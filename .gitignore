@@ -1,0 +1,23 @@
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.DS_Store
+*.log
+
+# Step 12 NISAR real data cache and large intermediates
+*.h5
+*.hdf5
+*.tif
+*.tiff
+data/real/flood_showcase/cache/
+data/real/flood_showcase/raw/
+.earthaccess/
+
+# Credentials and secrets
+.env
+.env.local
+.netrc
+*.key
+*.pem

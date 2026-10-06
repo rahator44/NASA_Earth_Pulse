@@ -1,0 +1,13 @@
+<div id="mobile-drawer" class="fixed inset-0 z-50 hidden opacity-0 transition-opacity duration-200 xl:hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
+  <div id="drawer-backdrop" class="absolute inset-0 bg-black/70"></div>
+  <div class="drawer-panel absolute left-0 top-0 bottom-0 w-[min(21rem,88vw)] bg-[#04060A] border-r border-[#1E2838] -translate-x-full transition-transform duration-200 flex flex-col">
+    <div class="p-4 border-b border-[#1E2838] flex items-center justify-between"><a href="/" class="text-white font-bold tracking-wide">NISAR <span class="badge badge-demo text-[8px]">DEMO MODE</span></a><button id="mobile-drawer-close" type="button" class="btn-icon" aria-label="Close navigation menu"><i data-lucide="x" class="w-5 h-5"></i></button></div>
+    <nav class="p-4 space-y-5 overflow-y-auto" aria-label="Mobile Main Navigation">
+      <section><h2 class="nav-group-label mb-1">EXPLORE</h2><a class="mobile-nav-link {% if active_page == 'home' %}mobile-nav-active{% endif %}" href="/" {% if active_page == 'home' %}aria-current="page"{% endif %}>Home</a><a class="mobile-nav-link {% if active_page == 'map' %}mobile-nav-active{% endif %}" href="/map" {% if active_page == 'map' %}aria-current="page"{% endif %}>Map</a><a class="mobile-nav-link {% if active_page == 'dashboard' %}mobile-nav-active{% endif %}" href="/dashboard" {% if active_page == 'dashboard' %}aria-current="page"{% endif %}>Dashboard</a></section>
+      <section><h2 class="nav-group-label mb-1">ANALYZE</h2><a class="mobile-nav-link {% if active_page == 'lab' %}mobile-nav-active{% endif %}" href="/lab/real_flood_001" {% if active_page == 'lab' %}aria-current="page"{% endif %}>Scientist Lab</a><a class="mobile-nav-link {% if active_page == 'methods' %}mobile-nav-active{% endif %}" href="/methods" {% if active_page == 'methods' %}aria-current="page"{% endif %}>Methods</a></section>
+      <section><h2 class="nav-group-label mb-1">ASSIST</h2><a class="mobile-nav-link {% if active_page == 'copilot' %}mobile-nav-active{% endif %}" href="/copilot" {% if active_page == 'copilot' %}aria-current="page"{% endif %}>Earth Copilot</a></section>
+      <section><h2 class="nav-group-label mb-1">SYSTEM</h2><a class="mobile-nav-link {% if active_page == 'settings' %}mobile-nav-active{% endif %}" href="/settings" {% if active_page == 'settings' %}aria-current="page"{% endif %}>Settings</a></section>
+    </nav>
+    <div class="mt-auto p-4 border-t border-[#1E2838] text-[10px] font-mono text-[#5C6B80]">NASA SPACE APPS CHALLENGE DEMO</div>
+  </div>
+</div>

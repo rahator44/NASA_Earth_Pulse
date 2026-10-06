@@ -1,0 +1,282 @@
+{
+  "$defs": {
+    "DataOrigin": {
+      "enum": [
+        "synthetic_ui_fixture",
+        "precomputed_real_analysis",
+        "live_analysis"
+      ],
+      "title": "DataOrigin",
+      "type": "string"
+    },
+    "Domain": {
+      "enum": [
+        "wildfire",
+        "flood_wetland",
+        "glacier",
+        "deformation",
+        "unclassified"
+      ],
+      "title": "Domain",
+      "type": "string"
+    },
+    "ProductMaturity": {
+      "enum": [
+        "PROVISIONAL",
+        "BETA",
+        "UNKNOWN"
+      ],
+      "title": "ProductMaturity",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "manifest_id": {
+      "title": "Manifest Id",
+      "type": "string"
+    },
+    "analysis_id": {
+      "title": "Analysis Id",
+      "type": "string"
+    },
+    "aoi_id": {
+      "title": "Aoi Id",
+      "type": "string"
+    },
+    "domain": {
+      "$ref": "#/$defs/Domain"
+    },
+    "before_acquisition_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Before Acquisition Id"
+    },
+    "after_acquisition_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "After Acquisition Id"
+    },
+    "comparison_policy": {
+      "title": "Comparison Policy",
+      "type": "string"
+    },
+    "reference_acquisition_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reference Acquisition Id"
+    },
+    "track": {
+      "title": "Track",
+      "type": "integer"
+    },
+    "frame": {
+      "title": "Frame",
+      "type": "integer"
+    },
+    "orbit_direction": {
+      "title": "Orbit Direction",
+      "type": "string"
+    },
+    "mode": {
+      "title": "Mode",
+      "type": "string"
+    },
+    "polarizations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Polarizations",
+      "type": "array"
+    },
+    "maturity": {
+      "$ref": "#/$defs/ProductMaturity",
+      "default": "PROVISIONAL"
+    },
+    "crid": {
+      "title": "Crid",
+      "type": "string"
+    },
+    "pipeline_version": {
+      "title": "Pipeline Version",
+      "type": "string"
+    },
+    "code_version": {
+      "title": "Code Version",
+      "type": "string"
+    },
+    "quality_parameters": {
+      "additionalProperties": true,
+      "title": "Quality Parameters",
+      "type": "object"
+    },
+    "detection_parameters": {
+      "additionalProperties": true,
+      "title": "Detection Parameters",
+      "type": "object"
+    },
+    "threshold_selection_method": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Threshold Selection Method"
+    },
+    "reference_area": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Reference Area"
+    },
+    "validation_reference": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Validation Reference"
+    },
+    "calibration_event_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Calibration Event Id"
+    },
+    "validation_event_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Validation Event Ids",
+      "type": "array"
+    },
+    "independent_validation": {
+      "default": false,
+      "title": "Independent Validation",
+      "type": "boolean"
+    },
+    "created_at": {
+      "title": "Created At",
+      "type": "string"
+    },
+    "firms_time_buffer_hours": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Firms Time Buffer Hours"
+    },
+    "firms_spatial_buffer_m": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Firms Spatial Buffer M"
+    },
+    "matching_firms_detection_count": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Matching Firms Detection Count"
+    },
+    "nearest_firms_distance_m": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Nearest Firms Distance M"
+    },
+    "is_demo": {
+      "default": true,
+      "title": "Is Demo",
+      "type": "boolean"
+    },
+    "data_origin": {
+      "$ref": "#/$defs/DataOrigin",
+      "default": "synthetic_ui_fixture"
+    },
+    "disclaimer": {
+      "default": "Synthetic development fixture \u2014 not an Earth observation result.",
+      "title": "Disclaimer",
+      "type": "string"
+    }
+  },
+  "required": [
+    "manifest_id",
+    "analysis_id",
+    "aoi_id",
+    "domain",
+    "comparison_policy",
+    "track",
+    "frame",
+    "orbit_direction",
+    "mode",
+    "crid",
+    "pipeline_version",
+    "code_version",
+    "created_at"
+  ],
+  "title": "AnalysisManifest",
+  "type": "object"
+}

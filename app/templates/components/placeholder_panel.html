@@ -1,0 +1,58 @@
+<div class="panel-standard">
+  <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-[#1E2838] pb-5 mb-6">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-[#090D14] border border-[#1E2838] flex items-center justify-center text-[#1E6BFF] shrink-0">
+        <i data-lucide="{{ icon | default('layers') }}" class="w-5 h-5"></i>
+      </div>
+      <div>
+        <h2 class="type-section-title">
+          {{ panel_title | default('Module Architecture') }}
+        </h2>
+        <span class="type-metadata text-[10px] text-[#94A3B8]">
+          {{ panel_tag | default('SYSTEM STATUS') }}
+        </span>
+      </div>
+    </div>
+    
+    <div class="flex items-center gap-2">
+      <span class="badge badge-maturity">
+        <span class="w-1.5 h-1.5 bg-[#1E6BFF] inline-block"></span>
+        <span>INTEGRATED</span>
+      </span>
+    </div>
+  </div>
+
+  <div class="space-y-3 text-sm text-[#94A3B8] leading-relaxed">
+    <p class="text-base text-white font-medium">
+      {{ summary | default('This section is connected to the application data and analysis services.') }}
+    </p>
+    <p>
+      {{ details | default('Scientific evidence, analysis status, and provenance are exposed through the appropriate public and scientist-facing views.') }}
+    </p>
+  </div>
+
+  <!-- Technical Readiness Metadata Grid -->
+  <div class="mt-8 pt-6 border-t border-[#1E2838] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div class="panel-subtle p-3.5">
+      <div class="type-metadata text-[10px] text-[#5C6B80]">Visual Architecture</div>
+      <div class="type-mono-metadata text-white mt-1 flex items-center gap-2">
+        <span class="w-1.5 h-1.5 bg-[#1E6BFF] inline-block"></span>
+        <span>Design System Active</span>
+      </div>
+    </div>
+
+    <div class="panel-subtle p-3.5">
+      <div class="type-metadata text-[10px] text-[#5C6B80]">Platform Foundation</div>
+      <div class="type-mono-metadata text-white mt-1">
+        FastAPI + Jinja2 (Python-First)
+      </div>
+    </div>
+
+    <div class="panel-subtle p-3.5">
+      <div class="type-metadata text-[10px] text-[#5C6B80]">Pipeline Binding</div>
+      <div class="type-mono-metadata text-[#94A3B8] mt-1">
+        Connected to Analysis Services
+      </div>
+    </div>
+  </div>
+</div>

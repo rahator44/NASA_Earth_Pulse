@@ -1,0 +1,169 @@
+{
+  "$defs": {
+    "AnalysisQuality": {
+      "properties": {
+        "valid_pixel_fraction": {
+          "title": "Valid Pixel Fraction",
+          "type": "number"
+        },
+        "required_inputs_available": {
+          "title": "Required Inputs Available",
+          "type": "boolean"
+        },
+        "quality_gate_passed": {
+          "title": "Quality Gate Passed",
+          "type": "boolean"
+        },
+        "notes": {
+          "title": "Notes",
+          "type": "string"
+        }
+      },
+      "required": [
+        "valid_pixel_fraction",
+        "required_inputs_available",
+        "quality_gate_passed",
+        "notes"
+      ],
+      "title": "AnalysisQuality",
+      "type": "object"
+    },
+    "ClassificationStatus": {
+      "enum": [
+        "resolved",
+        "ambiguous",
+        "unclassified"
+      ],
+      "title": "ClassificationStatus",
+      "type": "string"
+    },
+    "DataOrigin": {
+      "enum": [
+        "synthetic_ui_fixture",
+        "precomputed_real_analysis",
+        "live_analysis"
+      ],
+      "title": "DataOrigin",
+      "type": "string"
+    },
+    "Domain": {
+      "enum": [
+        "wildfire",
+        "flood_wetland",
+        "glacier",
+        "deformation",
+        "unclassified"
+      ],
+      "title": "Domain",
+      "type": "string"
+    },
+    "ObservationState": {
+      "enum": [
+        "no_change",
+        "change_detected",
+        "strong_change",
+        "unknown_change",
+        "insufficient_data"
+      ],
+      "title": "ObservationState",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "aoi_id": {
+      "title": "Aoi Id",
+      "type": "string"
+    },
+    "domain": {
+      "$ref": "#/$defs/Domain"
+    },
+    "before_acquisition_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Before Acquisition Id"
+    },
+    "after_acquisition_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "After Acquisition Id"
+    },
+    "observation_state": {
+      "$ref": "#/$defs/ObservationState"
+    },
+    "quality": {
+      "$ref": "#/$defs/AnalysisQuality"
+    },
+    "measurements": {
+      "additionalProperties": true,
+      "title": "Measurements",
+      "type": "object"
+    },
+    "manifest_id": {
+      "title": "Manifest Id",
+      "type": "string"
+    },
+    "classification_status": {
+      "$ref": "#/$defs/ClassificationStatus"
+    },
+    "final_classification": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Final Classification"
+    },
+    "created_at": {
+      "title": "Created At",
+      "type": "string"
+    },
+    "is_demo": {
+      "default": true,
+      "title": "Is Demo",
+      "type": "boolean"
+    },
+    "data_origin": {
+      "$ref": "#/$defs/DataOrigin",
+      "default": "synthetic_ui_fixture"
+    },
+    "disclaimer": {
+      "default": "Synthetic development fixture \u2014 not an Earth observation result.",
+      "title": "Disclaimer",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "aoi_id",
+    "domain",
+    "observation_state",
+    "quality",
+    "manifest_id",
+    "classification_status",
+    "created_at"
+  ],
+  "title": "Analysis",
+  "type": "object"
+}

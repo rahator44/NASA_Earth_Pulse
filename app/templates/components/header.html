@@ -1,0 +1,27 @@
+<header class="bg-[#04060A] border-b border-[#1E2838] sticky top-0 z-40">
+  <div class="h-[2px] bg-[#1E6BFF] w-full"></div>
+  <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between min-h-16 sm:min-h-[4.25rem] gap-3">
+      <a href="/" class="flex flex-col shrink-0 py-1" aria-label="NISAR Surface Change Explorer home">
+        <span class="flex items-center gap-2"><span class="w-2.5 h-2.5 bg-[#1E6BFF]"></span><strong class="text-white font-extrabold tracking-wider text-lg sm:text-xl uppercase">NISAR</strong><span class="badge badge-demo text-[8px]">DEMO MODE</span></span>
+        <span class="text-[10px] sm:text-[11px] tracking-[0.12em] text-[#94A3B8] font-semibold uppercase font-mono mt-1">SURFACE CHANGE EXPLORER</span>
+      </a>
+
+      <nav class="hidden xl:flex items-center gap-3 2xl:gap-5" aria-label="Main Navigation">
+        {% set explore = [('Home','/','home'),('Map','/map','map'),('Dashboard','/dashboard','dashboard')] %}
+        {% set analyze = [('Scientist Lab','/lab/real_flood_001','lab'),('Methods','/methods','methods')] %}
+        {% set assist = [('Earth Copilot','/copilot','copilot')] %}
+        {% set system = [('Settings','/settings','settings')] %}
+        {% for group_name, links in [('EXPLORE',explore),('ANALYZE',analyze),('ASSIST',assist),('SYSTEM',system)] %}
+          <div class="nav-group"><span class="nav-group-label">{{ group_name }}</span><div class="flex items-center gap-0.5">
+            {% for label,url,page in links %}<a href="{{ url }}" class="nav-link {% if active_page == page %}nav-link-active{% endif %}" {% if active_page == page %}aria-current="page"{% endif %}>{{ label }}</a>{% endfor %}
+          </div></div>
+        {% endfor %}
+      </nav>
+
+      <div class="flex items-center gap-2 shrink-0">
+        <button id="mobile-menu-toggle" type="button" class="xl:hidden btn-icon p-2 text-[#94A3B8] hover:text-white" aria-label="Open Navigation Menu" aria-expanded="false" aria-controls="mobile-drawer"><i data-lucide="menu" class="w-5 h-5"></i></button>
+      </div>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,99 @@
+[
+  {
+    "id": "analysis_synth_001",
+    "aoi_id": "aoi_synth_alpha",
+    "domain": "flood_wetland",
+    "before_acquisition_id": "SYNTH_GCOV_A_001",
+    "after_acquisition_id": "SYNTH_GCOV_A_002",
+    "observation_state": "change_detected",
+    "quality": {
+      "valid_pixel_fraction": 0.94,
+      "required_inputs_available": true,
+      "quality_gate_passed": true,
+      "notes": "Complete 12-day exact repeat dual-pol coverage available."
+    },
+    "measurements": {
+      "inundated_area_km2": 4.8,
+      "mean_backscatter_difference_db": -3.8
+    },
+    "manifest_id": "manifest_synth_001",
+    "classification_status": "resolved",
+    "final_classification": "flood_wetland",
+    "created_at": "2026-08-14T02:00:00Z",
+    "is_demo": true,
+    "data_origin": "synthetic_ui_fixture",
+    "disclaimer": "Synthetic development fixture \u2014 not an Earth observation result."
+  },
+  {
+    "id": "analysis_synth_002",
+    "aoi_id": "aoi_synth_beta",
+    "domain": "unclassified",
+    "before_acquisition_id": "SYNTH_GCOV_B_001",
+    "after_acquisition_id": "SYNTH_GCOV_B_002",
+    "observation_state": "unknown_change",
+    "quality": {
+      "valid_pixel_fraction": 0.91,
+      "required_inputs_available": true,
+      "quality_gate_passed": true,
+      "notes": "Valid SAR pixels present, but independent sensor signals diverge."
+    },
+    "measurements": {
+      "anomaly_area_km2": 2.1,
+      "coherence_loss": 0.52
+    },
+    "manifest_id": "manifest_synth_002",
+    "classification_status": "unclassified",
+    "final_classification": null,
+    "created_at": "2026-08-17T03:00:00Z",
+    "is_demo": true,
+    "data_origin": "synthetic_ui_fixture",
+    "disclaimer": "Synthetic development fixture \u2014 not an Earth observation result."
+  },
+  {
+    "id": "analysis_synth_003",
+    "aoi_id": "aoi_synth_gamma",
+    "domain": "unclassified",
+    "before_acquisition_id": "SYNTH_GCOV_G_001",
+    "after_acquisition_id": null,
+    "observation_state": "insufficient_data",
+    "quality": {
+      "valid_pixel_fraction": 0.32,
+      "required_inputs_available": false,
+      "quality_gate_passed": false,
+      "notes": "Valid-pixel fraction below configured minimum."
+    },
+    "measurements": {},
+    "manifest_id": "manifest_synth_003",
+    "classification_status": "unclassified",
+    "final_classification": null,
+    "created_at": "2026-08-09T01:00:00Z",
+    "is_demo": true,
+    "data_origin": "synthetic_ui_fixture",
+    "disclaimer": "Synthetic development fixture \u2014 not an Earth observation result."
+  },
+  {
+    "id": "analysis_synth_004",
+    "aoi_id": "aoi_synth_delta",
+    "domain": "deformation",
+    "before_acquisition_id": "SYNTH_GUNW_D_001",
+    "after_acquisition_id": "SYNTH_GUNW_D_002",
+    "observation_state": "no_change",
+    "quality": {
+      "valid_pixel_fraction": 0.98,
+      "required_inputs_available": true,
+      "quality_gate_passed": true,
+      "notes": "Excellent interferometric coherence across 12-day repeat."
+    },
+    "measurements": {
+      "max_displacement_mm": 1.8,
+      "mean_coherence": 0.82
+    },
+    "manifest_id": "manifest_synth_004",
+    "classification_status": "resolved",
+    "final_classification": "deformation_stable",
+    "created_at": "2026-08-10T04:30:00Z",
+    "is_demo": true,
+    "data_origin": "synthetic_ui_fixture",
+    "disclaimer": "Synthetic development fixture \u2014 not an Earth observation result."
+  }
+]

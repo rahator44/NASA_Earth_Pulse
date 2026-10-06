@@ -1,0 +1,15 @@
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+jinja2>=3.1.4
+python-multipart>=0.0.12
+httpx>=0.27.0
+pytest>=8.3.0
+shapely>=2.0.0
+asf_search>=7.0.0
+numpy>=2.0
+scipy>=1.13
+# Offline real-data pipeline only (scripts/real_flood):
+earthaccess>=0.12
+h5py>=3.11
+
+rasterio>=1.4

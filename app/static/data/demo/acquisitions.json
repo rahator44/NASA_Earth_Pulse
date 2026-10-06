@@ -1,0 +1,226 @@
+[
+  {
+    "id": "SYNTH_GCOV_A_001",
+    "source": "NASA-ISRO SAR",
+    "sensor": "NISAR L-SAR",
+    "product_type": "GCOV",
+    "acquisition_datetime": "2026-08-01T10:15:00Z",
+    "track": 42,
+    "frame": 110,
+    "orbit_direction": "ascending",
+    "mode": "dual-pol",
+    "polarizations": ["HH", "HV"],
+    "frequency": "1.26 GHz",
+    "bandwidth": "20 MHz",
+    "maturity": "PROVISIONAL",
+    "crid": "CRID_001",
+    "footprint": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [-25.6, 14.7],
+          [-24.7, 14.7],
+          [-24.7, 15.5],
+          [-25.6, 15.5],
+          [-25.6, 14.7]
+        ]
+      ]
+    },
+    "source_url": null,
+    "is_demo": true,
+    "data_origin": "synthetic_ui_fixture",
+    "disclaimer": "Synthetic development fixture — not an Earth observation result."
+  },
+  {
+    "id": "SYNTH_GCOV_A_002",
+    "source": "NASA-ISRO SAR",
+    "sensor": "NISAR L-SAR",
+    "product_type": "GCOV",
+    "acquisition_datetime": "2026-08-13T10:15:00Z",
+    "track": 42,
+    "frame": 110,
+    "orbit_direction": "ascending",
+    "mode": "dual-pol",
+    "polarizations": ["HH", "HV"],
+    "frequency": "1.26 GHz",
+    "bandwidth": "20 MHz",
+    "maturity": "PROVISIONAL",
+    "crid": "CRID_001",
+    "footprint": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [-25.6, 14.7],
+          [-24.7, 14.7],
+          [-24.7, 15.5],
+          [-25.6, 15.5],
+          [-25.6, 14.7]
+        ]
+      ]
+    },
+    "source_url": null,
+    "is_demo": true,
+    "data_origin": "synthetic_ui_fixture",
+    "disclaimer": "Synthetic development fixture — not an Earth observation result."
+  },
+  {
+    "id": "SYNTH_GCOV_B_001",
+    "source": "NASA-ISRO SAR",
+    "sensor": "NISAR L-SAR",
+    "product_type": "GCOV",
+    "acquisition_datetime": "2026-08-04T05:30:00Z",
+    "track": 88,
+    "frame": 204,
+    "orbit_direction": "descending",
+    "mode": "dual-pol",
+    "polarizations": ["HH", "HV"],
+    "frequency": "1.26 GHz",
+    "bandwidth": "20 MHz",
+    "maturity": "PROVISIONAL",
+    "crid": "CRID_002",
+    "footprint": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [9.4, -15.6],
+          [10.4, -15.6],
+          [10.4, -14.6],
+          [9.4, -14.6],
+          [9.4, -15.6]
+        ]
+      ]
+    },
+    "source_url": null,
+    "is_demo": true,
+    "data_origin": "synthetic_ui_fixture",
+    "disclaimer": "Synthetic development fixture — not an Earth observation result."
+  },
+  {
+    "id": "SYNTH_GCOV_B_002",
+    "source": "NASA-ISRO SAR",
+    "sensor": "NISAR L-SAR",
+    "product_type": "GCOV",
+    "acquisition_datetime": "2026-08-16T05:30:00Z",
+    "track": 88,
+    "frame": 204,
+    "orbit_direction": "descending",
+    "mode": "dual-pol",
+    "polarizations": ["HH", "HV"],
+    "frequency": "1.26 GHz",
+    "bandwidth": "20 MHz",
+    "maturity": "PROVISIONAL",
+    "crid": "CRID_002",
+    "footprint": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [9.4, -15.6],
+          [10.4, -15.6],
+          [10.4, -14.6],
+          [9.4, -14.6],
+          [9.4, -15.6]
+        ]
+      ]
+    },
+    "source_url": null,
+    "is_demo": true,
+    "data_origin": "synthetic_ui_fixture",
+    "disclaimer": "Synthetic development fixture — not an Earth observation result."
+  },
+  {
+    "id": "SYNTH_GCOV_G_001",
+    "source": "NASA-ISRO SAR",
+    "sensor": "NISAR L-SAR",
+    "product_type": "GCOV",
+    "acquisition_datetime": "2026-08-08T18:45:00Z",
+    "track": 15,
+    "frame": 75,
+    "orbit_direction": "ascending",
+    "mode": "dual-pol",
+    "polarizations": ["HH", "HV"],
+    "frequency": "1.26 GHz",
+    "bandwidth": "20 MHz",
+    "maturity": "BETA",
+    "crid": "CRID_003",
+    "footprint": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [44.4, 29.4],
+          [45.4, 29.4],
+          [45.4, 30.4],
+          [44.4, 30.4],
+          [44.4, 29.4]
+        ]
+      ]
+    },
+    "source_url": null,
+    "is_demo": true,
+    "data_origin": "synthetic_ui_fixture",
+    "disclaimer": "Synthetic development fixture — not an Earth observation result."
+  },
+  {
+    "id": "SYNTH_GUNW_D_001",
+    "source": "NASA-ISRO SAR",
+    "sensor": "NISAR L-SAR",
+    "product_type": "GUNW",
+    "acquisition_datetime": "2026-07-28T02:10:00Z",
+    "track": 112,
+    "frame": 320,
+    "orbit_direction": "descending",
+    "mode": "interferometric",
+    "polarizations": ["HH"],
+    "frequency": "1.26 GHz",
+    "bandwidth": "40 MHz",
+    "maturity": "PROVISIONAL",
+    "crid": "CRID_004",
+    "footprint": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [-60.6, -20.6],
+          [-59.6, -20.6],
+          [-59.6, -19.6],
+          [-60.6, -19.6],
+          [-60.6, -20.6]
+        ]
+      ]
+    },
+    "source_url": null,
+    "is_demo": true,
+    "data_origin": "synthetic_ui_fixture",
+    "disclaimer": "Synthetic development fixture — not an Earth observation result."
+  },
+  {
+    "id": "SYNTH_GUNW_D_002",
+    "source": "NASA-ISRO SAR",
+    "sensor": "NISAR L-SAR",
+    "product_type": "GUNW",
+    "acquisition_datetime": "2026-08-09T02:10:00Z",
+    "track": 112,
+    "frame": 320,
+    "orbit_direction": "descending",
+    "mode": "interferometric",
+    "polarizations": ["HH"],
+    "frequency": "1.26 GHz",
+    "bandwidth": "40 MHz",
+    "maturity": "PROVISIONAL",
+    "crid": "CRID_004",
+    "footprint": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [-60.6, -20.6],
+          [-59.6, -20.6],
+          [-59.6, -19.6],
+          [-60.6, -19.6],
+          [-60.6, -20.6]
+        ]
+      ]
+    },
+    "source_url": null,
+    "is_demo": true,
+    "data_origin": "synthetic_ui_fixture",
+    "disclaimer": "Synthetic development fixture — not an Earth observation result."
+  }
+]

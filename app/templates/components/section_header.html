@@ -1,0 +1,24 @@
+<div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 border-b border-[#1E2838] pb-4 mb-6">
+  <div>
+    {% if section_eyebrow %}
+    <div class="section-label mb-1.5">
+      <span class="section-label-dot"></span>
+      <span>{{ section_eyebrow }}</span>
+    </div>
+    {% endif %}
+    <h2 class="type-section-title">
+      {{ section_title }}
+    </h2>
+    {% if section_description %}
+    <p class="type-small text-[#94A3B8] mt-1 max-w-2xl leading-relaxed">
+      {{ section_description }}
+    </p>
+    {% endif %}
+  </div>
+
+  {% if section_action %}
+  <div class="shrink-0 flex items-center gap-2">
+    {{ section_action | safe }}
+  </div>
+  {% endif %}
+</div>

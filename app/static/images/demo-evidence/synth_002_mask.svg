@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
+  <defs>
+    <pattern id="mask-hatch-purple" width="8" height="8" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0" x2="0" y2="8" stroke="#8B5CF6" stroke-width="1.5" opacity="0.6"/>
+    </pattern>
+  </defs>
+
+  <!-- Segmented Unclassified Anomaly Mask -->
+  <path d="M 330 180 C 420 160 520 190 560 250 C 580 310 540 370 470 390 C 390 410 320 370 290 320 C 270 270 290 200 330 180 Z"
+        fill="#8B5CF6" fill-opacity="0.35" stroke="#8B5CF6" stroke-width="2.5"/>
+  <path d="M 330 180 C 420 160 520 190 560 250 C 580 310 540 370 470 390 C 390 410 320 370 290 320 C 270 270 290 200 330 180 Z"
+        fill="url(#mask-hatch-purple)"/>
+
+  <!-- Watermark & Legend -->
+  <rect x="430" y="16" width="350" height="24" fill="#090D14" opacity="0.85" rx="2" stroke="#1E2838" stroke-width="0.8"/>
+  <text x="440" y="32" fill="#FCA5A5" font-family="monospace" font-size="11" font-weight="bold" letter-spacing="1">
+    SYNTHETIC VISUAL FIXTURE // NOT NISAR IMAGERY
+  </text>
+
+  <rect x="20" y="458" width="300" height="24" fill="#090D14" opacity="0.85" rx="2" stroke="#1E2838" stroke-width="0.8"/>
+  <text x="28" y="474" fill="#A78BFA" font-family="monospace" font-size="10" font-weight="bold">
+    DETECTED ANOMALY MASK &bull; AREA: 2.10 km&sup2;
+  </text>
+</svg>

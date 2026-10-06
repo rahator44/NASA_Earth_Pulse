@@ -1,0 +1,86 @@
+[
+  {
+    "id": "aoi_synth_alpha",
+    "display_name": "Synthetic AOI Alpha",
+    "geometry": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [-25.5, 14.8],
+          [-24.8, 14.8],
+          [-24.8, 15.4],
+          [-25.5, 15.4],
+          [-25.5, 14.8]
+        ]
+      ]
+    },
+    "country": "Oceanic Testing Grid",
+    "region": "Grid Alpha-Sector",
+    "is_demo": true,
+    "data_origin": "synthetic_ui_fixture",
+    "disclaimer": "Synthetic development fixture — not an Earth observation result."
+  },
+  {
+    "id": "aoi_synth_beta",
+    "display_name": "Synthetic AOI Beta",
+    "geometry": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [9.5, -15.5],
+          [10.3, -15.5],
+          [10.3, -14.7],
+          [9.5, -14.7],
+          [9.5, -15.5]
+        ]
+      ]
+    },
+    "country": "Oceanic Testing Grid",
+    "region": "Grid Beta-Sector",
+    "is_demo": true,
+    "data_origin": "synthetic_ui_fixture",
+    "disclaimer": "Synthetic development fixture — not an Earth observation result."
+  },
+  {
+    "id": "aoi_synth_gamma",
+    "display_name": "Synthetic AOI Gamma",
+    "geometry": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [44.5, 29.5],
+          [45.3, 29.5],
+          [45.3, 30.3],
+          [44.5, 30.3],
+          [44.5, 29.5]
+        ]
+      ]
+    },
+    "country": "Continental Testing Zone",
+    "region": "Grid Gamma-Sector",
+    "is_demo": true,
+    "data_origin": "synthetic_ui_fixture",
+    "disclaimer": "Synthetic development fixture — not an Earth observation result."
+  },
+  {
+    "id": "aoi_synth_delta",
+    "display_name": "Synthetic AOI Delta",
+    "geometry": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [-60.5, -20.5],
+          [-59.7, -20.5],
+          [-59.7, -19.7],
+          [-60.5, -19.7],
+          [-60.5, -20.5]
+        ]
+      ]
+    },
+    "country": "Southern Testing Zone",
+    "region": "Grid Delta-Sector",
+    "is_demo": true,
+    "data_origin": "synthetic_ui_fixture",
+    "disclaimer": "Synthetic development fixture — not an Earth observation result."
+  }
+]

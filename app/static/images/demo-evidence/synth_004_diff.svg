@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
+  <rect width="800" height="500" fill="#0A0E18"/>
+
+  <!-- InSAR Simulated Concentric Phase Fringes (Phase Stability) -->
+  <g fill="none" opacity="0.85">
+    <ellipse cx="410" cy="245" rx="280" ry="170" stroke="#06B6D4" stroke-width="8"/>
+    <ellipse cx="410" cy="245" rx="220" ry="130" stroke="#EC4899" stroke-width="8"/>
+    <ellipse cx="410" cy="245" rx="160" ry="95" stroke="#EAB308" stroke-width="8"/>
+    <ellipse cx="410" cy="245" rx="100" ry="60" stroke="#06B6D4" stroke-width="8"/>
+    <ellipse cx="410" cy="245" rx="50" ry="30" stroke="#EC4899" stroke-width="8"/>
+  </g>
+
+  <!-- Stable Geodetic Marker Point -->
+  <circle cx="410" cy="245" r="5" fill="#FFFFFF"/>
+
+  <!-- Reticle -->
+  <g stroke="#1E6BFF" stroke-width="1" opacity="0.6">
+    <circle cx="400" cy="250" r="4" fill="none"/>
+    <line x1="390" y1="250" x2="410" y2="250"/>
+    <line x1="400" y1="240" x2="400" y2="260"/>
+  </g>
+
+  <rect x="430" y="16" width="350" height="24" fill="#090D14" opacity="0.85" rx="2" stroke="#1E2838" stroke-width="0.8"/>
+  <text x="440" y="32" fill="#FCA5A5" font-family="monospace" font-size="11" font-weight="bold" letter-spacing="1">
+    SYNTHETIC VISUAL FIXTURE // NOT NISAR IMAGERY
+  </text>
+
+  <rect x="20" y="458" width="320" height="24" fill="#090D14" opacity="0.85" rx="2" stroke="#1E2838" stroke-width="0.8"/>
+  <text x="28" y="474" fill="#EAB308" font-family="monospace" font-size="10" font-weight="bold">
+    INSAR PHASE DIFFERENCE &bull; RESIDUAL: 0.14 rad
+  </text>
+</svg>

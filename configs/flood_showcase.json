@@ -1,0 +1,77 @@
+{
+  "showcase_id": "real_flood_001",
+  "site_name": "Atchafalaya River Basin & Lower Mississippi Alluvial Plain, LA, USA",
+  "aoi_name": "Lake Henderson / Atchafalaya Basin",
+  "bbox": [
+    -91.75,
+    30.25,
+    -91.55,
+    30.43
+  ],
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [
+          -91.75,
+          30.25
+        ],
+        [
+          -91.55,
+          30.25
+        ],
+        [
+          -91.55,
+          30.43
+        ],
+        [
+          -91.75,
+          30.43
+        ],
+        [
+          -91.75,
+          30.25
+        ]
+      ]
+    ]
+  },
+  "before_granule_id": "NISAR_L2_PR_GCOV_024_033_A_017_4005_DHDH_A_20260628T112725_20260628T112800_P05023_N_F_J_001",
+  "after_granule_id": "NISAR_L2_PR_GCOV_025_033_A_017_4005_DHDH_A_20260710T112724_20260710T112759_P05023_N_F_J_001",
+  "before_date": "2026-06-28T11:27:25Z",
+  "after_date": "2026-07-10T11:27:24Z",
+  "product": "GCOV",
+  "maturity": "PROVISIONAL",
+  "track": 33,
+  "frame": 17,
+  "orbit_direction": "ASCENDING",
+  "mode": "4005 (40 MHz primary / 5 MHz secondary); DHDH polarization mode",
+  "selected_frequency": "A",
+  "selected_polarization": "HHHH",
+  "source_dataset_path": "science/LSAR/GCOV/grids/frequencyA/HHHH",
+  "crid": "P05023",
+  "quality_gate_min_valid_fraction": 0.85,
+  "apply_linear_power_filter": true,
+  "filter_type": "11x11 box mean in linear power",
+  "filter_kernel_size": 11,
+  "difference_definition": "after_db - before_db",
+  "threshold_method": "empirical median - 1.5*std, clamped to [-6,-2] dB; realized threshold -2.0 dB",
+  "delta_threshold": -2.0,
+  "post_water_threshold": null,
+  "morphology_opening": true,
+  "min_region_pixels": 500,
+  "reference_product_pre": null,
+  "reference_product_post": "OPERA_L3_DSWx-HLS_T15RXP_20260707T163136Z_20260721T200840Z_L9_30_v1.1",
+  "reference_dates": [
+    "2026-07-07"
+  ],
+  "calibration_method": "single real showcase; radar threshold demonstration",
+  "validation_basis": "DSWx-HLS temporal/contextual reference only; no spatial mask comparison performed",
+  "pipeline_version": "1.0.0",
+  "code_version": "step12-real-sar-v1",
+  "_note_dataset": "Frequency group and diagonal covariance term must be determined at runtime by inspecting /science/LSAR/GCOV/ in BOTH products; not assumed.",
+  "delta_threshold_search_range_db": null,
+  "_note_threshold": "The active precomputed manifest records the realized -2.0 dB candidate criterion.",
+  "aoi_status": "PROCESSED DEMO AOI (~19 x 20 km)",
+  "status": "COMPLETED PRECOMPUTED REAL ANALYSIS \u2014 calibration/context only, not independently validated",
+  "_note_reference": "DSWx-HLS is not treated as independent corroboration until reprojected/aligned and compared against the NISAR change mask."
+}

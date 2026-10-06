@@ -1,0 +1,197 @@
+{
+  "$defs": {
+    "DataOrigin": {
+      "enum": [
+        "synthetic_ui_fixture",
+        "precomputed_real_analysis",
+        "live_analysis"
+      ],
+      "title": "DataOrigin",
+      "type": "string"
+    },
+    "Domain": {
+      "enum": [
+        "wildfire",
+        "flood_wetland",
+        "glacier",
+        "deformation",
+        "unclassified"
+      ],
+      "title": "Domain",
+      "type": "string"
+    },
+    "ObservationState": {
+      "enum": [
+        "no_change",
+        "change_detected",
+        "strong_change",
+        "unknown_change",
+        "insufficient_data"
+      ],
+      "title": "ObservationState",
+      "type": "string"
+    },
+    "ProductMaturity": {
+      "enum": [
+        "PROVISIONAL",
+        "BETA",
+        "UNKNOWN"
+      ],
+      "title": "ProductMaturity",
+      "type": "string"
+    },
+    "ValidationStatus": {
+      "enum": [
+        "validated",
+        "calibrated_only",
+        "beta_demo",
+        "unvalidated"
+      ],
+      "title": "ValidationStatus",
+      "type": "string"
+    }
+  },
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "analysis_id": {
+      "title": "Analysis Id",
+      "type": "string"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "short_description": {
+      "title": "Short Description",
+      "type": "string"
+    },
+    "domain": {
+      "$ref": "#/$defs/Domain"
+    },
+    "observation_state": {
+      "$ref": "#/$defs/ObservationState"
+    },
+    "aoi_id": {
+      "title": "Aoi Id",
+      "type": "string"
+    },
+    "thumbnail_url": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Thumbnail Url"
+    },
+    "comparison_start": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Comparison Start"
+    },
+    "comparison_end": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Comparison End"
+    },
+    "primary_measurement_label": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Primary Measurement Label"
+    },
+    "primary_measurement_value": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Primary Measurement Value"
+    },
+    "product_maturity": {
+      "$ref": "#/$defs/ProductMaturity",
+      "default": "PROVISIONAL"
+    },
+    "freshness_timestamp": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Freshness Timestamp"
+    },
+    "validation_status": {
+      "$ref": "#/$defs/ValidationStatus",
+      "default": "beta_demo"
+    },
+    "manifest_id": {
+      "title": "Manifest Id",
+      "type": "string"
+    },
+    "featured": {
+      "default": false,
+      "title": "Featured",
+      "type": "boolean"
+    },
+    "is_demo": {
+      "default": true,
+      "title": "Is Demo",
+      "type": "boolean"
+    },
+    "data_origin": {
+      "$ref": "#/$defs/DataOrigin",
+      "default": "synthetic_ui_fixture"
+    },
+    "disclaimer": {
+      "default": "Synthetic development fixture \u2014 not an Earth observation result.",
+      "title": "Disclaimer",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "analysis_id",
+    "title",
+    "short_description",
+    "domain",
+    "observation_state",
+    "aoi_id",
+    "manifest_id"
+  ],
+  "title": "Event",
+  "type": "object"
+}

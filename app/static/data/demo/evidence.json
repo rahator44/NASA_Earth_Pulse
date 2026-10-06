@@ -1,0 +1,163 @@
+[
+  {
+    "analysis_id": "analysis_synth_001",
+    "before": {
+      "url": "/static/images/demo-evidence/synth_001_before.svg",
+      "label": "Pre-Event Baseline Observation",
+      "acquisition_id": "SYNTH_GCOV_A_001",
+      "acquisition_date": "2026-08-01T10:15:00Z",
+      "source": "Synthetic visual fixture",
+      "product": "Synthetic GCOV Demonstration",
+      "maturity": "DEMO / UNCALIBRATED",
+      "polarization": "Simulated HH+HV",
+      "is_synthetic": true
+    },
+    "after": {
+      "url": "/static/images/demo-evidence/synth_001_after.svg",
+      "label": "Post-Inundation Repeat Pass",
+      "acquisition_id": "SYNTH_GCOV_A_002",
+      "acquisition_date": "2026-08-13T10:15:00Z",
+      "source": "Synthetic visual fixture",
+      "product": "Synthetic GCOV Demonstration",
+      "maturity": "DEMO / UNCALIBRATED",
+      "polarization": "Simulated HH+HV",
+      "is_synthetic": true
+    },
+    "difference": {
+      "url": "/static/images/demo-evidence/synth_001_diff.svg",
+      "label": "Radar Backscatter Reduction (dB)",
+      "unit": "dB",
+      "legend_min": "-6.0 dB",
+      "legend_max": "+2.0 dB",
+      "colormap_label": "Cool-Warm Backscatter Contrast",
+      "is_synthetic": true
+    },
+    "change_mask": {
+      "url": "/static/images/demo-evidence/synth_001_mask.svg",
+      "label": "Segmented Inundation Mask",
+      "threshold_label": "Adaptive Otsu Threshold (-3.8 dB)",
+      "is_synthetic": true
+    },
+    "optical_context": {
+      "url": "/static/images/demo-evidence/synth_001_before.svg",
+      "source": "Simulated Optical Reference Mock",
+      "date": "2026-07-25",
+      "is_synthetic": true
+    },
+    "change_regions_geojson_url": "/api/demo/change_regions.geojson",
+    "data_origin": "synthetic_ui_fixture",
+    "disclaimer": "Synthetic visual fixture — not NISAR imagery. Demonstrating evidence viewer mechanics only.",
+    "quality_gate_passed": true,
+    "quality_notes": "Complete 12-day exact repeat dual-pol coverage available."
+  },
+  {
+    "analysis_id": "analysis_synth_002",
+    "before": {
+      "url": "/static/images/demo-evidence/synth_002_before.svg",
+      "label": "Pre-Disturbance Canopy Baseline",
+      "acquisition_id": "SYNTH_GCOV_B_001",
+      "acquisition_date": "2026-08-04T05:30:00Z",
+      "source": "Synthetic visual fixture",
+      "product": "Synthetic GCOV Demonstration",
+      "maturity": "DEMO / UNCALIBRATED",
+      "polarization": "Simulated HH+HV",
+      "is_synthetic": true
+    },
+    "after": {
+      "url": "/static/images/demo-evidence/synth_002_after.svg",
+      "label": "Post-Anomaly Repeat Pass",
+      "acquisition_id": "SYNTH_GCOV_B_002",
+      "acquisition_date": "2026-08-16T05:30:00Z",
+      "source": "Synthetic visual fixture",
+      "product": "Synthetic GCOV Demonstration",
+      "maturity": "DEMO / UNCALIBRATED",
+      "polarization": "Simulated HH+HV",
+      "is_synthetic": true
+    },
+    "difference": {
+      "url": "/static/images/demo-evidence/synth_002_diff.svg",
+      "label": "Cross-Pol Coherence Loss",
+      "unit": "unitless",
+      "legend_min": "0.0 (High)",
+      "legend_max": "1.0 (Lost)",
+      "colormap_label": "Temporal Decorrelation Index",
+      "is_synthetic": true
+    },
+    "change_mask": {
+      "url": "/static/images/demo-evidence/synth_002_mask.svg",
+      "label": "Unclassified Anomaly Mask",
+      "threshold_label": "Multi-channel Anomaly Gate",
+      "is_synthetic": true
+    },
+    "optical_context": null,
+    "change_regions_geojson_url": "/api/demo/change_regions.geojson",
+    "data_origin": "synthetic_ui_fixture",
+    "disclaimer": "Synthetic visual fixture — not NISAR imagery. Demonstrating evidence viewer mechanics only.",
+    "quality_gate_passed": true,
+    "quality_notes": "Valid SAR pixels present, but independent sensor signals diverge."
+  },
+  {
+    "analysis_id": "analysis_synth_003",
+    "before": {
+      "url": "/static/images/demo-evidence/synth_003_before.svg",
+      "label": "Partial Swath Primary Acquisition",
+      "acquisition_id": "SYNTH_GCOV_G_001",
+      "acquisition_date": "2026-08-08T18:45:00Z",
+      "source": "Synthetic visual fixture",
+      "product": "Synthetic GCOV Demonstration",
+      "maturity": "DEMO / UNCALIBRATED",
+      "polarization": "Simulated HH+HV",
+      "is_synthetic": true
+    },
+    "after": null,
+    "difference": null,
+    "change_mask": null,
+    "optical_context": null,
+    "change_regions_geojson_url": null,
+    "data_origin": "synthetic_ui_fixture",
+    "disclaimer": "Synthetic visual fixture — not NISAR imagery. Demonstrating evidence viewer mechanics only.",
+    "quality_gate_passed": false,
+    "quality_notes": "Difference and change-mask products are unavailable because the analysis quality gate was not passed."
+  },
+  {
+    "analysis_id": "analysis_synth_004",
+    "before": {
+      "url": "/static/images/demo-evidence/synth_004_before.svg",
+      "label": "Reference Geodetic Baseline",
+      "acquisition_id": "SYNTH_GUNW_D_001",
+      "acquisition_date": "2026-07-28T02:10:00Z",
+      "source": "Synthetic visual fixture",
+      "product": "Synthetic GUNW Demonstration",
+      "maturity": "DEMO / UNCALIBRATED",
+      "polarization": "Simulated HH",
+      "is_synthetic": true
+    },
+    "after": {
+      "url": "/static/images/demo-evidence/synth_004_after.svg",
+      "label": "12-Day Repeat Interferometric Pass",
+      "acquisition_id": "SYNTH_GUNW_D_002",
+      "acquisition_date": "2026-08-09T02:10:00Z",
+      "source": "Synthetic visual fixture",
+      "product": "Synthetic GUNW Demonstration",
+      "maturity": "DEMO / UNCALIBRATED",
+      "polarization": "Simulated HH",
+      "is_synthetic": true
+    },
+    "difference": {
+      "url": "/static/images/demo-evidence/synth_004_diff.svg",
+      "label": "Interferometric Phase Residuals",
+      "unit": "rad",
+      "legend_min": "-π rad",
+      "legend_max": "+π rad",
+      "colormap_label": "Wrapped Interferometric Fringes",
+      "is_synthetic": true
+    },
+    "change_mask": null,
+    "optical_context": null,
+    "change_regions_geojson_url": null,
+    "data_origin": "synthetic_ui_fixture",
+    "disclaimer": "Synthetic visual fixture — not NISAR imagery. Demonstrating evidence viewer mechanics only.",
+    "quality_gate_passed": true,
+    "quality_notes": "Excellent interferometric coherence across 12-day repeat."
+  }
+]

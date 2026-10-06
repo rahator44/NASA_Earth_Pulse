@@ -1,0 +1,802 @@
+{% extends "base.html" %}
+
+{% block title %}Methods, Validation & Scientific Rigor{% endblock %}
+
+{% block content %}
+  {% set page_label = "SCIENTIFIC RIGOR & PROVENANCE // MODULE 05" %}
+  {% set page_title = "Methods & Scientific Transparency" %}
+  {% set page_description = "Architecture, sensor product roles, pairwise compatibility checks, domain algorithms, triage mathematics, and current demo maturity." %}
+  {% set badge_text = "METHODOLOGY · SPECIFICATION" %}
+  {% include "components/page_header.html" %}
+
+  <div class="space-y-10" x-data="{ activeSection: 'principles' }">
+
+    <!-- Sticky Navigation Anchor Strip -->
+    <div class="sticky top-14 z-20 bg-[#04060A]/95 backdrop-blur-md border-y border-[#1E2838] py-2.5 px-4 overflow-x-auto">
+      <div class="max-w-[1440px] mx-auto flex items-center gap-2 sm:gap-4 text-xs font-mono whitespace-nowrap">
+        <span class="text-[#5C6B80] uppercase tracking-wider text-[10px]">Jump to:</span>
+        <a href="#principles" class="text-[#94A3B8] hover:text-white hover:underline">01. Principle</a>
+        <span class="text-[#1E2838]">&bull;</span>
+        <a href="#data-sources" class="text-[#94A3B8] hover:text-white hover:underline">02. Data Sources</a>
+        <span class="text-[#1E2838]">&bull;</span>
+        <a href="#nisar-products" class="text-[#94A3B8] hover:text-white hover:underline">03. Products</a>
+        <span class="text-[#1E2838]">&bull;</span>
+        <a href="#pair-selection" class="text-[#94A3B8] hover:text-white hover:underline">04. Pair Check</a>
+        <span class="text-[#1E2838]">&bull;</span>
+        <a href="#processing-architecture" class="text-[#94A3B8] hover:text-white hover:underline">05. Processing</a>
+        <span class="text-[#1E2838]">&bull;</span>
+        <a href="#domain-methods" class="text-[#94A3B8] hover:text-white hover:underline">06. Domains</a>
+        <span class="text-[#1E2838]">&bull;</span>
+        <a href="#observation-states" class="text-[#94A3B8] hover:text-white hover:underline">07. States</a>
+        <span class="text-[#1E2838]">&bull;</span>
+        <a href="#ambiguity-handling" class="text-[#94A3B8] hover:text-white hover:underline">08. Ambiguity</a>
+        <span class="text-[#1E2838]">&bull;</span>
+        <a href="#validation-framework" class="text-[#94A3B8] hover:text-white hover:underline">09. Validation</a>
+        <span class="text-[#1E2838]">&bull;</span>
+        <a href="#review-priority" class="text-[#94A3B8] hover:text-white hover:underline">10. Review Priority</a>
+        <span class="text-[#1E2838]">&bull;</span>
+        <a href="#provenance" class="text-[#94A3B8] hover:text-white hover:underline">11. Provenance</a>
+        <span class="text-[#1E2838]">&bull;</span>
+        <a href="#maturity-table" class="text-[#94A3B8] hover:text-white hover:underline">12. Maturity Matrix</a>
+        <span class="text-[#1E2838]">&bull;</span>
+        <a href="#limitations" class="text-[#94A3B8] hover:text-white hover:underline">13. Limitations</a>
+      </div>
+    </div>
+
+    <!-- 1. PROJECT PRINCIPLE -->
+    <section id="principles" class="panel-accent border-l-4 border-[#1E6BFF] space-y-4">
+      <div class="flex items-center justify-between border-b border-[#1E2838] pb-3">
+        <span class="type-metadata text-[10px] text-[#1E6BFF] font-mono font-bold tracking-wider">01 // SCIENTIFIC PHILOSOPHY &amp; SCOPE</span>
+        <span class="badge badge-product text-[10px]">DECISION SUPPORT</span>
+      </div>
+
+      <div class="space-y-3">
+        <blockquote class="text-base sm:text-lg text-white font-mono font-semibold leading-relaxed border-l-2 border-[#1E6BFF] pl-4 my-2">
+          &ldquo;We do not predict disasters. We reveal, visualize, quantify, and explain observed changes to Earth's surface using NISAR and complementary Earth-observation data.&rdquo;
+        </blockquote>
+
+        <p class="type-body text-[#94A3B8] leading-relaxed">
+          The NISAR Surface Change Explorer is an evidence-first Earth-observation decision-support workspace. It operates strictly on physical radiometric backscatter differences, interferometric phase correlations, and cross-sensor validation.
+        </p>
+
+        <div class="p-3 bg-[#090D14] border border-[#1E2838] text-xs font-mono text-[#94A3B8] flex items-center gap-2">
+          <i data-lucide="info" class="w-4 h-4 text-[#1E6BFF] shrink-0"></i>
+          <span>This application does not issue evacuation instructions or provide tactical crisis command directives.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. DATA SOURCES -->
+    <section id="data-sources" class="panel-standard space-y-5">
+      <div class="flex items-center justify-between border-b border-[#1E2838] pb-3">
+        <h3 class="type-section-title text-base flex items-center gap-2">
+          <i data-lucide="database" class="w-4 h-4 text-[#1E6BFF]"></i>
+          <span>02. DATA SOURCE INTEGRATION MATRIX</span>
+        </h3>
+        <span class="type-metadata text-[10px] text-[#5C6B80]">INGESTION AUDIT</span>
+      </div>
+
+      <p class="type-body text-[#94A3B8] text-xs leading-relaxed">
+        The system distinguishes operational primary radar products from contextual Earth observation datasets, explicitly declaring the current integration status of each feed.
+      </p>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left font-mono text-xs border border-[#1E2838]">
+          <thead class="bg-[#090D14] text-[#5C6B80] border-b border-[#1E2838]">
+            <tr>
+              <th class="p-3">DATASET / SENSOR</th>
+              <th class="p-3">ROLE IN SYSTEM</th>
+              <th class="p-3">PROCESSING ROLE</th>
+              <th class="p-3">CURRENT DEMO STATUS</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[#1E2838] bg-[#04060A] text-[#94A3B8]">
+            <tr>
+              <td class="p-3 font-semibold text-white">NASA-ISRO NISAR (GCOV)</td>
+              <td class="p-3">Geocoded Polarimetric Backscatter</td>
+              <td class="p-3">Flood / Wetland Inundation &amp; Vegetation Disturbance</td>
+              <td class="p-3"><span class="badge border-[#1E6BFF] bg-[#1E6BFF]/20 text-[#60A5FA]">LIVE METADATA ONLY</span></td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-white">NASA-ISRO NISAR (GUNW)</td>
+              <td class="p-3">Unwrapped InSAR Phase &amp; Relative LOS</td>
+              <td class="p-3">Ground Deformation baseline stability checks</td>
+              <td class="p-3"><span class="badge border-[#1E6BFF] bg-[#1E6BFF]/20 text-[#60A5FA]">LIVE METADATA ONLY</span></td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-white">NASA-ISRO NISAR (GOFF)</td>
+              <td class="p-3">Pixel Offsets &amp; Velocity Vectors</td>
+              <td class="p-3">Glacier motion &amp; ice shelf fracture tracking</td>
+              <td class="p-3"><span class="badge border-[#1E6BFF] bg-[#1E6BFF]/20 text-[#60A5FA]">LIVE METADATA ONLY</span></td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-white">NASA ASF DAAC API</td>
+              <td class="p-3">Archive Metadata Search Engine</td>
+              <td class="p-3">Real-time NISAR granule discovery &amp; pair matching</td>
+              <td class="p-3"><span class="badge border-[#10B981] bg-[#10B981]/20 text-[#34D399]">CONNECTED</span></td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-white">NASA FIRMS (VIIRS / MODIS)</td>
+              <td class="p-3">Active Fire Thermal Detections</td>
+              <td class="p-3">Corroboration filter for radar vegetation disturbance</td>
+              <td class="p-3"><span class="badge border-[#8B5CF6] bg-[#8B5CF6]/20 text-[#C4B5FD]">SYNTHETIC FIXTURE</span></td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-white">NASA HLS (Harmonized Landsat-Sentinel)</td>
+              <td class="p-3">Optical Surface Reflectance (30m)</td>
+              <td class="p-3">Post-event optical cloud-free verification</td>
+              <td class="p-3"><span class="badge border-[#64748B] bg-[#64748B]/20 text-[#94A3B8]">PLANNED</span></td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-white">NASA ITS_LIVE</td>
+              <td class="p-3">Inter-mission Glacier Velocity Climatology</td>
+              <td class="p-3">Long-term ice speed baseline comparison</td>
+              <td class="p-3"><span class="badge border-[#64748B] bg-[#64748B]/20 text-[#94A3B8]">PLANNED</span></td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-white">Copernicus Sentinel-1 SAR</td>
+              <td class="p-3">C-band European Space Agency SAR</td>
+              <td class="p-3">Cross-frequency comparison (L-band vs C-band)</td>
+              <td class="p-3"><span class="badge border-[#64748B] bg-[#64748B]/20 text-[#94A3B8]">NOT YET IMPLEMENTED</span></td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-white">WorldPop / OpenStreetMap</td>
+              <td class="p-3">Gridded Demographics &amp; Infrastructure</td>
+              <td class="p-3">Exposure contextual normalization</td>
+              <td class="p-3"><span class="badge border-[#8B5CF6] bg-[#8B5CF6]/20 text-[#C4B5FD]">SYNTHETIC FIXTURE</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 3. NISAR PRODUCT ROLES -->
+    <section id="nisar-products" class="panel-standard space-y-5">
+      <div class="flex items-center justify-between border-b border-[#1E2838] pb-3">
+        <h3 class="type-section-title text-base flex items-center gap-2">
+          <i data-lucide="layers" class="w-4 h-4 text-[#1E6BFF]"></i>
+          <span>03. NISAR PRODUCT ROLES &amp; PHYSICAL SPECIFICATIONS</span>
+        </h3>
+        <span class="type-metadata text-[10px] text-[#5C6B80]">PHYSICAL MODES</span>
+      </div>
+
+      <div class="p-3 bg-[#090D14] border border-[#1E2838] text-xs font-mono text-[#F59E0B]">
+        <strong>Crucial Physical Rule:</strong> NISAR products are NOT interchangeable. Each product encodes fundamentally different wave interactions (radiometric backscatter power, interferometric phase fringes, or sub-pixel speckle correlation offsets).
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs">
+        <!-- GCOV -->
+        <div class="p-4 bg-[#090D14] border border-[#1E2838] space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="type-section-title text-sm text-[#1E6BFF]">GCOV</span>
+            <span class="badge border-[#1E6BFF] text-[#60A5FA]">LEVEL 2</span>
+          </div>
+          <div class="text-[11px] text-white font-bold">Geocoded Radiometric Backscatter</div>
+          <p class="text-[#94A3B8] text-[11px] leading-relaxed">
+            Terrain-corrected normalized radar cross-section (gamma-nought $\gamma^0$) in dual polarization (HH, HV). Measures surface roughness, dielectric permittivity, and volumetric structure.
+          </p>
+          <div class="pt-2 border-t border-[#1E2838] text-[10px] text-[#5C6B80]">
+            Primary Modules: <span class="text-white">Flood / Wetland Inundation</span> &bull; <span class="text-white">Vegetation Disturbance</span>
+          </div>
+        </div>
+
+        <!-- GUNW -->
+        <div class="p-4 bg-[#090D14] border border-[#1E2838] space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="type-section-title text-sm text-[#00D2FF]">GUNW</span>
+            <span class="badge border-[#00D2FF] text-[#38BDF8]">LEVEL 2</span>
+          </div>
+          <div class="text-[11px] text-white font-bold">Geocoded Unwrapped Interferogram</div>
+          <p class="text-[#94A3B8] text-[11px] leading-relaxed">
+            Relative line-of-sight (LOS) spatial displacement and interferometric phase coherence derived from repeat-pass single-look complex (SLC) radar returns.
+          </p>
+          <div class="pt-2 border-t border-[#1E2838] text-[10px] text-[#5C6B80]">
+            Primary Modules: <span class="text-white">Ground Deformation</span> &bull; <span class="text-white">Geodetic Bedrock Baselines</span>
+          </div>
+        </div>
+
+        <!-- GOFF -->
+        <div class="p-4 bg-[#090D14] border border-[#1E2838] space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="type-section-title text-sm text-[#8B5CF6]">GOFF</span>
+            <span class="badge border-[#8B5CF6] text-[#C4B5FD]">LEVEL 2</span>
+          </div>
+          <div class="text-[11px] text-white font-bold">Geocoded Pixel Offsets</div>
+          <p class="text-[#94A3B8] text-[11px] leading-relaxed">
+            Along-track and slant-range cross-correlation offsets tracking fast movement where radar phase coherence has decorrelated.
+          </p>
+          <div class="pt-2 border-t border-[#1E2838] text-[10px] text-[#5C6B80]">
+            Primary Modules: <span class="text-white">Glacier Flow Dynamics</span> &bull; <span class="text-white">Ice Shelf Fracture Tracking</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. COVERAGE + PAIR SELECTION -->
+    <section id="pair-selection" class="panel-standard space-y-5">
+      <div class="flex items-center justify-between border-b border-[#1E2838] pb-3">
+        <h3 class="type-section-title text-base flex items-center gap-2">
+          <i data-lucide="git-merge" class="w-4 h-4 text-[#1E6BFF]"></i>
+          <span>04. COVERAGE DISCOVERY &amp; NINE-POINT PAIR COMPATIBILITY</span>
+        </h3>
+        <span class="type-metadata text-[10px] text-[#5C6B80]">ASF DAAC ENGINE</span>
+      </div>
+
+      <div class="space-y-3 font-mono text-xs">
+        <p class="text-[#94A3B8] leading-relaxed">
+          Coverage queries query the Alaska Satellite Facility (ASF DAAC) metadata catalog via <code class="text-white">asf_search</code>. Acquisitions are filtered to the post-launch public calibration window (<strong>2026-06-17 onward</strong>). Products are evaluated separately for <span class="text-white font-semibold">PROVISIONAL</span> (preferred calibrated public release) and <span class="text-white font-semibold">BETA</span> maturity states without silent mixing.
+        </p>
+
+        <div class="p-3.5 bg-[#090D14] border border-[#1E2838] space-y-2">
+          <div class="text-white font-bold text-xs">GCOV Pair Selection Policy</div>
+          <p class="text-[#94A3B8] text-[11px]">
+            The primary automated policy is <code class="text-[#1E6BFF]">nearest_previous</code>: searching for the nearest earlier compatible acquisition (nominally 12-day or 24-day exact repeat orbital interval). A fixed reference policy (<code class="text-[#1E6BFF]">fixed_reference</code>) is available when evaluating seasonal hydrologic baselines.
+          </p>
+        </div>
+
+        <div class="space-y-2">
+          <div class="text-white font-bold text-xs">The Nine-Point Scientific Compatibility Engine:</div>
+          <p class="text-[11px] text-[#5C6B80]">Two acquisitions are marked COMPATIBLE only when all 9 physical criteria hold:</p>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px]">
+            <div class="p-2 bg-[#090D14] border border-[#1E2838] flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-[#1E6BFF]/20 text-[#1E6BFF] flex items-center justify-center font-bold text-[10px]">1</span>
+              <span>Same Track (Relative Orbit)</span>
+            </div>
+            <div class="p-2 bg-[#090D14] border border-[#1E2838] flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-[#1E6BFF]/20 text-[#1E6BFF] flex items-center justify-center font-bold text-[10px]">2</span>
+              <span>Same Frame Number</span>
+            </div>
+            <div class="p-2 bg-[#090D14] border border-[#1E2838] flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-[#1E6BFF]/20 text-[#1E6BFF] flex items-center justify-center font-bold text-[10px]">3</span>
+              <span>Same Orbit Direction (Asc/Desc)</span>
+            </div>
+            <div class="p-2 bg-[#090D14] border border-[#1E2838] flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-[#1E6BFF]/20 text-[#1E6BFF] flex items-center justify-center font-bold text-[10px]">4</span>
+              <span>Compatible Acquisition Mode</span>
+            </div>
+            <div class="p-2 bg-[#090D14] border border-[#1E2838] flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-[#1E6BFF]/20 text-[#1E6BFF] flex items-center justify-center font-bold text-[10px]">5</span>
+              <span>Compatible Polarizations (HH/HV)</span>
+            </div>
+            <div class="p-2 bg-[#090D14] border border-[#1E2838] flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-[#1E6BFF]/20 text-[#1E6BFF] flex items-center justify-center font-bold text-[10px]">6</span>
+              <span>Compatible Radar Frequency</span>
+            </div>
+            <div class="p-2 bg-[#090D14] border border-[#1E2838] flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-[#1E6BFF]/20 text-[#1E6BFF] flex items-center justify-center font-bold text-[10px]">7</span>
+              <span>Compatible Bandwidth (MHz)</span>
+            </div>
+            <div class="p-2 bg-[#090D14] border border-[#1E2838] flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-[#1E6BFF]/20 text-[#1E6BFF] flex items-center justify-center font-bold text-[10px]">8</span>
+              <span>Same Product Maturity State</span>
+            </div>
+            <div class="p-2 bg-[#090D14] border border-[#1E2838] flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-[#1E6BFF]/20 text-[#1E6BFF] flex items-center justify-center font-bold text-[10px]">9</span>
+              <span>Compatible CRID / Processor Version</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-3 bg-[#090D14] border-l-2 border-[#8B5CF6] border-y border-r border-[#1E2838] text-[11px] text-[#94A3B8]">
+          <strong class="text-white">GUNW / GOFF Distinct Handling:</strong> Neither GUNW interferograms nor GOFF velocity products are paired using GCOV two-date backscatter logic. GUNW and GOFF granules encode mission-processed interferometric baselines and correlation pairs directly within their product packaging.
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. PROCESSING ARCHITECTURE -->
+    <section id="processing-architecture" class="panel-standard space-y-5">
+      <div class="flex items-center justify-between border-b border-[#1E2838] pb-3">
+        <h3 class="type-section-title text-base flex items-center gap-2">
+          <i data-lucide="cpu" class="w-4 h-4 text-[#1E6BFF]"></i>
+          <span>05. THREE-BRANCH SAR PROCESSING ARCHITECTURE</span>
+        </h3>
+        <span class="type-metadata text-[10px] text-[#5C6B80]">PHYSICAL PIPELINES</span>
+      </div>
+
+      <div class="p-3 bg-[#090D14] border border-[#1E2838] text-xs font-mono text-[#F59E0B]">
+        <strong>Physical Ordering Rule:</strong> Multi-look speckle filtering is mathematically evaluated in LINEAR POWER space prior to decibel log-transform ($\text{dB} = 10 \log_{10} \gamma^0$). Linear speckle averaging must never be computed after non-linear logarithmic transformation.
+      </div>
+
+      <div class="space-y-4 font-mono text-xs">
+        <!-- Branch 1: GCOV -->
+        <div class="p-4 bg-[#090D14] border border-[#1E2838] space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-white font-bold">Branch A: GCOV Radiometric Difference Pipeline</span>
+            <span class="badge border-[#1E6BFF] text-[#60A5FA]">DESIGNED &bull; NEXT MILESTONE</span>
+          </div>
+          <div class="p-2.5 bg-[#04060A] text-[#38BDF8] text-[11px] overflow-x-auto whitespace-nowrap">
+            Crop AOI &rarr; Valid Pixel Mask (&ge; 85%) &rarr; Linear Power Lee Speckle Filter &rarr; Convert Power to dB &rarr; Align Compatible Pair &rarr; Compute Difference (&Delta;&gamma;&deg;) &rarr; Adaptive Bimodal Cutoff &rarr; Vector Delineation
+          </div>
+        </div>
+
+        <!-- Branch 2: GUNW -->
+        <div class="p-4 bg-[#090D14] border border-[#1E2838] space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-white font-bold">Branch B: GUNW Phase &amp; Relative LOS Pipeline</span>
+            <span class="badge border-[#64748B] text-[#94A3B8]">NOT YET IMPLEMENTED</span>
+          </div>
+          <div class="p-2.5 bg-[#04060A] text-[#38BDF8] text-[11px] overflow-x-auto whitespace-nowrap">
+            Crop AOI &rarr; InSAR Coherence Mask (&ge; 0.4) &rarr; Select Stable Bedrock Reference Area &rarr; Compute Relative LOS Residual &rarr; Flag Non-Trivial Deformation Footprints
+          </div>
+        </div>
+
+        <!-- Branch 3: GOFF -->
+        <div class="p-4 bg-[#090D14] border border-[#1E2838] space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-white font-bold">Branch C: GOFF Offset-Tracking Velocity Pipeline</span>
+            <span class="badge border-[#64748B] text-[#94A3B8]">NOT YET IMPLEMENTED</span>
+          </div>
+          <div class="p-2.5 bg-[#04060A] text-[#38BDF8] text-[11px] overflow-x-auto whitespace-nowrap">
+            Crop AOI &rarr; Offset SNR Quality Filter &rarr; Bad Vector Rejection &rarr; Spatial Directional Consistency Check &rarr; Magnitude &amp; Direction Vector Grid
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. DOMAIN METHODS -->
+    <section id="domain-methods" class="panel-standard space-y-5">
+      <div class="flex items-center justify-between border-b border-[#1E2838] pb-3">
+        <h3 class="type-section-title text-base flex items-center gap-2">
+          <i data-lucide="compass" class="w-4 h-4 text-[#1E6BFF]"></i>
+          <span>06. DOMAIN-SPECIFIC DETECTION LOGIC &amp; SCIENTIFIC TERMINOLOGY</span>
+        </h3>
+        <span class="type-metadata text-[10px] text-[#5C6B80]">PHYSICAL SIGNATURES</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono text-xs">
+        <!-- Flood / Wetland -->
+        <div class="panel-standard bg-[#090D14] space-y-3">
+          <div class="flex items-center justify-between border-b border-[#1E2838] pb-2">
+            <h4 class="text-sm font-bold text-white">HYDROLOGY: FLOOD &amp; WETLAND CHANGE</h4>
+            <span class="badge border-[#1E6BFF] text-[#60A5FA]">GCOV DUAL-POL</span>
+          </div>
+          <p class="text-[#94A3B8] leading-relaxed text-[11px]">
+            Evaluates two complementary physical radar signatures:
+          </p>
+          <ul class="list-disc list-inside space-y-1 text-[11px] text-[#94A3B8]">
+            <li><strong>Signature A (Specular Attenuation):</strong> Smooth open water acts as a specular reflector, scattering incident radar pulses away from the sensor. Backscatter drops significantly (&Delta;&gamma;&deg; &le; -3.5 dB).</li>
+            <li><strong>Signature B (Double-Bounce Scattering):</strong> Inundated tree trunks and emergent reed vegetation produce double-bounce dihedral reflections, increasing backscatter. Evaluated only where vegetation land-cover classes exist.</li>
+          </ul>
+          <div class="p-2.5 bg-[#04060A] border border-[#1E2838] text-[10px] text-[#5C6B80]">
+            Approved terminology: <span class="text-white">&ldquo;Radar-observed inundation / wetland change.&rdquo;</span> Permanent water and steep slope masks are applied to prevent false detections.
+          </div>
+        </div>
+
+        <!-- Vegetation Disturbance -->
+        <div class="panel-standard bg-[#090D14] space-y-3">
+          <div class="flex items-center justify-between border-b border-[#1E2838] pb-2">
+            <h4 class="text-sm font-bold text-white">BIOSPHERE: VEGETATION DISTURBANCE</h4>
+            <span class="badge border-[#00D2FF] text-[#38BDF8]">GCOV CROSS-POL</span>
+          </div>
+          <p class="text-[#94A3B8] leading-relaxed text-[11px]">
+            Measures the destruction or desiccation of forest canopies and shrublands. Cross-polarized (HV) radar backscatter is highly sensitive to volume scattering from branches and leaves.
+          </p>
+          <ul class="list-disc list-inside space-y-1 text-[11px] text-[#94A3B8]">
+            <li><strong>Radar-Only Detection:</strong> Severe canopy defoliation or crown consumption produces a sharp loss in HV volume scattering.</li>
+            <li><strong>Mandatory Phrasing:</strong> Standalone radar observations are labeled <span class="text-white">&ldquo;Radar-detected vegetation disturbance.&rdquo;</span></li>
+            <li><strong>Fire Attribution:</strong> The label <span class="text-white">&ldquo;Vegetation disturbance consistent with fire&rdquo;</span> is assigned ONLY when corroborated by independent NASA FIRMS thermal hotspots. Never use &ldquo;Radar-detected fire.&rdquo;</li>
+          </ul>
+        </div>
+
+        <!-- Glacier Motion -->
+        <div class="panel-standard bg-[#090D14] space-y-3">
+          <div class="flex items-center justify-between border-b border-[#1E2838] pb-2">
+            <h4 class="text-sm font-bold text-white">CRYOSPHERE: GLACIER DYNAMICS</h4>
+            <span class="badge border-[#8B5CF6] text-[#C4B5FD]">GOFF LEVEL 2</span>
+          </div>
+          <p class="text-[#94A3B8] leading-relaxed text-[11px]">
+            Ingests NISAR GOFF sub-pixel speckle tracking products to determine ice velocity magnitude and azimuth direction. Does not assume global GOFF availability; operates strictly over monitored glacier zones.
+          </p>
+        </div>
+
+        <!-- Ground Deformation -->
+        <div class="panel-standard bg-[#090D14] space-y-3">
+          <div class="flex items-center justify-between border-b border-[#1E2838] pb-2">
+            <h4 class="text-sm font-bold text-white">GEOHAZARDS: RELATIVE LOS DEFORMATION</h4>
+            <span class="badge border-[#4E7880] text-[#8CC4CE]">GUNW InSAR</span>
+          </div>
+          <p class="text-[#94A3B8] leading-relaxed text-[11px]">
+            Interferometric phase residuals are evaluated against stable bedrock reference networks. Crucial scientific caveat: <strong>Line-of-sight (LOS) displacement &ne; vertical subsidence</strong>. Single-track InSAR measures only 1D projection along radar sightlines.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. OBSERVATION STATES -->
+    <section id="observation-states" class="panel-standard space-y-5">
+      <div class="flex items-center justify-between border-b border-[#1E2838] pb-3">
+        <h3 class="type-section-title text-base flex items-center gap-2">
+          <i data-lucide="tag" class="w-4 h-4 text-[#1E6BFF]"></i>
+          <span>07. FIVE PHYSICAL OBSERVATION STATES &amp; UNKNOWN HANDLING</span>
+        </h3>
+        <span class="type-metadata text-[10px] text-[#5C6B80]">CANONICAL DEFINITIONS</span>
+      </div>
+
+      <div class="space-y-3 font-mono text-xs">
+        <div class="p-3 bg-[#090D14] border border-[#1E2838] text-white">
+          <strong class="text-[#00D2FF]">NON-ALARM PRINCIPLE:</strong> Observation States represent empirical radar evidence. They are deliberately rendered using restrained scientific tokens (cool gray, royal blue, cyan, violet, slate) rather than emergency siren colors (green, yellow, red).
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+          <div class="p-3 bg-[#090D14] border border-[#1E2838] space-y-1">
+            <span class="badge badge-state-no-change text-[10px]">NO CHANGE</span>
+            <p class="text-[10px] text-[#94A3B8] leading-tight">
+              Permitted ONLY when valid repeat coverage exists, quality gates pass, and change magnitude remains below domain threshold criteria.
+            </p>
+          </div>
+
+          <div class="p-3 bg-[#090D14] border border-[#1E2838] space-y-1">
+            <span class="badge badge-state-change text-[10px]">CHANGE DETECTED</span>
+            <p class="text-[10px] text-[#94A3B8] leading-tight">
+              Significant physical surface change observed matching an established radar backscatter or phase signature.
+            </p>
+          </div>
+
+          <div class="p-3 bg-[#090D14] border border-[#1E2838] space-y-1">
+            <span class="badge badge-state-strong text-[10px]">STRONG CHANGE</span>
+            <p class="text-[10px] text-[#94A3B8] leading-tight">
+              High-magnitude divergence and large contiguous spatial extent exceeding strong-change criteria.
+            </p>
+          </div>
+
+          <div class="p-3 bg-[#090D14] border border-[#1E2838] space-y-1">
+            <span class="badge badge-state-unknown text-[10px]">UNKNOWN CHANGE</span>
+            <p class="text-[10px] text-[#94A3B8] leading-tight">
+              High-confidence physical change verified, but conflicting or insufficient independent data prevents specific physical attribution.
+            </p>
+          </div>
+
+          <div class="p-3 bg-[#090D14] border border-[#1E2838] space-y-1">
+            <span class="badge badge-state-insufficient text-[10px]">INSUFFICIENT DATA</span>
+            <p class="text-[10px] text-[#94A3B8] leading-tight">
+              Valid pixel fraction below quality gate (&lt; 85%) or missing compatible repeat pass. <strong>Insufficient Data &ne; No Change.</strong>
+            </p>
+          </div>
+        </div>
+
+        <div class="p-3.5 bg-[#090D14] border-l-2 border-[#8B5CF6] border-y border-r border-[#1E2838] text-[11px] text-[#94A3B8] space-y-1">
+          <div class="text-white font-bold">Public Wording for Unknown Change:</div>
+          <p class="text-[#C4B5FD] font-semibold">&ldquo;Unusual radar change detected. Cause not identified.&rdquo;</p>
+          <p>
+            Surface changes from agricultural harvesting, soil moisture variations, freeze/thaw transitions, and defoliation produce radar divergence. UNKNOWN CHANGE is preserved honestly rather than forcing an inaccurate hazard classification.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. CANDIDATE / AMBIGUITY HANDLING -->
+    <section id="ambiguity-handling" class="panel-standard space-y-5">
+      <div class="flex items-center justify-between border-b border-[#1E2838] pb-3">
+        <h3 class="type-section-title text-base flex items-center gap-2">
+          <i data-lucide="help-circle" class="w-4 h-4 text-[#1E6BFF]"></i>
+          <span>08. MULTI-CANDIDATE INTERPRETATION &amp; FIRMS CORROBORATION</span>
+        </h3>
+        <span class="type-metadata text-[10px] text-[#5C6B80]">EVIDENCE RESOLUTION</span>
+      </div>
+
+      <div class="space-y-3 font-mono text-xs">
+        <p class="text-[#94A3B8] leading-relaxed">
+          A single radar backscatter decrease may support competing physical hypotheses (e.g. smooth water inundation vs complete defoliation). The system stores candidate records containing:
+        </p>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
+          <div class="p-2 bg-[#090D14] border border-[#1E2838] text-center text-white">Physical Evidence</div>
+          <div class="p-2 bg-[#090D14] border border-[#1E2838] text-center text-white">Independent Evidence</div>
+          <div class="p-2 bg-[#090D14] border border-[#1E2838] text-center text-white">Contradicting Factors</div>
+          <div class="p-2 bg-[#090D14] border border-[#1E2838] text-center text-white">Support Status</div>
+        </div>
+
+        <div class="p-3 bg-[#0B1220] border border-[#1E6BFF]/30 text-[11px] text-[#94A3B8] space-y-1.5">
+          <span class="text-[#60A5FA] font-bold block">Explainability rule IDs are application rules, not NASA hazard codes.</span>
+          <p>
+            IDs such as <span class="text-white">GCOV_BACKSCATTER_DECREASE_01</span> record the exact deterministic rule used to turn a stored measurement into cautious public wording. They do not claim that NISAR itself publishes a flood, fire, danger, or risk code.
+          </p>
+          <p>
+            Public Mode shows the measurement, why the rule can support an interpretation, alternative explanations, and the limit of the conclusion. Scientist Mode also exposes the rule ID, product metadata, thresholds, and provenance.
+          </p>
+        </div>
+
+        <div class="p-3 bg-[#090D14] border border-[#1E2838] space-y-1.5 text-[11px]">
+          <span class="text-white font-bold block">NASA FIRMS Corroboration Engine Defaults:</span>
+          <ul class="list-disc list-inside space-y-1 text-[#94A3B8]">
+            <li><strong>Temporal Coincidence Window:</strong> Between reference and secondary pass dates &plusmn; 24 hours.</li>
+            <li><strong>Spatial Proximity Buffer:</strong> Within detected change boundary or 1,000 m geographic buffer.</li>
+            <li><strong>Caveat:</strong> FIRMS thermal detections indicate active combustion at scan time, not a complete structural burn scar perimeter.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. VALIDATION FRAMEWORK -->
+    <section id="validation-framework" class="panel-standard space-y-5">
+      <div class="flex items-center justify-between border-b border-[#1E2838] pb-3">
+        <h3 class="type-section-title text-base flex items-center gap-2">
+          <i data-lucide="check-circle" class="w-4 h-4 text-[#1E6BFF]"></i>
+          <span>09. VALIDATION FRAMEWORK &amp; BENCHMARK METRICS</span>
+        </h3>
+        <span class="type-metadata text-[10px] text-[#5C6B80]">NO GENERIC CONFIDENCE</span>
+      </div>
+
+      <div class="space-y-4 font-mono text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="p-3.5 bg-[#090D14] border border-[#1E2838] space-y-1">
+            <span class="text-[#38BDF8] font-bold block text-xs">Calibration Events</span>
+            <p class="text-[#94A3B8] text-[11px] leading-relaxed">
+              Historical surface change events used to tune backscatter threshold cutoffs, speckle filter kernel sizes, and spatial component filters.
+            </p>
+          </div>
+          <div class="p-3.5 bg-[#090D14] border border-[#1E2838] space-y-1">
+            <span class="text-[#10B981] font-bold block text-xs">Independent Validation Events</span>
+            <p class="text-[#94A3B8] text-[11px] leading-relaxed">
+              Unseen external events with ground-truth water gauge, GNSS, or post-event aerial orthophotos used solely to compute benchmark metrics.
+            </p>
+          </div>
+        </div>
+
+        <div class="p-3 bg-[#090D14] border border-[#1E2838] text-[11px] text-[#94A3B8] space-y-1">
+          <div class="text-white font-bold">Scientific Integrity Mandates:</div>
+          <p>
+            If calibration and evaluation occur on the same observation, the system enforces disclosure:
+            <em class="text-[#F59E0B]">&ldquo;Calibration and evaluation used the same event; reported performance is not independent validation.&rdquo;</em>
+          </p>
+          <p class="pt-1 text-[#5C6B80]">
+            The application never presents synthetic &ldquo;confidence percentages.&rdquo; It reports actual mathematical metrics: Intersection over Union (IoU), Precision, Recall, F1 score, and Displacement RMSE.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. REVIEW PRIORITY METHOD -->
+    <section id="review-priority" class="panel-standard space-y-5">
+      <div class="flex items-center justify-between border-b border-[#1E2838] pb-3">
+        <h3 class="type-section-title text-base flex items-center gap-2">
+          <i data-lucide="sliders" class="w-4 h-4 text-[#1E6BFF]"></i>
+          <span>10. DETERMINISTIC REVIEW PRIORITY FORMULATION</span>
+        </h3>
+        <span class="type-metadata text-[10px] text-[#5C6B80]">REVIEW ORDERING</span>
+      </div>
+
+      <div class="space-y-4 font-mono text-xs">
+        <div class="p-4 bg-[#090D14] border border-[#1E2838] text-center sm:text-left flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <span class="text-[10px] text-[#5C6B80] uppercase tracking-wider block">OPERATIONAL TRIAGE FORMULA</span>
+            <span class="text-base font-bold text-white font-mono">
+              ReviewScore = 0.50 &times; O + 0.35 &times; E + 0.15 &times; F
+            </span>
+          </div>
+          <span class="badge border-[#1E6BFF] text-[#60A5FA]">DETERMINISTIC WEIGHTS</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-[11px]">
+          <div class="p-3 bg-[#090D14] border border-[#1E2838] space-y-1">
+            <span class="text-white font-bold">O: Observation (50%)</span>
+            <p class="text-[#94A3B8]">Strong Change = 1.00 &bull; Unknown Change = 0.65 &bull; Change Detected = 0.50. No Change and Insufficient Data are never scored.</p>
+          </div>
+          <div class="p-3 bg-[#090D14] border border-[#1E2838] space-y-1">
+            <span class="text-white font-bold">E: Exposure (35%)</span>
+            <p class="text-[#94A3B8]">0.60 &times; Population + 0.40 &times; Infrastructure. Normalized dataset-relatively against maximums in the active comparison set.</p>
+          </div>
+          <div class="p-3 bg-[#090D14] border border-[#1E2838] space-y-1">
+            <span class="text-white font-bold">F: Freshness (15%)</span>
+            <p class="text-[#94A3B8]">Calculated relative to the newest observation in the dataset using piecewise linear decay (0d: 1.0, 7d: 0.8, 14d: 0.6, 30d: 0.3, &gt;60d: 0.1).</p>
+          </div>
+        </div>
+
+        <div class="p-3 bg-[#090D14] border border-[#1E2838] space-y-1 text-[11px] text-[#94A3B8]">
+          <div class="text-white font-bold">Dense-City Ranking Caveat:</div>
+          <p class="text-[#38BDF8]">
+            &ldquo;A smaller detected change in a densely populated area can rank above a larger change in a sparsely populated area because Review Priority includes exposure.&rdquo;
+          </p>
+          <p class="text-[#5C6B80]">
+            Review Priority reflects human review and verification ordering, NOT physical magnitude or hazard severity.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11. PROVENANCE / MANIFEST -->
+    <section id="provenance" class="panel-standard space-y-5">
+      <div class="flex items-center justify-between border-b border-[#1E2838] pb-3">
+        <h3 class="type-section-title text-base flex items-center gap-2">
+          <i data-lucide="file-text" class="w-4 h-4 text-[#1E6BFF]"></i>
+          <span>11. PROVENANCE TRACEABILITY &amp; MANIFEST AUDITING</span>
+        </h3>
+        <span class="type-metadata text-[10px] text-[#5C6B80]">REPEATABILITY</span>
+      </div>
+
+      <div class="space-y-4 font-mono text-xs">
+        <div class="p-3 bg-[#04060A] border border-[#1E2838] flex items-center justify-between overflow-x-auto text-[11px] text-[#38BDF8] whitespace-nowrap">
+          <span>ACQUISITION</span>
+          <span class="text-[#5C6B80]">&rarr;</span>
+          <span>PROCESSING</span>
+          <span class="text-[#5C6B80]">&rarr;</span>
+          <span>MEASUREMENT</span>
+          <span class="text-[#5C6B80]">&rarr;</span>
+          <span>CANDIDATE EVIDENCE</span>
+          <span class="text-[#5C6B80]">&rarr;</span>
+          <span>CLASSIFICATION</span>
+          <span class="text-[#5C6B80]">&rarr;</span>
+          <span>VISUALIZATION</span>
+          <span class="text-[#5C6B80]">&rarr;</span>
+          <span>EXPLANATION</span>
+        </div>
+
+        <p class="text-[#94A3B8] leading-relaxed">
+          Every persisted analysis links to a unique <code class="text-white">manifest_id</code> recording exact software pipeline versions, git commit hashes, radiometric calibration thresholds, pair selection policies, and sensor CRID processing metadata.
+        </p>
+      </div>
+    </section>
+
+    <!-- 12. CURRENT DEMO MATURITY TABLE -->
+    <section id="maturity-table" class="panel-standard space-y-5">
+      <div class="flex items-center justify-between border-b border-[#1E2838] pb-3">
+        <h3 class="type-section-title text-base flex items-center gap-2">
+          <i data-lucide="award" class="w-4 h-4 text-[#1E6BFF]"></i>
+          <span>12. CURRENT DEMO CAPABILITY &amp; MATURITY MATRIX</span>
+        </h3>
+        <span class="type-metadata text-[10px] text-[#5C6B80]">HONEST COMPETITION AUDIT</span>
+      </div>
+
+      <p class="text-xs text-[#94A3B8] font-mono leading-relaxed">
+        To prevent confusion between completed architectural scaffolding and upcoming scientific milestones, this table transparently audits current implementation readiness:
+      </p>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left font-mono text-xs border border-[#1E2838]">
+          <thead class="bg-[#090D14] text-[#5C6B80] border-b border-[#1E2838]">
+            <tr>
+              <th class="p-3">CAPABILITY / WORKSPACE MODULE</th>
+              <th class="p-3">IMPLEMENTATION STATUS</th>
+              <th class="p-3">TECHNICAL SCOPE</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[#1E2838] bg-[#04060A] text-[#94A3B8]">
+            <tr>
+              <td class="p-3 font-semibold text-white">Application Shell &amp; Visual Design System</td>
+              <td class="p-3"><span class="badge border-[#10B981] bg-[#10B981]/20 text-[#34D399]">IMPLEMENTED</span></td>
+              <td class="p-3">FastAPI, Jinja2, Tailwind, Alpine.js, MapLibre GL</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-white">Interactive Map Selection &amp; Area Inspector</td>
+              <td class="p-3"><span class="badge border-[#10B981] bg-[#10B981]/20 text-[#34D399]">IMPLEMENTED</span></td>
+              <td class="p-3">Click, point, bbox, polygon selection with Shapely</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-white">Stored Result Lookup &amp; Precomputed Feed</td>
+              <td class="p-3"><span class="badge border-[#10B981] bg-[#10B981]/20 text-[#34D399]">IMPLEMENTED</span></td>
+              <td class="p-3">Change feed cards, filters, and event details</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-white">Live NISAR Metadata Discovery (ASF DAAC)</td>
+              <td class="p-3"><span class="badge border-[#10B981] bg-[#10B981]/20 text-[#34D399]">IMPLEMENTED</span></td>
+              <td class="p-3">Real-time ASF search for GCOV, GUNW, GOFF products</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-white">Nine-Point Pair Compatibility Engine</td>
+              <td class="p-3"><span class="badge border-[#10B981] bg-[#10B981]/20 text-[#34D399]">IMPLEMENTED</span></td>
+              <td class="p-3">Deterministic orbital geometry and mode validation</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-white">Satellite Evidence Viewer (Swipe / Mask)</td>
+              <td class="p-3"><span class="badge border-[#38BDF8] bg-[#38BDF8]/20 text-[#38BDF8]">IMPLEMENTED WITH SYNTHETIC VISUAL FIXTURES</span></td>
+              <td class="p-3">Before, after, difference, and change mask overlays</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-white">Scientist Image Lab Workspace</td>
+              <td class="p-3"><span class="badge border-[#38BDF8] bg-[#38BDF8]/20 text-[#38BDF8]">IMPLEMENTED WITH SYNTHETIC LAB FIXTURES</span></td>
+              <td class="p-3">Native SVG histogram, precomputed threshold preview</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-white">Situation Dashboard &amp; Review Priority</td>
+              <td class="p-3"><span class="badge border-[#38BDF8] bg-[#38BDF8]/20 text-[#38BDF8]">IMPLEMENTED WITH SYNTHETIC ANALYSIS/EXPOSURE FIXTURES</span></td>
+              <td class="p-3">Multi-criteria triage scoring and non-alarm mapping</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-white">Real NISAR GCOV Raster Processing</td>
+              <td class="p-3"><span class="badge border-[#10B981] bg-[#10B981]/20 text-[#34D399]">IMPLEMENTED — ONE PRECOMPUTED SHOWCASE</span></td>
+              <td class="p-3">Provisional NISAR L2 GCOV HDF5 repeat pass streamed directly via authenticated Earthdata range requests. Validated 100% valid radar pixels, linear-power multi-looking, dB conversion, and backscatter difference calculation.</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-white">Real Flood / Wetland Showcase</td>
+              <td class="p-3"><span class="badge border-[#10B981] bg-[#10B981]/20 text-[#34D399]">IMPLEMENTED — ONE REAL EVENT</span></td>
+              <td class="p-3">Lake Henderson / Atchafalaya Basin (2026-06-28 → 2026-07-10, track 033, provisional L2 GCOV). 0.837 km² of quality-screened pixels met the configured radar-backscatter decrease criterion; 0.527 km² remained in three mapped regions after minimum-size filtering. OPERA DSWx-HLS is temporal/contextual only in this build and has not been spatially compared with the NISAR mask.</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-white">Real Vegetation Disturbance Showcase</td>
+              <td class="p-3"><span class="badge border-[#64748B] bg-[#64748B]/20 text-[#94A3B8]">PLANNED</span></td>
+              <td class="p-3">Cross-polarized HV difference with FIRMS thermal overlap</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-white">Real GOFF Cryosphere Processing</td>
+              <td class="p-3"><span class="badge border-[#64748B] bg-[#64748B]/20 text-[#94A3B8]">PLANNED</span></td>
+              <td class="p-3">Direct displacement vector grid processing</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-white">Real GUNW InSAR Processing</td>
+              <td class="p-3"><span class="badge border-[#64748B] bg-[#64748B]/20 text-[#94A3B8]">PLANNED / LIMITED DEMO</span></td>
+              <td class="p-3">Unwrapped phase residual calculation over bedrock</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-white">Earth Copilot AI Assistant Backend</td>
+              <td class="p-3"><span class="badge border-[#64748B] bg-[#64748B]/20 text-[#94A3B8]">PLANNED</span></td>
+              <td class="p-3">Grounded science QA on stored manifest metadata</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-semibold text-white">Supabase Cloud Persistence</td>
+              <td class="p-3"><span class="badge border-[#64748B] bg-[#64748B]/20 text-[#94A3B8]">OPTIONAL / NOT YET IMPLEMENTED</span></td>
+              <td class="p-3">PostgreSQL user session and saved analysis registry</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 13. LIMITATIONS -->
+    <section id="limitations" class="panel-standard space-y-4">
+      <div class="flex items-center justify-between border-b border-[#1E2838] pb-3">
+        <h3 class="type-section-title text-base flex items-center gap-2">
+          <i data-lucide="alert-circle" class="w-4 h-4 text-[#F59E0B]"></i>
+          <span>13. DOCUMENTED SCIENTIFIC LIMITATIONS</span>
+        </h3>
+        <span class="type-metadata text-[10px] text-[#5C6B80]">BOUNDS</span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 font-mono text-xs text-[#94A3B8]">
+        <div class="p-3 bg-[#090D14] border border-[#1E2838] space-y-1">
+          <strong class="text-white block">&bull; Current Event Records Are Synthetic Fixtures:</strong>
+          <span>Visual imagery SVGs, histograms, and exposure metrics demonstrate the UI workflow rather than active NISAR radiometry.</span>
+        </div>
+        <div class="p-3 bg-[#090D14] border border-[#1E2838] space-y-1">
+          <strong class="text-white block">&bull; Metadata vs Raster Distinction:</strong>
+          <span>Archive discovery through ASF DAAC is live, but numeric on-demand SAR raster differencing is not yet running in this demo step.</span>
+        </div>
+        <div class="p-3 bg-[#090D14] border border-[#1E2838] space-y-1">
+          <strong class="text-white block">&bull; Precomputed Threshold Previews:</strong>
+          <span>Image Lab threshold sliders interpolate between discrete stored mask states and do not re-run SAR calibration in the browser.</span>
+        </div>
+        <div class="p-3 bg-[#090D14] border border-[#1E2838] space-y-1">
+          <strong class="text-white block">&bull; Dataset-Relative Normalization:</strong>
+          <span>Review Priority scores are relative to the active comparison cohort and adjust if the review set changes.</span>
+        </div>
+        <div class="p-3 bg-[#090D14] border border-[#1E2838] space-y-1">
+          <strong class="text-white block">&bull; Coverage Availability &ne; Change:</strong>
+          <span>A high density of compatible NISAR passes over an AOI does not imply surface disturbance has occurred.</span>
+        </div>
+        <div class="p-3 bg-[#090D14] border border-[#1E2838] space-y-1">
+          <strong class="text-white block">&bull; Missing Analysis &ne; No Change:</strong>
+          <span>Unanalyzed footprints cannot be assumed stable; lack of observation data represents an absence of analysis, not confirmed stability.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 14. WHAT IS NOT IMPLEMENTED -->
+    <section id="not-implemented" class="panel-standard space-y-4 bg-[#090D14] border border-[#1E2838]">
+      <div class="flex items-center justify-between border-b border-[#1E2838] pb-3">
+        <h3 class="type-section-title text-base flex items-center gap-2">
+          <i data-lucide="shield-x" class="w-4 h-4 text-[#5C6B80]"></i>
+          <span>14. EXPLICIT OUT-OF-SCOPE BOUNDARIES</span>
+        </h3>
+        <span class="badge border-[#64748B] text-[#94A3B8]">NOT PART OF CURRENT DEMO</span>
+      </div>
+
+      <p class="text-xs text-[#94A3B8] font-mono leading-relaxed">
+        The following capabilities are deliberately excluded from the current Space Apps Challenge demo to preserve scientific transparency and avoid ungrounded algorithmic claims:
+      </p>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 font-mono text-xs">
+        <div class="p-2.5 bg-[#04060A] border border-[#1E2838] text-center text-[#94A3B8]">Machine Learning Models</div>
+        <div class="p-2.5 bg-[#04060A] border border-[#1E2838] text-center text-[#94A3B8]">Deep Learning / CNNs</div>
+        <div class="p-2.5 bg-[#04060A] border border-[#1E2838] text-center text-[#94A3B8]">Random Forest Classifiers</div>
+        <div class="p-2.5 bg-[#04060A] border border-[#1E2838] text-center text-[#94A3B8]">Isolation Forest Anomalies</div>
+        <div class="p-2.5 bg-[#04060A] border border-[#1E2838] text-center text-[#94A3B8]">SHAP Explanations</div>
+        <div class="p-2.5 bg-[#04060A] border border-[#1E2838] text-center text-[#94A3B8]">Disaster Prediction</div>
+        <div class="p-2.5 bg-[#04060A] border border-[#1E2838] text-center text-[#94A3B8]">Evacuation Routing</div>
+        <div class="p-2.5 bg-[#04060A] border border-[#1E2838] text-center text-[#94A3B8]">Live On-Demand SAR Calibration</div>
+        <div class="p-2.5 bg-[#04060A] border border-[#1E2838] text-center text-[#94A3B8]">Continuous Satellite Feeds</div>
+        <div class="p-2.5 bg-[#04060A] border border-[#1E2838] text-center text-[#94A3B8]">Enterprise Cloud Orchestration</div>
+      </div>
+    </section>
+
+  </div>
+{% endblock %}

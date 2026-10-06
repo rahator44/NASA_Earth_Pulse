@@ -1,0 +1,70 @@
+[
+  {
+    "id": "validation_synth_001",
+    "analysis_id": "analysis_synth_001",
+    "status": "validated",
+    "number_of_independent_events": 2,
+    "calibration_event_id": "cal_synth_01",
+    "validation_event_ids": ["val_synth_01", "val_synth_02"],
+    "independent_validation": true,
+    "reference_dataset": "SYNTH_GAUGE_COVARIANCE_MOCK",
+    "metrics": {
+      "intersection_over_union": 0.84,
+      "precision": 0.89,
+      "recall": 0.91,
+      "f1_score": 0.90
+    },
+    "notes": "Synthetic cross-comparison with synthetic water gauge station readings.",
+    "is_demo": true,
+    "data_origin": "synthetic_ui_fixture",
+    "disclaimer": "Synthetic development fixture — not an Earth observation result."
+  },
+  {
+    "id": "validation_synth_002",
+    "analysis_id": "analysis_synth_002",
+    "status": "unvalidated",
+    "number_of_independent_events": 0,
+    "calibration_event_id": null,
+    "validation_event_ids": [],
+    "independent_validation": false,
+    "reference_dataset": null,
+    "metrics": {},
+    "notes": "Unresolved multi-candidate anomaly lacks ground validation references.",
+    "is_demo": true,
+    "data_origin": "synthetic_ui_fixture",
+    "disclaimer": "Synthetic development fixture — not an Earth observation result."
+  },
+  {
+    "id": "validation_synth_003",
+    "analysis_id": "analysis_synth_003",
+    "status": "beta_demo",
+    "number_of_independent_events": 0,
+    "calibration_event_id": null,
+    "validation_event_ids": [],
+    "independent_validation": false,
+    "reference_dataset": null,
+    "metrics": {},
+    "notes": "Validation aborted due to failed quality gate.",
+    "is_demo": true,
+    "data_origin": "synthetic_ui_fixture",
+    "disclaimer": "Synthetic development fixture — not an Earth observation result."
+  },
+  {
+    "id": "validation_synth_004",
+    "analysis_id": "analysis_synth_004",
+    "status": "calibrated_only",
+    "number_of_independent_events": 1,
+    "calibration_event_id": "cal_synth_04",
+    "validation_event_ids": ["val_synth_04"],
+    "independent_validation": true,
+    "reference_dataset": "SYNTH_GNSS_NETWORK_MOCK",
+    "metrics": {
+      "displacement_rmse_mm": 1.2,
+      "phase_residual_rad": 0.14
+    },
+    "notes": "Stable reference geodetic point calibration verified.",
+    "is_demo": true,
+    "data_origin": "synthetic_ui_fixture",
+    "disclaimer": "Synthetic development fixture — not an Earth observation result."
+  }
+]

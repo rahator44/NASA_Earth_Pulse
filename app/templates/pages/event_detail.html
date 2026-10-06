@@ -1,0 +1,1188 @@
+{% extends "base.html" %}
+
+{% block title %}{{ event.title }}{% endblock %}
+
+{% block head_extra %}
+  <!-- MapLibre GL JS Stylesheet & Script for Mini Map -->
+  <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+{% endblock %}
+
+{% block content %}
+  {% set page_label = event.eyebrow ~ " // " ~ event.domain_label | upper %}
+  {% set page_title = event.title %}
+  {% set page_description = event.short_description %}
+  {% set badge_text = "OBSERVATION // " ~ event.id %}
+  {% include "components/page_header.html" %}
+
+  <nav class="record-sequence mb-5" aria-label="Event detail sections">
+    <a href="#human-interpretation">HUMAN INTERPRETATION</a><span>↓</span><a href="#evidence">EVIDENCE</a><span>↓</span><a href="#interpretation">CANDIDATE EVIDENCE</a><span>↓</span><a href="#quality">QUALITY</a><span>↓</span><a href="#validation">VALIDATION</a><span>↓</span><a href="#provenance">PROVENANCE</a><span>↓</span><a href="#limitations">LIMITATIONS</a>
+  </nav>
+
+  {% set s = event.situation %}
+  <section id="human-interpretation" class="panel-standard mb-6 space-y-4" aria-labelledby="human-interpretation-title">
+    <div class="flex flex-wrap justify-between items-start gap-3 border-b border-[#1E2838] pb-3">
+      <div><div class="type-metadata text-[#60A5FA]">{{ s.human_label }}</div><h2 id="human-interpretation-title" class="type-section-title text-lg mt-1">HUMAN INTERPRETATION</h2></div>
+      <span class="badge {{ event.observation_state_badge_class }}">{{ s.observation_state|replace('_', ' ')|upper }}</span>
+    </div>
+    <div><h3 class="text-xl text-white font-semibold">{{ s.headline }}</h3><p class="text-sm text-[#CBD5E1] mt-2">{{ s.what_changed }}</p></div>
+    {% if s.human_label == "DEMO INTERPRETATION" %}<p class="p-2 border border-amber-900/50 text-xs text-amber-200">Synthetic development fixture — not an Earth observation result.</p>{% endif %}
+    <div class="grid md:grid-cols-2 gap-4">
+      <div><h3 class="type-metadata mb-1">WHAT DID NISAR MEASURE?</h3><p class="text-xs text-[#CBD5E1]">{{ s.what_nisar_measured }}</p></div>
+      <div class="p-3 bg-[#090D14] border border-[#1E2838]">
+        <h3 class="type-metadata mb-1">HOW TO READ THE NISAR DATA</h3>
+        <div class="text-sm text-white font-medium">{{ s.technical_metadata.product_name_public or "NISAR science product" }}{% if s.technical_metadata.product_code %} <span class="text-[#64748B] font-mono text-xs">({{ s.technical_metadata.product_code }})</span>{% endif %}</div>
+        {% if s.technical_metadata.product_explanation %}<p class="text-xs text-[#94A3B8] mt-1">{{ s.technical_metadata.product_explanation }}</p>{% endif %}
+        <div class="mt-2 space-y-1 text-[11px] text-[#CBD5E1]">
+          {% if s.technical_metadata.orbit_direction_public %}<div><span class="text-[#64748B]">Satellite pass:</span> {{ s.technical_metadata.orbit_direction_public }}</div>{% endif %}
+          {% if s.technical_metadata.maturity_label %}<div><span class="text-[#64748B]">Data maturity:</span> {{ s.technical_metadata.maturity_label }}</div>{% endif %}
+          {% if s.technical_metadata.polarizations %}<div><span class="text-[#64748B]">Radar channels:</span> {% for pol in s.technical_metadata.polarizations %}{{ pol }}{% if s.technical_metadata.polarization_explanations|length > loop.index0 %} — {{ s.technical_metadata.polarization_explanations[loop.index0] }}{% endif %}{% if not loop.last %}; {% endif %}{% endfor %}</div>{% endif %}
+        </div>
+      </div>
+      <div><h3 class="type-metadata mb-1">WHAT COULD THIS MEAN?</h3><div class="space-y-2">{% for item in s.interpretations %}<div class="p-3 bg-[#090D14] border border-[#1E2838]"><div class="flex items-center justify-between gap-2"><div class="text-sm text-white">{{ item.public_label }}</div><span class="type-metadata">{{ item.status|upper }}</span></div><p class="text-xs text-[#CBD5E1] mt-1">{{ item.description }}</p>{% if item.public_reason %}<div class="mt-2"><div class="type-metadata text-[#60A5FA]">WHY THIS INTERPRETATION?</div><p class="text-xs text-[#94A3B8] mt-1">{{ item.public_reason }}</p></div>{% endif %}{% if item.alternative_explanations %}<div class="mt-2"><div class="type-metadata">OTHER POSSIBLE EXPLANATIONS</div><ul class="list-disc pl-5 text-xs text-[#94A3B8] mt-1 space-y-1">{% for alt in item.alternative_explanations %}<li>{{ alt }}</li>{% endfor %}</ul></div>{% endif %}<div class="scientist-only type-metadata mt-2">RULE {{ item.rule_id or 'N/A' }} · {{ item.reason }}</div></div>{% else %}<p class="text-xs text-[#94A3B8]">The stored evidence does not support a more specific physical interpretation.</p>{% endfor %}</div></div>
+      <div><h3 class="type-metadata mb-1">DIRECT NISAR EVIDENCE</h3><ul class="list-disc pl-5 text-xs text-[#CBD5E1] space-y-1">{% for item in s.direct_evidence %}<li>{{ item.description_public }}</li>{% else %}<li>No direct measurement detail is stored.</li>{% endfor %}</ul></div>
+      <div><h3 class="type-metadata mb-1">SUPPORTING EARTH-OBSERVATION EVIDENCE</h3><ul class="list-disc pl-5 text-xs text-[#CBD5E1] space-y-1">{% for item in s.supporting_evidence %}<li>{{ item.description_public }}</li>{% else %}<li>No independent supporting evidence is stored.</li>{% endfor %}</ul></div>
+      {% if s.context %}<div><h3 class="type-metadata mb-1">CONTEXT</h3><ul class="list-disc pl-5 text-xs text-[#94A3B8] space-y-1">{% for item in s.context %}<li>{{ item.description_public }}</li>{% endfor %}</ul></div>{% endif %}
+      {% if s.contradicting_evidence %}<div><h3 class="type-metadata mb-1">EVIDENCE THAT LIMITS SUPPORT</h3><ul class="list-disc pl-5 text-xs text-amber-200 space-y-1">{% for item in s.contradicting_evidence %}<li>{{ item.description_public }}</li>{% endfor %}</ul></div>{% endif %}
+    </div>
+    <div class="grid md:grid-cols-2 gap-4 border-t border-[#1E2838] pt-3">
+      <div><h3 class="type-metadata mb-1">DATA QUALITY · {{ s.data_quality.status|upper }}</h3><p class="text-xs text-[#CBD5E1]">{{ s.data_quality.explanation }} {% if s.data_quality.valid_pixel_percent is defined %}{{ s.data_quality.valid_pixel_percent }}% of selected radar pixels were usable.{% endif %}</p>{% if s.data_quality.failure_reason %}<p class="text-xs text-amber-200 mt-1">{{ s.data_quality.failure_reason }}</p>{% endif %}</div>
+      <div><h3 class="type-metadata mb-1">WHAT WE CANNOT SAY</h3><ul class="list-disc pl-5 text-xs text-[#CBD5E1] space-y-1">{% for item in s.what_we_cannot_say %}<li>{{ item }}</li>{% endfor %}</ul></div>
+    </div>
+    <div class="scientist-only border-t border-[#1E2838] pt-3 text-xs text-[#94A3B8] space-y-1">
+      <h3 class="type-metadata">SCIENTIST METADATA</h3>
+      <div>Product: {{ s.technical_metadata.product_code }} · {{ s.technical_metadata.product_name_technical }}</div>
+      <div>Before / after granule: <span class="technical-id">{{ s.technical_metadata.before_granule_id }}</span> / <span class="technical-id">{{ s.technical_metadata.after_granule_id }}</span></div>
+      <div>Track {{ s.technical_metadata.track }} · Frame {{ s.technical_metadata.frame }} · {{ s.technical_metadata.orbit_direction }} · {{ s.technical_metadata.mode }} · {{ s.technical_metadata.frequency }} · {{ s.technical_metadata.bandwidth }} · {{ s.technical_metadata.polarizations|join(', ') }} · maturity {{ s.technical_metadata.maturity_code }}</div>
+      <div>CRID {{ s.technical_metadata.crid }} ({{ s.technical_metadata.crid_explanation }}) · Product processing/PGE version {{ s.technical_metadata.processing_version or "not recorded in the stored acquisition metadata" }} · Analysis pipeline {{ s.technical_metadata.analysis_pipeline_version }} · Code {{ s.technical_metadata.code_version }} · Manifest <span class="technical-id">{{ s.manifest_id }}</span></div>
+      <div>Quality {{ s.data_quality.valid_pixel_fraction }} · Threshold {{ s.data_quality.configured_threshold if s.data_quality.configured_threshold is defined else 'not stored' }} · Comparison {{ event.comparison_policy }}</div>
+      {% if s.technical_metadata.quality_parameters %}<div>Stored quality configuration: {% for key, value in s.technical_metadata.quality_parameters.items() %}{{ key }}={{ value }}{% if not loop.last %}; {% endif %}{% endfor %}</div>{% endif %}
+      {% if s.technical_metadata.detection_parameters %}<div>Stored detection configuration: {% for key, value in s.technical_metadata.detection_parameters.items() %}{{ key }}={{ value }}{% if not loop.last %}; {% endif %}{% endfor %}</div>{% endif %}
+      <div>Comparison policy: {{ s.technical_metadata.comparison_policy }}</div>
+      <div>Recorded GCOV dataset path: {{ s.technical_metadata.dataset_path or "not stored" }}</div>
+    </div>
+  </section>
+
+  <div id="observation" class="space-y-6">
+
+    <!-- ========================================== -->
+    <!-- 1. HERO / OBSERVATION SUMMARY & WARNING     -->
+    <!-- ========================================== -->
+    <div class="panel-accent">
+      
+      <!-- Real Analysis Badge or Synthetic Warning -->
+      {% if event.is_synthetic %}
+        <div class="mb-5 p-3 sm:p-4 bg-[#EF4444]/10 border border-[#EF4444]/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <span class="badge border-[#EF4444] bg-[#EF4444]/20 text-[#FCA5A5] text-[10px] font-bold tracking-wider px-2 py-0.5">
+              {{ event.synthetic_badge_text }}
+            </span>
+            <span class="type-body text-xs text-[#FCA5A5] font-medium">
+              {{ event.synthetic_warning }}
+            </span>
+          </div>
+          <span class="type-metadata text-[10px] text-[#FCA5A5]/80 shrink-0">
+            DATA ORIGIN: {{ event.data_origin_display | upper }}
+          </span>
+        </div>
+      {% else %}
+        <div class="mb-5 p-3 sm:p-4 bg-[#10B981]/10 border border-[#10B981]/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <span class="badge border-[#10B981] bg-[#10B981]/25 text-[#34D399] text-[10px] font-bold tracking-wider px-2 py-0.5">
+              REAL NISAR ANALYSIS
+            </span>
+            <span class="type-body text-xs text-[#6EE7B7] font-medium">
+              Precomputed radar surface change analysis from NASA NISAR provisional L2 GCOV repeat pass.
+            </span>
+          </div>
+          <span class="type-metadata text-[10px] text-[#34D399] shrink-0 font-mono">
+            DATA ORIGIN: PRECOMPUTED REAL ANALYSIS
+          </span>
+        </div>
+      {% endif %}
+
+      <!-- Top Header Row -->
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-[#1E2838] pb-5 mb-5">
+        <div class="flex items-start sm:items-center gap-3.5">
+          <div class="w-11 h-11 bg-[#090D14] border border-[#1E2838] flex items-center justify-center text-[#1E6BFF] shrink-0">
+            <i data-lucide="scan" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <div class="flex flex-wrap items-center gap-2 mb-1">
+              <span class="type-metadata text-[10px] text-[#5C6B80]">EVENT RECORD</span>
+              <span class="technical-id scientist-only">{{ event.id }}</span>
+              <span class="text-[#5C6B80]">&bull;</span>
+              <span class="type-metadata text-[10px] text-[#5C6B80]">ANALYSIS</span>
+              <span class="technical-id scientist-only">{{ event.analysis_id }}</span>
+            </div>
+            <h2 class="type-section-title text-lg sm:text-xl text-white">{{ event.title }}</h2>
+          </div>
+        </div>
+
+        <!-- Quick Status Badges (Strictly Separate: Observation State vs Interpretation Domain) -->
+        <div class="flex flex-wrap items-center gap-2">
+          <!-- OBSERVATION STATE BADGE -->
+          <div class="flex items-center gap-1.5 px-2.5 py-1 bg-[#090D14] border border-[#1E2838]">
+            <span class="type-metadata text-[9px] text-[#5C6B80]">OBSERVATION</span>
+            <span class="badge {{ event.observation_state_badge_class }} text-[10px]">
+              {{ event.observation_state_label }}
+            </span>
+          </div>
+
+          <!-- INTERPRETATION DOMAIN BADGE -->
+          <div class="flex items-center gap-1.5 px-2.5 py-1 bg-[#090D14] border border-[#1E2838]">
+            <span class="type-metadata text-[9px] text-[#5C6B80]">INTERPRETATION</span>
+            <span class="badge badge-product text-[10px]">
+              {{ event.domain_label }}
+            </span>
+          </div>
+
+          <!-- MATURITY & VALIDATION BADGES -->
+          <span class="badge {{ event.product_maturity_badge_class }} text-[10px]" title="{{ event.situation.technical_metadata.maturity_explanation }}">
+            {{ event.situation.technical_metadata.maturity_label or event.product_maturity_label }}
+          </span>
+          <span class="badge {{ event.validation_status_badge_class }} text-[10px]">
+            {{ event.validation_status_label }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Observation Summary Paragraph -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+        <div class="lg:col-span-2">
+          <p class="type-body text-sm text-[#94A3B8] leading-relaxed">
+            {{ event.short_description }}
+          </p>
+          <div class="mt-3 flex flex-wrap items-center gap-4 text-xs font-mono text-[#5C6B80]">
+            <span class="flex items-center gap-1.5">
+              <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#1E6BFF]"></i>
+              <span class="text-[#94A3B8]">{{ event.comparison_dates_display }}</span>
+            </span>
+            <span>&bull;</span>
+            <span class="flex items-center gap-1.5">
+              <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#1E6BFF]"></i>
+              <span class="text-[#94A3B8]">{{ event.aoi_name }} ({{ event.aoi_country }})</span>
+            </span>
+            <span>&bull;</span>
+            <span class="flex items-center gap-1.5">
+              <i data-lucide="clock" class="w-3.5 h-3.5 text-[#5C6B80]"></i>
+              <span>Generated: {{ event.created_at_display }}</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Quick Action Links -->
+        <div class="flex flex-wrap lg:justify-end items-center gap-2.5">
+          <a href="{{ event.image_lab_url }}" class="btn btn-secondary text-xs py-2 px-3.5 flex items-center gap-1.5">
+            <i data-lucide="layers" class="w-3.5 h-3.5 text-[#1E6BFF]"></i>
+            <span>Open Image Lab</span>
+          </a>
+          <a href="{{ event.map_explorer_url }}" class="btn btn-primary text-xs py-2 px-3.5 flex items-center gap-1.5">
+            <i data-lucide="map" class="w-3.5 h-3.5"></i>
+            <span>Open in Explorer</span>
+          </a>
+          <a href="{{ event.copilot_url }}" class="btn btn-secondary text-xs py-2 px-3.5 flex items-center gap-1.5">
+            <i data-lucide="bot" class="w-3.5 h-3.5 text-[#1E6BFF]"></i>
+            <span>Ask Demo Assistant</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MAIN 2/3 + 1/3 LAYOUT                      -->
+    <!-- ========================================== -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- ========================================== -->
+      <!-- LEFT 2 COLUMNS: SCIENTIFIC EVIDENCE BODY   -->
+      <!-- ========================================== -->
+      <div class="lg:col-span-2 space-y-6">
+
+        <!-- 2. LOCATION MAP -->
+        <div class="panel-standard p-0 overflow-hidden">
+          <div class="p-4 bg-[#090D14] border-b border-[#1E2838] flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5">
+              <div class="w-7 h-7 bg-[#0F141F] border border-[#1E2838] flex items-center justify-center text-[#1E6BFF]">
+                <i data-lucide="map" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <h3 class="type-section-title text-sm">SPATIAL CONTEXT &amp; CHANGE REGIONS</h3>
+                <div class="type-metadata text-[10px] text-[#5C6B80]">AREA OF INTEREST: {{ event.aoi_name | upper }}</div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <a href="{{ event.map_explorer_url }}" class="btn btn-secondary text-[11px] py-1.5 px-3 flex items-center gap-1.5">
+                <i data-lucide="external-link" class="w-3 h-3 text-[#1E6BFF]"></i>
+                <span>Open in Explorer</span>
+              </a>
+              <a href="{{ event.map_explorer_url }}" class="btn btn-secondary text-[11px] py-1.5 px-3 flex items-center gap-1.5" title="Check live metadata coverage for this AOI">
+                <i data-lucide="satellite" class="w-3 h-3 text-[#1E6BFF]"></i>
+                <span>Check Current NISAR Coverage</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Map Container -->
+          <div class="relative w-full h-[320px] bg-[#090D14]">
+            <div id="event-mini-map" class="w-full h-full"></div>
+            
+            <!-- Map Overlay Legend -->
+            <div class="absolute bottom-3 left-3 bg-[#090D14]/90 backdrop-blur-md border border-[#1E2838] px-3 py-2 text-xs space-y-1 z-10">
+              <div class="flex items-center gap-2 text-[10px] font-mono text-[#94A3B8]">
+                <span class="w-3 h-0.5 border-t border-dashed border-[#1E6BFF] inline-block"></span>
+                <span>AOI Boundary ({{ event.aoi_id }})</span>
+              </div>
+              {% if event.has_change_regions %}
+                <div class="flex items-center gap-2 text-[10px] font-mono text-[#94A3B8]">
+                  <span class="w-3 h-2 bg-[#1E6BFF]/35 border border-[#1E6BFF] inline-block"></span>
+                  <span>Detected Change Region</span>
+                </div>
+              {% else %}
+                <div class="flex items-center gap-2 text-[10px] font-mono text-[#5C6B80]">
+                  <span class="w-3 h-2 bg-transparent border border-[#5C6B80] inline-block"></span>
+                  <span>No Polygons Delineated</span>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. COMPARISON / ACQUISITIONS -->
+        <div class="panel-standard">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#1E2838] pb-3 mb-4">
+            <div class="flex items-center gap-2.5">
+              <div class="w-7 h-7 bg-[#090D14] border border-[#1E2838] flex items-center justify-center text-[#1E6BFF]">
+                <i data-lucide="git-compare" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <h3 class="type-section-title text-sm">RADAR ACQUISITION COMPARISON</h3>
+                <div class="type-metadata text-[10px] text-[#5C6B80]">TEMPORAL REPEAT BASELINE</div>
+              </div>
+            </div>
+
+            <!-- Comparison Policy Pill -->
+            <div class="flex items-center gap-2">
+              <span class="type-metadata text-[10px] text-[#5C6B80]">PAIR POLICY:</span>
+              <span class="font-mono text-xs text-[#60A5FA] bg-[#090D14] px-2.5 py-1 border border-[#1E2838]">
+                {{ event.comparison_policy }}
+              </span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
+            <!-- BEFORE ACQUISITION -->
+            <div class="panel-subtle p-4 border border-[#1E2838]">
+              <div class="flex items-center justify-between mb-3 border-b border-[#1E2838] pb-2">
+                <span class="badge border-[#1E6BFF]/40 text-[#60A5FA] text-[10px] font-mono font-bold tracking-wider">
+                  BEFORE OBSERVATION
+                </span>
+                {% if event.has_before_acquisition %}
+                  <span class="type-metadata text-[10px] text-[#5C6B80]">PRIMARY PASS</span>
+                {% endif %}
+              </div>
+
+              {% if event.has_before_acquisition %}
+                {% set b = event.before_acquisition %}
+                <div class="space-y-2 text-xs font-mono">
+                  <div class="flex justify-between items-center py-1 border-b border-[#1E2838]/50">
+                    <span class="text-[#5C6B80]">Acquisition Date</span>
+                    <span class="text-white font-semibold">{{ b.formatted_date }}</span>
+                  </div>
+                  <div class="flex justify-between items-center py-1 border-b border-[#1E2838]/50">
+                    <span class="text-[#5C6B80]">Product &amp; Sensor</span>
+                    <span class="text-[#94A3B8]">{{ event.situation.technical_metadata.product_name_public }} &bull; {{ b.sensor }}</span>
+                  </div>
+                  <div class="scientist-only text-[10px] text-[#64748B]">Product code: {{ b.product_type }}</div>
+                  <div class="scientist-only flex justify-between items-center py-1 border-b border-[#1E2838]/50">
+                    <span class="text-[#5C6B80]">Track / Frame</span>
+                    <span class="text-[#94A3B8]">Track {{ b.track }} / Frame {{ b.frame }}</span>
+                  </div>
+                  <div class="scientist-only flex justify-between items-center py-1 border-b border-[#1E2838]/50">
+                    <span class="text-[#5C6B80]">Orbit Direction</span>
+                    <span class="text-[#94A3B8]">{{ b.orbit_direction }}</span>
+                  </div>
+                  <div class="scientist-only flex justify-between items-center py-1 border-b border-[#1E2838]/50">
+                    <span class="text-[#5C6B80]">Polarizations</span>
+                    <span class="text-[#60A5FA]">{{ b.polarizations_display }}</span>
+                  </div>
+                  <div class="scientist-only flex justify-between items-center py-1 border-b border-[#1E2838]/50">
+                    <span class="text-[#5C6B80]">Mode &amp; Maturity</span>
+                    <span class="text-[#94A3B8]">{{ b.mode }} &bull; {{ b.maturity }}</span>
+                  </div>
+                  <div class="scientist-only flex justify-between items-center pt-1 text-[11px]">
+                    <span class="text-[#5C6B80]">Acquisition ID</span>
+                    <span class="text-white font-semibold">{{ b.id }}</span>
+                  </div>
+                </div>
+              {% else %}
+                <div class="py-6 text-center text-[#5C6B80] font-mono text-xs">
+                  Not applicable / unavailable
+                </div>
+              {% endif %}
+            </div>
+
+            <!-- AFTER ACQUISITION -->
+            <div class="panel-subtle p-4 border border-[#1E2838]">
+              <div class="flex items-center justify-between mb-3 border-b border-[#1E2838] pb-2">
+                <span class="badge border-[#1E6BFF]/40 text-[#60A5FA] text-[10px] font-mono font-bold tracking-wider">
+                  AFTER OBSERVATION
+                </span>
+                {% if event.has_after_acquisition %}
+                  <span class="type-metadata text-[10px] text-[#5C6B80]">REPEAT PASS</span>
+                {% endif %}
+              </div>
+
+              {% if event.has_after_acquisition %}
+                {% set a = event.after_acquisition %}
+                <div class="space-y-2 text-xs font-mono">
+                  <div class="flex justify-between items-center py-1 border-b border-[#1E2838]/50">
+                    <span class="text-[#5C6B80]">Acquisition Date</span>
+                    <span class="text-white font-semibold">{{ a.formatted_date }}</span>
+                  </div>
+                  <div class="flex justify-between items-center py-1 border-b border-[#1E2838]/50">
+                    <span class="text-[#5C6B80]">Product &amp; Sensor</span>
+                    <span class="text-[#94A3B8]">{{ event.situation.technical_metadata.product_name_public }} &bull; {{ a.sensor }}</span>
+                  </div>
+                  <div class="scientist-only text-[10px] text-[#64748B]">Product code: {{ a.product_type }}</div>
+                  <div class="scientist-only flex justify-between items-center py-1 border-b border-[#1E2838]/50">
+                    <span class="text-[#5C6B80]">Track / Frame</span>
+                    <span class="text-[#94A3B8]">Track {{ a.track }} / Frame {{ a.frame }}</span>
+                  </div>
+                  <div class="scientist-only flex justify-between items-center py-1 border-b border-[#1E2838]/50">
+                    <span class="text-[#5C6B80]">Orbit Direction</span>
+                    <span class="text-[#94A3B8]">{{ a.orbit_direction }}</span>
+                  </div>
+                  <div class="scientist-only flex justify-between items-center py-1 border-b border-[#1E2838]/50">
+                    <span class="text-[#5C6B80]">Polarizations</span>
+                    <span class="text-[#60A5FA]">{{ a.polarizations_display }}</span>
+                  </div>
+                  <div class="scientist-only flex justify-between items-center py-1 border-b border-[#1E2838]/50">
+                    <span class="text-[#5C6B80]">Mode &amp; Maturity</span>
+                    <span class="text-[#94A3B8]">{{ a.mode }} &bull; {{ a.maturity }}</span>
+                  </div>
+                  <div class="scientist-only flex justify-between items-center pt-1 text-[11px]">
+                    <span class="text-[#5C6B80]">Acquisition ID</span>
+                    <span class="text-white font-semibold">{{ a.id }}</span>
+                  </div>
+                </div>
+              {% else %}
+                <div class="py-6 text-center text-[#94A3B8] font-mono text-xs space-y-2">
+                  <div class="text-[#F59E0B]">
+                    <i data-lucide="alert-circle" class="w-6 h-6 mx-auto mb-2 opacity-75"></i>
+                  </div>
+                  <div class="text-white font-semibold">Not applicable / unavailable</div>
+                  <p class="text-[11px] text-[#5C6B80] max-w-xs mx-auto">
+                    {{ event.after_unavailable_notice or "No repeat pass available for this analysis baseline." }}
+                  </p>
+                </div>
+              {% endif %}
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 5. MEASUREMENT SUMMARY -->
+        <div class="panel-standard">
+          <div class="flex items-center justify-between border-b border-[#1E2838] pb-3 mb-4">
+            <div class="flex items-center gap-2.5">
+              <div class="w-7 h-7 bg-[#090D14] border border-[#1E2838] flex items-center justify-center text-[#1E6BFF]">
+                <i data-lucide="gauge" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <h3 class="type-section-title text-sm">SURFACE CHANGE MEASUREMENTS</h3>
+                <div class="type-metadata text-[10px] text-[#5C6B80]">STORED ALGORITHMIC EXTRACTIONS</div>
+              </div>
+            </div>
+            
+            {% if event.has_measurements %}
+              <span class="badge badge-state-change text-[10px]">
+                {{ event.measurements | length }} QUANTIFIED METRIC(S)
+              </span>
+            {% endif %}
+          </div>
+
+          {% if event.has_measurements %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {% for m in event.measurements %}
+                <div class="panel-subtle p-4 border border-[#1E2838] flex flex-col justify-between">
+                  <div>
+                    <div class="type-metadata text-[10px] text-[#5C6B80] uppercase tracking-wider">{{ m.label }}</div>
+                    <div class="text-2xl font-mono font-bold text-white mt-1.5">{{ m.value }}</div>
+                  </div>
+                  {% if m.description %}
+                    <div class="mt-3 pt-2.5 border-t border-[#1E2838] text-[11px] text-[#94A3B8] leading-relaxed">
+                      {{ m.description }}
+                    </div>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <!-- Insufficient Data or No Change Notice (Never show fake metrics) -->
+            <div class="p-4 bg-[#090D14] border border-[#1E2838] text-center">
+              <div class="text-sm font-mono text-[#94A3B8] mb-1">
+                {{ event.measurements_notice or "No significant surface change measurements detected under configured thresholds." }}
+              </div>
+              <div class="type-metadata text-[10px] text-[#5C6B80]">
+                PRIMARY RADAR ANOMALY METRICS ARE WITHHELD IN ACCORDANCE WITH SCIENTIFIC INTEGRITY RULES.
+              </div>
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- 6. INTERPRETATION + CANDIDATE EVIDENCE -->
+        <div id="interpretation" class="panel-standard">
+          <div class="flex items-center justify-between border-b border-[#1E2838] pb-3 mb-4">
+            <div class="flex items-center gap-2.5">
+              <div class="w-7 h-7 bg-[#090D14] border border-[#1E2838] flex items-center justify-center text-[#1E6BFF]">
+                <i data-lucide="microscope" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <h3 class="type-section-title text-sm">INTERPRETATION &amp; CANDIDATE EVIDENCE</h3>
+                <div class="type-metadata text-[10px] text-[#5C6B80]">PHYSICAL &amp; INDEPENDENT SENSOR CORROBORATION</div>
+              </div>
+            </div>
+
+            {% if event.is_resolved %}
+              <span class="badge badge-validated text-[10px]">
+                RESOLVED: {{ event.resolved_domain_label | upper }}
+              </span>
+            {% else %}
+              <span class="badge badge-state-unknown text-[10px]">
+                CAUSE NOT CONFIRMED
+              </span>
+            {% endif %}
+          </div>
+
+          <!-- Case A: Resolved Domain -->
+          {% if event.is_resolved %}
+            <div class="space-y-4">
+              <div class="p-4 bg-[#10B981]/5 border border-[#10B981]/30">
+                <div class="type-metadata text-[10px] text-[#10B981] font-bold tracking-wider uppercase mb-1">
+                  INTERPRETATION &bull; WHY THIS ASSIGNMENT
+                </div>
+                <div class="text-sm text-white font-medium leading-relaxed">
+                  {{ event.resolved_explanation }}
+                </div>
+              </div>
+
+              {% if event.candidates %}
+                <div class="space-y-3">
+                  <div class="type-metadata text-[10px] text-[#5C6B80] uppercase tracking-wider">SUPPORTED EVIDENCE CORROBORATION</div>
+                  {% for c in event.candidates %}
+                    {% if c.supported %}
+                      <div class="panel-subtle p-4 border border-[#1E2838] space-y-3">
+                        <div class="flex items-center justify-between">
+                          <span class="text-sm font-semibold text-white">{{ c.domain_label }}</span>
+                          <span class="badge {{ c.support_badge_class }} text-[10px]">{{ c.support_status_label }}</span>
+                        </div>
+
+                        <!-- Physical Evidence -->
+                        {% if c.physical_evidence %}
+                          <div class="text-xs">
+                            <span class="type-metadata text-[10px] text-[#5C6B80] block mb-1">PHYSICAL SAR EVIDENCE</span>
+                            <div class="grid grid-cols-2 gap-2">
+                              {% for item in c.physical_evidence %}
+                                <div class="bg-[#090D14] p-2 border border-[#1E2838] font-mono">
+                                  <span class="text-[#5C6B80] block text-[10px]">{{ item.label }}</span>
+                                  <span class="text-white font-semibold">{{ item.value }}</span>
+                                </div>
+                              {% endfor %}
+                            </div>
+                          </div>
+                        {% endif %}
+
+                        <!-- Independent Evidence -->
+                        {% if c.independent_evidence %}
+                          <div class="text-xs">
+                            <span class="type-metadata text-[10px] text-[#5C6B80] block mb-1">INDEPENDENT SENSOR EVIDENCE</span>
+                            <div class="grid grid-cols-2 gap-2">
+                              {% for item in c.independent_evidence %}
+                                <div class="bg-[#090D14] p-2 border border-[#1E2838] font-mono">
+                                  <span class="text-[#5C6B80] block text-[10px]">{{ item.label }}</span>
+                                  <span class="text-white font-semibold">{{ item.value }}</span>
+                                </div>
+                              {% endfor %}
+                            </div>
+                          </div>
+                        {% endif %}
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+
+          <!-- Case B: Ambiguous or Unclassified Change -->
+          {% else %}
+            <div class="space-y-4">
+              <div class="p-4 bg-[#8B5CF6]/10 border border-[#8B5CF6]/30">
+                <div class="flex items-center gap-2 mb-1">
+                  <i data-lucide="help-circle" class="w-4 h-4 text-[#A78BFA]"></i>
+                  <span class="type-metadata text-[10px] text-[#A78BFA] font-bold tracking-wider uppercase">
+                    CAUSE NOT CONFIRMED
+                  </span>
+                </div>
+                <div class="text-sm text-white font-medium">
+                  {{ event.unclassified_notice }}
+                </div>
+                <p class="text-xs text-[#94A3B8] mt-1.5 leading-relaxed">
+                  Significant radar backscatter fluctuation or decorrelation was detected; however, available physical parameters and multi-sensor corroboration do not definitively isolate a single physical mechanism. Candidate hypotheses are evaluated below.
+                </p>
+              </div>
+
+              <!-- List of Candidate Hypotheses -->
+              {% if event.candidates %}
+                <div class="space-y-3">
+                  <div class="type-metadata text-[10px] text-[#5C6B80] uppercase tracking-wider">POSSIBLE INTERPRETATIONS</div>
+                  
+                  {% for c in event.candidates %}
+                    <div class="panel-subtle p-4 border border-[#1E2838] space-y-3">
+                      <div class="flex flex-wrap items-center justify-between gap-2 border-b border-[#1E2838] pb-2">
+                        <div class="flex items-center gap-2">
+                          <span class="text-sm font-semibold text-white">{{ c.domain_label }}</span>
+                          <span class="type-metadata text-[10px] text-[#5C6B80]">CANDIDATE HYPOTHESIS</span>
+                        </div>
+                        
+                        <div class="flex items-center gap-2">
+                          {% if c.candidate_score_display %}
+                            <div class="flex items-center gap-1 font-mono text-xs bg-[#090D14] px-2 py-0.5 border border-[#1E2838]">
+                              <span class="text-[#5C6B80] text-[10px]">Evidence Score:</span>
+                              <span class="text-white font-bold">{{ c.candidate_score_display }}</span>
+                            </div>
+                          {% endif %}
+                          <span class="badge {{ c.support_badge_class }} text-[10px]">{{ c.support_status_label }}</span>
+                        </div>
+                      </div>
+
+                      {% if c.candidate_score_display %}
+                        <div class="text-[10px] text-[#5C6B80] italic">
+                          {{ c.score_disclaimer }}
+                        </div>
+                      {% endif %}
+
+                      <!-- Physical Evidence -->
+                      {% if c.physical_evidence %}
+                        <div>
+                          <span class="type-metadata text-[10px] text-[#5C6B80] block mb-1">PHYSICAL EVIDENCE</span>
+                          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            {% for item in c.physical_evidence %}
+                              <div class="bg-[#090D14] p-2 border border-[#1E2838] font-mono text-xs flex justify-between">
+                                <span class="text-[#5C6B80]">{{ item.label }}</span>
+                                <span class="text-white font-semibold">{{ item.value }}</span>
+                              </div>
+                            {% endfor %}
+                          </div>
+                        </div>
+                      {% endif %}
+
+                      <!-- Independent Evidence -->
+                      {% if c.independent_evidence %}
+                        <div>
+                          <span class="type-metadata text-[10px] text-[#5C6B80] block mb-1">INDEPENDENT SENSOR EVIDENCE</span>
+                          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            {% for item in c.independent_evidence %}
+                              <div class="bg-[#090D14] p-2 border border-[#1E2838] font-mono text-xs flex justify-between">
+                                <span class="text-[#5C6B80]">{{ item.label }}</span>
+                                <span class="text-white font-semibold">{{ item.value }}</span>
+                              </div>
+                            {% endfor %}
+                          </div>
+                        </div>
+                      {% endif %}
+
+                      <!-- Contradicting Evidence -->
+                      {% if c.contradicting_evidence %}
+                        <div>
+                          <span class="type-metadata text-[10px] text-[#EF4444] block mb-1">CONTRADICTING EVIDENCE</span>
+                          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            {% for item in c.contradicting_evidence %}
+                              <div class="bg-[#EF4444]/5 p-2 border border-[#EF4444]/30 font-mono text-xs flex justify-between">
+                                <span class="text-[#FCA5A5]">{{ item.label }}</span>
+                                <span class="text-white font-semibold">{{ item.value }}</span>
+                              </div>
+                            {% endfor %}
+                          </div>
+                        </div>
+                      {% endif %}
+
+                      <!-- FIRMS Active Fire Corroboration Block -->
+                      {% if c.has_firms and c.firms_details %}
+                        <div class="p-3 bg-[#090D14] border border-[#1E2838] space-y-2">
+                          <div class="flex items-center justify-between text-[11px] font-mono">
+                            <span class="text-[#F59E0B] font-semibold flex items-center gap-1.5">
+                              <i data-lucide="flame" class="w-3.5 h-3.5"></i>
+                              FIRMS ACTIVE FIRE CORROBORATION
+                            </span>
+                            <span class="type-metadata text-[9px] text-[#5C6B80]">NASA VIIRS / MODIS</span>
+                          </div>
+                          
+                          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono">
+                            {% if c.firms_details.time_buffer_hours %}
+                              <div class="bg-[#0F141F] p-1.5 border border-[#1E2838]">
+                                <span class="text-[#5C6B80] block text-[9px]">Time Window</span>
+                                <span class="text-white font-semibold">&plusmn;{{ c.firms_details.time_buffer_hours }}h</span>
+                              </div>
+                            {% endif %}
+                            {% if c.firms_details.spatial_buffer_m %}
+                              <div class="bg-[#0F141F] p-1.5 border border-[#1E2838]">
+                                <span class="text-[#5C6B80] block text-[9px]">Spatial Buffer</span>
+                                <span class="text-white font-semibold">{{ c.firms_details.spatial_buffer_m }}m</span>
+                              </div>
+                            {% endif %}
+                            <div class="bg-[#0F141F] p-1.5 border border-[#1E2838]">
+                              <span class="text-[#5C6B80] block text-[9px]">Detections</span>
+                              <span class="text-white font-semibold">{{ c.firms_details.matching_detection_count or 0 }}</span>
+                            </div>
+                            {% if c.firms_details.nearest_distance_m %}
+                              <div class="bg-[#0F141F] p-1.5 border border-[#1E2838]">
+                                <span class="text-[#5C6B80] block text-[9px]">Nearest Fire</span>
+                                <span class="text-white font-semibold">{{ (c.firms_details.nearest_distance_m / 1000) | round(1) }} km</span>
+                              </div>
+                            {% endif %}
+                          </div>
+
+                          <p class="text-[11px] text-[#94A3B8] leading-relaxed">
+                            {{ c.firms_details.statement }}
+                          </p>
+                        </div>
+                      {% endif %}
+
+                      <div class="text-xs text-[#94A3B8] pt-1">
+                        <span class="text-[#5C6B80] font-mono text-[10px]">EVALUATION NOTES:</span> {{ c.notes }}
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- 8. EXPOSURE CONTEXT (Strictly NOT Severity or Risk) -->
+        <div class="panel-standard">
+          <div class="flex items-center justify-between border-b border-[#1E2838] pb-3 mb-4">
+            <div class="flex items-center gap-2.5">
+              <div class="w-7 h-7 bg-[#090D14] border border-[#1E2838] flex items-center justify-center text-[#1E6BFF]">
+                <i data-lucide="users" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <h3 class="type-section-title text-sm">EXPOSURE CONTEXT</h3>
+                <div class="type-metadata text-[10px] text-[#5C6B80]">SPATIAL OVERLAP WITH SETTLEMENTS &amp; INFRASTRUCTURE</div>
+              </div>
+            </div>
+
+            <span class="type-metadata text-[10px] text-[#5C6B80]">CONTEXTUAL ESTIMATE</span>
+          </div>
+
+          {% if event.is_exposure_withheld %}
+            <div class="p-4 bg-[#090D14] border border-[#1E2838] text-center text-xs font-mono text-[#94A3B8]">
+              <i data-lucide="info" class="w-5 h-5 mx-auto mb-2 text-[#5C6B80]"></i>
+              <div>{{ event.exposure_withheld_notice }}</div>
+            </div>
+          {% elif not event.has_exposure %}
+            <div class="p-4 bg-[#090D14] border border-[#1E2838] text-center text-xs font-mono text-[#94A3B8] space-y-1">
+              <i data-lucide="info" class="w-5 h-5 mx-auto mb-2 text-[#5C6B80]"></i>
+              <div class="text-white font-semibold">Exposure data unavailable</div>
+              <p class="text-[11px] text-[#5C6B80] max-w-md mx-auto">
+                WorldPop and OpenStreetMap spatial intersections have not been calculated for this real showcase. Synthetic exposure data is not substituted.
+              </p>
+            </div>
+          {% elif event.has_exposure %}
+            <div class="space-y-4">
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div class="panel-subtle p-3 border border-[#1E2838]">
+                  <div class="type-metadata text-[10px] text-[#5C6B80]">Estimated Population</div>
+                  <div class="text-xl font-mono font-bold text-white mt-1">{{ event.estimated_population_display or '0' }}</div>
+                  <div class="text-[9px] font-mono text-[#5C6B80] mt-1">Spatial overlap count</div>
+                </div>
+
+                <div class="panel-subtle p-3 border border-[#1E2838]">
+                  <div class="type-metadata text-[10px] text-[#5C6B80]">Road Network</div>
+                  <div class="text-xl font-mono font-bold text-white mt-1">{{ event.road_length_display or '0 km' }}</div>
+                  <div class="text-[9px] font-mono text-[#5C6B80] mt-1">Intersected corridors</div>
+                </div>
+
+                <div class="panel-subtle p-3 border border-[#1E2838]">
+                  <div class="type-metadata text-[10px] text-[#5C6B80]">Settlements</div>
+                  <div class="text-xl font-mono font-bold text-white mt-1">{{ event.settlement_count or 0 }}</div>
+                  <div class="text-[9px] font-mono text-[#5C6B80] mt-1">Named locations</div>
+                </div>
+
+                <div class="panel-subtle p-3 border border-[#1E2838]">
+                  <div class="type-metadata text-[10px] text-[#5C6B80]">Bridge Structures</div>
+                  <div class="text-xl font-mono font-bold text-white mt-1">{{ event.bridge_count or 0 }}</div>
+                  <div class="text-[9px] font-mono text-[#5C6B80] mt-1">Crossings identified</div>
+                </div>
+              </div>
+
+              <!-- Methodology Citation -->
+              <div class="p-3 bg-[#090D14] border border-[#1E2838] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs font-mono">
+                <span class="text-[#94A3B8]">
+                  Source: <span class="text-white">{{ event.population_source or 'Gridded Population Mock' }}</span> ({{ event.population_year or '2026' }})
+                </span>
+                <span class="text-[10px] text-[#5C6B80]">
+                  *Values represent contextual geometric intersection, not confirmed damages.
+                </span>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- 9. VALIDATION & BENCHMARKS -->
+        <div id="validation" class="panel-standard">
+          <div class="flex items-center justify-between border-b border-[#1E2838] pb-3 mb-4">
+            <div class="flex items-center gap-2.5">
+              <div class="w-7 h-7 bg-[#090D14] border border-[#1E2838] flex items-center justify-center text-[#1E6BFF]">
+                <i data-lucide="check-circle" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <h3 class="type-section-title text-sm">ALGORITHMIC VALIDATION &amp; BENCHMARKS</h3>
+                <div class="type-metadata text-[10px] text-[#5C6B80]">INDEPENDENT GROUND-TRUTH ASSESSMENT</div>
+              </div>
+            </div>
+
+            <span class="badge {{ event.validation_status_badge_class }} text-[10px]">
+              {{ event.validation_status_label | upper }}
+            </span>
+          </div>
+
+          <div class="space-y-4">
+            <!-- Validation Statement Banner -->
+            <div class="p-3.5 bg-[#090D14] border border-[#1E2838] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div class="text-sm font-mono text-white font-medium">
+                {{ event.validation_statement }}
+              </div>
+              <div class="text-xs font-mono text-[#5C6B80] shrink-0">
+                Independent: <span class="text-white font-semibold">{% if event.independent_validation %}Yes{% else %}No{% endif %}</span>
+                &bull; Events: <span class="text-white font-semibold">{{ event.number_of_independent_events }}</span>
+              </div>
+            </div>
+
+            <!-- Stored Validation Metrics Grid (Only Stored Values) -->
+            {% if event.metrics %}
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {% for m in event.metrics %}
+                  <div class="bg-[#090D14] p-3 border border-[#1E2838] font-mono">
+                    <div class="type-metadata text-[10px] text-[#5C6B80]">{{ m.label }}</div>
+                    <div class="text-xl font-bold text-white mt-1">{{ m.value }}</div>
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            <!-- Reference Dataset & Event IDs -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
+              <div class="p-2.5 bg-[#090D14] border border-[#1E2838] flex justify-between">
+                <span class="text-[#5C6B80]">Reference Dataset</span>
+                <span class="text-white">{{ event.reference_dataset or 'None specified' }}</span>
+              </div>
+              <div class="p-2.5 bg-[#090D14] border border-[#1E2838] flex justify-between">
+                <span class="text-[#5C6B80]">Calibration ID</span>
+                <span class="text-white">{{ event.calibration_event_id or 'None' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 10. PROVENANCE & REPRODUCIBILITY MANIFEST -->
+        <div id="provenance" class="panel-standard scientist-only" x-data="{ expanded: false }">
+          <div class="flex items-center justify-between border-b border-[#1E2838] pb-3 mb-4">
+            <div class="flex items-center gap-2.5">
+              <div class="w-7 h-7 bg-[#090D14] border border-[#1E2838] flex items-center justify-center text-[#1E6BFF]">
+                <i data-lucide="file-code" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <h3 class="type-section-title text-sm">PROVENANCE &amp; REPRODUCIBILITY</h3>
+                <div class="type-metadata text-[10px] text-[#5C6B80]">PIPELINE MANIFEST: {{ event.manifest_id }}</div>
+              </div>
+            </div>
+
+            <button type="button" @click="expanded = !expanded" class="btn btn-secondary text-xs py-1 px-2.5 flex items-center gap-1">
+              <span x-text="expanded ? 'Hide Details' : 'Inspect Manifest'">Inspect Manifest</span>
+              <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform" :class="expanded ? 'rotate-180' : ''"></i>
+            </button>
+          </div>
+
+          <!-- Process Strip -->
+          <div class="mb-4 p-3 bg-[#090D14] border border-[#1E2838] overflow-x-auto">
+            <div class="flex items-center min-w-[580px] justify-between text-[10px] font-mono text-[#5C6B80]">
+              <span class="text-white font-semibold">1. ACQUISITION</span>
+              <span>&rarr;</span>
+              <span class="text-white font-semibold">2. PRE-PROCESSING</span>
+              <span>&rarr;</span>
+              <span class="text-white font-semibold">3. MEASUREMENT</span>
+              <span>&rarr;</span>
+              <span class="text-white font-semibold">4. EVIDENCE MATCHING</span>
+              <span>&rarr;</span>
+              <span class="text-white font-semibold">5. CLASSIFICATION</span>
+              <span>&rarr;</span>
+              <span class="text-[#60A5FA] font-semibold">6. EXPLANATION</span>
+            </div>
+          </div>
+
+          <!-- Core Provenance Parameters Table -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono mb-4">
+            <div class="p-2 bg-[#090D14] border border-[#1E2838]">
+              <span class="text-[#5C6B80] block text-[9px]">Pipeline Version</span>
+              <span class="text-white">{{ event.pipeline_version }}</span>
+            </div>
+            <div class="p-2 bg-[#090D14] border border-[#1E2838]">
+              <span class="text-[#5C6B80] block text-[9px]">Git Commit</span>
+              <span class="text-white">{{ event.code_version }}</span>
+            </div>
+            <div class="p-2 bg-[#090D14] border border-[#1E2838]">
+              <span class="text-[#5C6B80] block text-[9px]">CRID</span>
+              <span class="text-white">{{ event.crid }}</span>
+            </div>
+            <div class="p-2 bg-[#090D14] border border-[#1E2838]">
+              <span class="text-[#5C6B80] block text-[9px]">Polarizations</span>
+              <span class="text-white">{{ event.polarizations_display }}</span>
+            </div>
+          </div>
+
+          <!-- Expandable Deep Parameters (Quality & Detection Tables) -->
+          <div x-show="expanded" x-collapse class="space-y-4 pt-3 border-t border-[#1E2838]">
+            {% if event.quality_parameters %}
+              <div>
+                <div class="type-metadata text-[10px] text-[#5C6B80] mb-2">QUALITY GATE PARAMETERS</div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
+                  {% for p in event.quality_parameters %}
+                    <div class="bg-[#090D14] p-2 border border-[#1E2838] flex justify-between">
+                      <span class="text-[#5C6B80]">{{ p.label }}</span>
+                      <span class="text-white">{{ p.value }}</span>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+
+            {% if event.detection_parameters %}
+              <div>
+                <div class="type-metadata text-[10px] text-[#5C6B80] mb-2">DETECTION THRESHOLD PARAMETERS</div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
+                  {% for p in event.detection_parameters %}
+                    <div class="bg-[#090D14] p-2 border border-[#1E2838] flex justify-between">
+                      <span class="text-[#5C6B80]">{{ p.label }}</span>
+                      <span class="text-white">{{ p.value }}</span>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- SATELLITE EVIDENCE VIEWER (Step 8) -->
+        <div id="evidence" class="space-y-3">
+          <div class="flex items-center justify-between border-b border-[#1E2838] pb-2">
+            <div class="flex items-center gap-2.5">
+              <div class="w-7 h-7 bg-[#090D14] border border-[#1E2838] flex items-center justify-center text-[#1E6BFF]">
+                <i data-lucide="split" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <h3 class="type-section-title text-sm">SATELLITE EVIDENCE VIEWER</h3>
+                <div class="type-metadata text-[10px] text-[#5C6B80]">BEFORE / AFTER / DIFFERENCE / CHANGE MASK</div>
+              </div>
+            </div>
+            <span class="type-metadata text-[10px] text-[#5C6B80]">INTERACTIVE WORKSPACE</span>
+          </div>
+
+          {% set evidence = event.evidence %}
+          {% include "components/evidence_viewer.html" %}
+        </div>
+
+        <!-- 11. LIMITATIONS & SCIENTIFIC INTEGRITY -->
+        <div id="limitations" class="panel-subtle p-4 border border-[#1E2838] space-y-3">
+          <div class="flex items-center gap-2 text-xs font-mono text-[#F59E0B]">
+            <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+            <span class="font-bold tracking-wider uppercase">OBSERVATION LIMITATIONS &amp; ASSUMPTIONS</span>
+          </div>
+
+          <ul class="space-y-1.5 text-xs text-[#94A3B8] leading-relaxed list-disc list-inside">
+            {% for lim in event.limitations %}
+              <li>{{ lim }}</li>
+            {% endfor %}
+          </ul>
+
+          <div class="pt-2 border-t border-[#1E2838] text-[11px] font-mono text-[#5C6B80]">
+            {{ event.general_disclaimer }}
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ========================================== -->
+      <!-- RIGHT 1 COLUMN: METADATA & QUICK ACTIONS   -->
+      <!-- ========================================== -->
+      <div class="space-y-6">
+
+        <!-- Quick Actions Panel -->
+        <div class="panel-standard">
+          <div class="type-metadata text-[10px] text-[#5C6B80] uppercase tracking-wider mb-3">
+            EXPLORATION WORKSPACES
+          </div>
+          
+          <div class="space-y-2.5">
+            <a href="{{ event.image_lab_url }}" class="w-full btn btn-primary text-xs py-2.5 px-3 flex items-center justify-between">
+              <span class="flex items-center gap-2">
+                <i data-lucide="layers" class="w-4 h-4"></i>
+                <span>Open Image Lab</span>
+              </span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </a>
+
+            <a href="{{ event.map_explorer_url }}" class="w-full btn btn-secondary text-xs py-2.5 px-3 flex items-center justify-between">
+              <span class="flex items-center gap-2">
+                <i data-lucide="map" class="w-4 h-4 text-[#1E6BFF]"></i>
+                <span>Open in Map Explorer</span>
+              </span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </a>
+
+            <a href="{{ event.copilot_url }}" class="w-full btn btn-secondary text-xs py-2.5 px-3 flex items-center justify-between">
+              <span class="flex items-center gap-2">
+                <i data-lucide="bot" class="w-4 h-4 text-[#1E6BFF]"></i>
+                <span>Ask Demo Assistant</span>
+              </span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- 3. OBSERVATION DETAILS METADATA BLOCK -->
+        <div class="panel-standard">
+          <div class="flex items-center justify-between border-b border-[#1E2838] pb-3 mb-3">
+            <h3 class="type-section-title text-sm">OBSERVATION DETAILS</h3>
+            <span class="type-metadata text-[10px] text-[#5C6B80]">REGISTRY RECORD</span>
+          </div>
+
+          <div class="space-y-3 text-xs font-mono">
+            <div class="flex justify-between items-center py-1 border-b border-[#1E2838]/50">
+              <span class="text-[#5C6B80]">Domain</span>
+              <span class="text-white font-semibold">{{ event.domain_label }}</span>
+            </div>
+
+            <div class="flex justify-between items-center py-1 border-b border-[#1E2838]/50">
+              <span class="text-[#5C6B80]">Observation State</span>
+              <span class="badge {{ event.observation_state_badge_class }} text-[9px]">{{ event.observation_state_label }}</span>
+            </div>
+
+            <div class="flex justify-between items-center py-1 border-b border-[#1E2838]/50">
+              <span class="text-[#5C6B80]">Classification</span>
+              <span class="text-white">{{ event.classification_status_label }}</span>
+            </div>
+
+            <div class="flex justify-between items-center py-1 border-b border-[#1E2838]/50">
+              <span class="text-[#5C6B80]">Analysis ID</span>
+              <span class="text-white font-semibold">{{ event.analysis_id }}</span>
+            </div>
+
+            <div class="flex justify-between items-center py-1 border-b border-[#1E2838]/50">
+              <span class="text-[#5C6B80]">Target AOI</span>
+              <span class="text-[#94A3B8]">{{ event.aoi_name }} ({{ event.aoi_id }})</span>
+            </div>
+
+            <div class="flex justify-between items-center py-1 border-b border-[#1E2838]/50">
+              <span class="text-[#5C6B80]">Created At</span>
+              <span class="text-[#94A3B8]">{{ event.created_at_display }}</span>
+            </div>
+
+            <div class="flex justify-between items-center py-1 border-b border-[#1E2838]/50">
+              <span class="text-[#5C6B80]">Data Origin</span>
+              <span class="text-[#94A3B8]">{{ event.data_origin_display }}</span>
+            </div>
+
+            <div class="flex justify-between items-center pt-1">
+              <span class="text-[#5C6B80]">Manifest ID</span>
+              <span class="text-[#60A5FA] font-semibold">{{ event.manifest_id }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. DATA QUALITY PANEL -->
+        <div id="quality" class="panel-standard">
+          <div class="flex items-center justify-between border-b border-[#1E2838] pb-3 mb-3">
+            <h3 class="type-section-title text-sm">DATA QUALITY</h3>
+            {% if event.quality_gate_passed %}
+              <span class="badge badge-validated text-[9px]">GATE PASSED</span>
+            {% else %}
+              <span class="badge border-[#EF4444] bg-[#EF4444]/20 text-[#FCA5A5] text-[9px]">GATE FAILED</span>
+            {% endif %}
+          </div>
+
+          <div class="space-y-3">
+            <div class="flex items-center justify-between font-mono text-xs py-1 border-b border-[#1E2838]/50">
+              <span class="text-[#5C6B80]">Valid Pixel Fraction</span>
+              <span class="text-white font-bold">{{ event.valid_pixel_fraction_display }}</span>
+            </div>
+
+            <div class="flex items-center justify-between font-mono text-xs py-1 border-b border-[#1E2838]/50">
+              <span class="text-[#5C6B80]">Required Inputs Available</span>
+              <span class="text-white">{% if event.required_inputs_available %}Yes{% else %}No{% endif %}</span>
+            </div>
+
+            <div class="flex items-center justify-between font-mono text-xs py-1 border-b border-[#1E2838]/50">
+              <span class="text-[#5C6B80]">Quality Gate Passed</span>
+              <span class="text-white">{% if event.quality_gate_passed %}Yes{% else %}No{% endif %}</span>
+            </div>
+
+            {% if not event.quality_gate_passed %}
+              <div class="p-2.5 bg-[#EF4444]/10 border border-[#EF4444]/40 text-xs">
+                <span class="text-[#FCA5A5] font-semibold font-mono block mb-1">QUALITY GATE NOT PASSED</span>
+                <p class="text-[#FCA5A5]/90 text-[11px] leading-relaxed">
+                  {{ event.quality_gate_failure_reason }}
+                </p>
+              </div>
+            {% endif %}
+
+            <div class="text-[11px] text-[#94A3B8] leading-relaxed">
+              <span class="text-[#5C6B80] font-mono text-[10px]">NOTES:</span> {{ event.quality_notes }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Processing Metadata Summary -->
+        <div class="panel-standard scientist-only">
+          <div class="type-metadata text-[10px] text-[#5C6B80] uppercase tracking-wider mb-2">
+            SAR GEOMETRY
+          </div>
+          
+          <div class="space-y-2 text-xs font-mono">
+            <div class="flex justify-between py-0.5">
+              <span class="text-[#5C6B80]">Track &amp; Frame</span>
+              <span class="text-white">{{ event.track }} / {{ event.frame }}</span>
+            </div>
+            <div class="flex justify-between py-0.5">
+              <span class="text-[#5C6B80]">Orbit Direction</span>
+              <span class="text-white">{{ event.orbit_direction }}</span>
+            </div>
+            <div class="flex justify-between py-0.5">
+              <span class="text-[#5C6B80]">Operating Mode</span>
+              <span class="text-white">{{ event.mode }}</span>
+            </div>
+            <div class="flex justify-between py-0.5">
+              <span class="text-[#5C6B80]">Threshold Method</span>
+              <span class="text-white">{{ event.threshold_selection_method }}</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Mini Map Initialization Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const container = document.getElementById('event-mini-map');
+      if (!container) return;
+      if (typeof maplibregl === 'undefined') {
+        container.innerHTML = '<div class="h-full flex items-center justify-center p-6 text-center text-sm text-[#94A3B8]"><div><div class="text-white font-medium mb-1">Interactive map could not load.</div><div>The analysis explanation and evidence are still available on this page.</div></div></div>';
+        return;
+      }
+
+      const aoiGeojson = {{ event.aoi_geojson_str | safe }};
+      const changeRegionsGeojson = {{ event.change_regions_geojson_str | safe }};
+      const bounds = {{ event.map_bounds | safe }};
+      const center = {{ event.map_center | safe }};
+
+      try {
+        if (!window.NisarBasemaps) {
+          container.innerHTML = '<div class="h-full flex items-center justify-center p-6 text-center text-sm text-[#94A3B8]">Basemap configuration could not load. The analysis explanation remains available.</div>';
+          return;
+        }
+        const map = new maplibregl.Map({
+          container: 'event-mini-map',
+          style: window.NisarBasemaps.createStyle(),
+          center: center,
+          zoom: 8,
+          attributionControl: false
+        });
+        map.on('error', event => {
+          if (event.error) console.error('MapLibre error:', event.error);
+        });
+        window.NisarBasemaps.bindFallback(map);
+
+        map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+        map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
+
+        map.on('load', () => {
+          map.resize();
+          // 1. Add AOI Outline & Fill
+          map.addSource('aoi-source', {
+            type: 'geojson',
+            data: aoiGeojson
+          });
+
+          map.addLayer({
+            id: 'aoi-fill',
+            type: 'fill',
+            source: 'aoi-source',
+            paint: {
+              'fill-color': '#1E6BFF',
+              'fill-opacity': 0.08
+            }
+          });
+
+          map.addLayer({
+            id: 'aoi-line',
+            type: 'line',
+            source: 'aoi-source',
+            paint: {
+              'line-color': '#1E6BFF',
+              'line-width': 1.5,
+              'line-dasharray': [3, 2]
+            }
+          });
+
+          // 2. Add Change Regions (if present)
+          if (changeRegionsGeojson && changeRegionsGeojson.features && changeRegionsGeojson.features.length > 0) {
+            map.addSource('regions-source', {
+              type: 'geojson',
+              data: changeRegionsGeojson
+            });
+
+            const stateColor = '{{ "#1E6BFF" if event.observation_state_raw == "change_detected" else "#00D2FF" if event.observation_state_raw == "strong_change" else "#8B5CF6" if event.observation_state_raw == "unknown_change" else "#4E7880" if event.observation_state_raw == "no_change" else "#64748B" }}';
+
+            map.addLayer({
+              id: 'regions-fill',
+              type: 'fill',
+              source: 'regions-source',
+              paint: {
+                'fill-color': stateColor,
+                'fill-opacity': 0.4
+              }
+            });
+
+            map.addLayer({
+              id: 'regions-line',
+              type: 'line',
+              source: 'regions-source',
+              paint: {
+                'line-color': stateColor,
+                'line-width': 2
+              }
+            });
+          }
+
+          // 3. Fit bounds with padding
+          if (bounds && bounds.length === 2) {
+            try {
+              map.fitBounds(bounds, { padding: 45, maxZoom: 12 });
+            } catch (err) {
+              console.warn('fitBounds error:', err);
+            }
+          }
+        });
+      } catch (err) {
+        console.error('Error initializing mini map:', err);
+      }
+    });
+  </script>
+{% endblock %}

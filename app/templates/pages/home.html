@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+
+{% block title %}Home / Change Feed{% endblock %}
+
+{% block content %}
+
+  <!-- 1. Hero / Editorial Intro Section -->
+  <section class="mb-10 lg:mb-12 border-b border-[#1E2838] pb-8">
+    <div class="max-w-4xl space-y-4">
+      <div class="section-label">
+        <span class="section-label-dot"></span>
+        <span>NISAR SURFACE CHANGE EXPLORER</span>
+      </div>
+
+      <h1 class="type-display text-white font-extrabold tracking-tight">
+        Observe how Earth's surface changes.
+      </h1>
+
+      <p class="type-body-large text-[#94A3B8] leading-relaxed max-w-3xl">
+        Explore radar-observed surface change, inspect the evidence behind each analysis, and compare observations across time.
+      </p>
+
+      <div class="flex flex-wrap items-center gap-3 pt-2">
+        <a href="/map" class="btn btn-primary">
+          <i data-lucide="map" class="w-4 h-4"></i>
+          <span>Explore Map</span>
+        </a>
+        <a href="/methods" class="btn btn-secondary">
+          <i data-lucide="book-open" class="w-4 h-4"></i>
+          <span>Methods &amp; Validation</span>
+        </a>
+      </div>
+      <nav class="demo-flow flex flex-wrap items-center gap-2 pt-3 text-[10px] font-mono" aria-label="Suggested demo flow">
+        <span class="type-metadata">DEMO FLOW</span>
+        <a href="#real-showcase">REAL SHOWCASE</a><span aria-hidden="true">→</span>
+        {% if real_events %}<a href="{{ real_events[0].detail_url }}">EVENT DETAIL</a>{% else %}<a href="/map">MAP</a>{% endif %}<span aria-hidden="true">→</span>
+        <a href="/lab/real_flood_001">EVIDENCE / IMAGE LAB</a><span aria-hidden="true">→</span>
+        <a href="/map">MAP</a><span aria-hidden="true">→</span><a href="/methods">METHODS</a>
+      </nav>
+
+      <!-- Small Scientific Transparency Note -->
+      <div class="pt-2 flex items-center gap-2 text-xs font-mono text-[#5C6B80]">
+        <i data-lucide="info" class="w-3.5 h-3.5 text-[#1E6BFF] shrink-0"></i>
+        <span>Demo analyses are precomputed and explicitly labeled by data origin.</span>
+      </div>
+    </div>
+  </section>
+
+  {% if total_count == 0 or not events %}
+    <!-- 5. Global Dataset Empty-State Behavior -->
+    <section class="py-12">
+      {% set empty_icon = "inbox" %}
+      {% set empty_title = "NO ANALYZED CHANGES AVAILABLE" %}
+      {% set empty_description = "No processed surface-change analyses are available in the current demo dataset." %}
+      {% set empty_action_label = "Explore NISAR Coverage" %}
+      {% set empty_action_url = "/map" %}
+      {% include "components/empty_state.html" %}
+      <div class="text-center mt-4">
+        <a href="/methods" class="text-xs font-mono text-[#1E6BFF] hover:underline uppercase tracking-wider">
+          Review Methods &amp; Validation
+        </a>
+      </div>
+    </section>
+
+  {% else %}
+
+    <!-- 2. Featured Observations Section -->
+    {% if real_events %}
+    <section id="real-showcase" class="mb-12">
+      {% set section_eyebrow = "REAL DATA // ONE STORED ANALYSIS" %}
+      {% set section_title = "Real NISAR Showcase" %}
+      {% set section_description = "One precomputed analysis uses real NISAR acquisitions. The linked record explains its evidence, quality, and validation limits." %}
+      {% set section_action = '<span class="badge badge-real">REAL NISAR ANALYSIS</span>' %}
+      {% include "components/section_header.html" %}
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for event in real_events %}
+        <div class="md:col-span-2 lg:col-span-2">
+          {% include "components/event_card.html" %}
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+
+    <!-- Synthetic demonstration records stay separate from the real showcase. -->
+    <section class="panel-subtle mb-8 p-4 border border-[#2D3B52]" aria-label="Demonstration data notice">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div><span class="badge badge-demo">DEMONSTRATION DATA</span><p class="type-small mt-2">Synthetic fixtures demonstrate other interface states. They are not Earth-observation measurements.</p></div>
+        <span class="type-metadata text-[10px]">REAL DATA: ONE NISAR SHOWCASE</span>
+      </div>
+    </section>
+
+    <!-- Demonstration records with Alpine.js filtering -->
+    <section class="mb-14" x-data="{ stateFilter: 'all', domainFilter: 'all' }">
+      
+      {% set section_eyebrow = "SYNTHETIC INTERFACE FIXTURES" %}
+      {% set section_title = "DEMONSTRATION OBSERVATIONS" %}
+      {% set section_description = "Synthetic records demonstrate change states, uncertain interpretations, and data-quality limits." %}
+      {% set section_action = '<span class="badge badge-demo">DEMO FIXTURE</span>' %}
+      {% include "components/section_header.html" %}
+
+      <!-- Filter Controls Bar -->
+      <div class="panel-subtle p-3.5 mb-6 border border-[#1E2838] space-y-3">
+        
+        <!-- State Filters -->
+        <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+          <span class="type-metadata text-[10px] text-[#5C6B80] mr-1 uppercase">State:</span>
+          
+          <button type="button" 
+                  @click="stateFilter = 'all'"
+                  :class="stateFilter === 'all' ? 'bg-[#1E6BFF] text-white border-[#1E6BFF]' : 'bg-[#0F141F] text-[#94A3B8] border-[#1E2838] hover:text-white hover:bg-[#161D2B]'"
+                  class="px-2.5 py-1 text-[11px] font-mono uppercase tracking-wider rounded-[2px] border transition-colors">
+            All States
+          </button>
+
+          <button type="button" 
+                  @click="stateFilter = 'change_detected'"
+                  :class="stateFilter === 'change_detected' ? 'bg-[#1E6BFF] text-white border-[#1E6BFF]' : 'bg-[#0F141F] text-[#94A3B8] border-[#1E2838] hover:text-white hover:bg-[#161D2B]'"
+                  class="px-2.5 py-1 text-[11px] font-mono uppercase tracking-wider rounded-[2px] border transition-colors flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 bg-[#1E6BFF] inline-block"></span>
+            <span>Change Detected</span>
+          </button>
+
+          <button type="button" 
+                  @click="stateFilter = 'strong_change'"
+                  :class="stateFilter === 'strong_change' ? 'bg-[#00D2FF] text-[#04060A] font-bold border-[#00D2FF]' : 'bg-[#0F141F] text-[#94A3B8] border-[#1E2838] hover:text-white hover:bg-[#161D2B]'"
+                  class="px-2.5 py-1 text-[11px] font-mono uppercase tracking-wider rounded-[2px] border transition-colors flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 bg-[#00D2FF] inline-block"></span>
+            <span>Strong Change</span>
+          </button>
+
+          <button type="button" 
+                  @click="stateFilter = 'unknown_change'"
+                  :class="stateFilter === 'unknown_change' ? 'bg-[#8B5CF6] text-white border-[#8B5CF6]' : 'bg-[#0F141F] text-[#94A3B8] border-[#1E2838] hover:text-white hover:bg-[#161D2B]'"
+                  class="px-2.5 py-1 text-[11px] font-mono uppercase tracking-wider rounded-[2px] border transition-colors flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 bg-[#8B5CF6] inline-block"></span>
+            <span>Unknown Change</span>
+          </button>
+
+          <button type="button" 
+                  @click="stateFilter = 'no_change'"
+                  :class="stateFilter === 'no_change' ? 'bg-[#4E7880] text-white border-[#4E7880]' : 'bg-[#0F141F] text-[#94A3B8] border-[#1E2838] hover:text-white hover:bg-[#161D2B]'"
+                  class="px-2.5 py-1 text-[11px] font-mono uppercase tracking-wider rounded-[2px] border transition-colors flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 bg-[#4E7880] inline-block"></span>
+            <span>No Change</span>
+          </button>
+
+          <button type="button" 
+                  @click="stateFilter = 'insufficient_data'"
+                  :class="stateFilter === 'insufficient_data' ? 'bg-[#64748B] text-white border-[#64748B]' : 'bg-[#0F141F] text-[#94A3B8] border-[#1E2838] hover:text-white hover:bg-[#161D2B]'"
+                  class="px-2.5 py-1 text-[11px] font-mono uppercase tracking-wider rounded-[2px] border transition-colors flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 bg-[#64748B] inline-block"></span>
+            <span>Insufficient Data</span>
+          </button>
+        </div>
+
+        <!-- Domain Filters -->
+        <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 pt-1 border-t border-[#1E2838]">
+          <span class="type-metadata text-[10px] text-[#5C6B80] mr-1 uppercase">Domain:</span>
+
+          <button type="button" 
+                  @click="domainFilter = 'all'"
+                  :class="domainFilter === 'all' ? 'text-white font-bold underline decoration-[#1E6BFF] decoration-2' : 'text-[#94A3B8] hover:text-white'"
+                  class="px-2 py-0.5 text-[11px] font-mono uppercase tracking-wider transition-colors">
+            All Domains
+          </button>
+          
+          <span class="text-[#2D3B52] text-xs">/</span>
+
+          <button type="button" 
+                  @click="domainFilter = 'flood_wetland'"
+                  :class="domainFilter === 'flood_wetland' ? 'text-white font-bold underline decoration-[#1E6BFF] decoration-2' : 'text-[#94A3B8] hover:text-white'"
+                  class="px-2 py-0.5 text-[11px] font-mono uppercase tracking-wider transition-colors">
+            Flood / Wetland
+          </button>
+
+          <span class="text-[#2D3B52] text-xs">/</span>
+
+          <button type="button" 
+                  @click="domainFilter = 'wildfire'"
+                  :class="domainFilter === 'wildfire' ? 'text-white font-bold underline decoration-[#1E6BFF] decoration-2' : 'text-[#94A3B8] hover:text-white'"
+                  class="px-2 py-0.5 text-[11px] font-mono uppercase tracking-wider transition-colors">
+            Vegetation Disturbance
+          </button>
+
+          <span class="text-[#2D3B52] text-xs">/</span>
+
+          <button type="button" 
+                  @click="domainFilter = 'glacier'"
+                  :class="domainFilter === 'glacier' ? 'text-white font-bold underline decoration-[#1E6BFF] decoration-2' : 'text-[#94A3B8] hover:text-white'"
+                  class="px-2 py-0.5 text-[11px] font-mono uppercase tracking-wider transition-colors">
+            Glacier Change
+          </button>
+
+          <span class="text-[#2D3B52] text-xs">/</span>
+
+          <button type="button" 
+                  @click="domainFilter = 'deformation'"
+                  :class="domainFilter === 'deformation' ? 'text-white font-bold underline decoration-[#1E6BFF] decoration-2' : 'text-[#94A3B8] hover:text-white'"
+                  class="px-2 py-0.5 text-[11px] font-mono uppercase tracking-wider transition-colors">
+            Ground Deformation
+          </button>
+
+          <span class="text-[#2D3B52] text-xs">/</span>
+
+          <button type="button" 
+                  @click="domainFilter = 'unclassified'"
+                  :class="domainFilter === 'unclassified' ? 'text-white font-bold underline decoration-[#1E6BFF] decoration-2' : 'text-[#94A3B8] hover:text-white'"
+                  class="px-2 py-0.5 text-[11px] font-mono uppercase tracking-wider transition-colors">
+            Unclassified Change
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Event Cards Grid (Reactive Filtered View) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for event in demo_events %}
+        <div x-show="(stateFilter === 'all' || stateFilter === '{{ event.observation_state_raw }}') && (domainFilter === 'all' || domainFilter === '{{ event.domain_raw }}')"
+             x-transition:enter="transition ease-out duration-150"
+             x-transition:enter-start="opacity-0 scale-95"
+             x-transition:enter-end="opacity-100 scale-100">
+          {% include "components/event_card.html" %}
+        </div>
+        {% endfor %}
+      </div>
+
+    </section>
+
+    <!-- 4. Coverage / Interactive Map Callout Section -->
+    <section class="panel-accent mb-12 flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div class="space-y-1">
+        <div class="type-metadata text-[10px] text-[#1E6BFF]">SPATIAL EXPLORATION</div>
+        <h2 class="type-section-title text-base sm:text-lg">
+          Explore Global Radar Coverage on MapLibre
+        </h2>
+        <p class="type-body text-[#94A3B8] max-w-2xl">
+          Inspect 12-day exact repeat orbital passes, swath geometry, and geographical bounding boxes for all analyzed regions.
+        </p>
+      </div>
+      <div class="shrink-0 flex items-center gap-3">
+        <a href="/map" class="btn btn-primary">
+          <i data-lucide="map" class="w-4 h-4"></i>
+          <span>Launch Map Explorer</span>
+        </a>
+      </div>
+    </section>
+
+  {% endif %}
+
+{% endblock %}
