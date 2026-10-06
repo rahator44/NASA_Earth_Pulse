@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="NISAR Surface Change Explorer - Interactive Earth observation demonstration for the NASA Space Apps Challenge.">
+  <title>{% block title %}NISAR Surface Change Explorer{% endblock %} | NASA Space Apps Challenge</title>
+
+  <!-- Typography: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS Configuration & CDN -->
+  <script>
+    window.tailwind = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            bg: {
+              DEFAULT: 'var(--color-bg)',
+              secondary: 'var(--color-bg-secondary)',
+            },
+            surface: {
+              DEFAULT: 'var(--color-surface)',
+              elevated: 'var(--color-surface-elevated)',
+            },
+            border: {
+              DEFAULT: 'var(--color-border)',
+              strong: 'var(--color-border-strong)',
+              accent: 'var(--color-border-accent)',
+            },
+            text: {
+              DEFAULT: 'var(--color-text)',
+              secondary: 'var(--color-text-secondary)',
+              muted: 'var(--color-text-muted)',
+            },
+            accent: {
+              DEFAULT: 'var(--color-accent)',
+              hover: 'var(--color-accent-hover)',
+              subtle: 'var(--color-accent-subtle)',
+            },
+            state: {
+              'no-change': 'var(--color-state-no-change)',
+              'change': 'var(--color-state-change)',
+              'strong': 'var(--color-state-strong)',
+              'unknown': 'var(--color-state-unknown)',
+              'insufficient': 'var(--color-state-insufficient)',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Courier New', 'monospace'],
+          },
+          maxWidth: {
+            'page': 'var(--page-max-width)',
+          }
+        }
+      }
+    };
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Global Custom Styles & Tokens -->
+  <link rel="stylesheet" href="/static/css/app.css">
+  <script>window.MAPBOX_PUBLIC_TOKEN = {{ mapbox_public_token|default('', true)|tojson }};</script>
+  <script src="/static/js/map_basemaps.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Alpine.js (Lightweight interactive state) -->
+  <script defer src="https://unpkg.com/alpinejs@3.14.8/dist/cdn.min.js"></script>
+
+  <!-- HTMX -->
+  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+
+  {% block head_extra %}{% endblock %}
+</head>
+<body data-page="{{ active_page|default('') }}" class="bg-[#04060A] text-[#F0F4F8] font-sans min-h-screen flex flex-col selection:bg-[#1E6BFF] selection:text-white">
+
+  <!-- Header Component -->
+  {% include "components/header.html" %}
+
+  <!-- Mobile Navigation Drawer -->
+  {% include "components/mobile_nav.html" %}
+
+  <!-- Main Content Container -->
+  <main id="main-content" class="flex-1 w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Scientific Sub-Footer -->
+  <footer class="mt-auto border-t border-[#1E2838] bg-[#04060A] py-6 text-xs text-[#94A3B8]">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex flex-col gap-2">
+        <div class="flex items-center space-x-3">
+        <span class="w-2 h-2 bg-[#1E6BFF] inline-block"></span>
+        <span class="font-mono text-[#F0F4F8] uppercase tracking-wider font-semibold">NISAR Surface Change Explorer</span>
+        <span class="text-[#5C6B80]">|</span>
+        <span class="font-mono text-[#94A3B8]">NASA Space Apps Challenge Demo</span>
+        </div>
+        <p class="max-w-3xl text-[11px] leading-relaxed">NISAR Surface Change Explorer is a NASA Space Apps Challenge demo. It visualizes observed Earth-surface change and does not predict disasters or issue emergency instructions. This demo is not an official NASA product or endorsement.</p>
+      </div>
+      <div class="font-mono text-[#5C6B80] text-center sm:text-right">
+        <span class="badge badge-maturity">DEMO MODE</span><br><a href="/settings" class="hover:text-white">About &amp; settings</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Core Scripts -->
+  <script src="/static/js/navigation.js"></script>
+  <script src="/static/js/app.js"></script>
+  <script src="/static/js/evidence_viewer.js"></script>
+  <script src="/static/js/live_reload.js"></script>
+  {% block scripts_extra %}{% endblock %}
+</body>
+</html>

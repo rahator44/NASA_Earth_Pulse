@@ -1,0 +1,79 @@
+{
+  "showcase_id": "real_flood_001",
+  "status": "NO DEFENSIBLE REAL SHOWCASE PROCESSED",
+  "stop_condition": "Earthdata authentication unavailable",
+  "diagnostic": "LoginAttemptFailure: LoginAttemptFailure (Authentication with Earthdata Login failed with:\n{\"error\":\"invalid_account_status\",\"error_description\":\"Credentials (username, password) are invalid\"})",
+  "timestamp": "2026-10-05T21:08:38.548456+00:00",
+  "config_used": {
+    "showcase_id": "real_flood_001",
+    "site_name": "Atchafalaya River Basin & Lower Mississippi Alluvial Plain, LA, USA",
+    "aoi_name": "Atchafalaya Floodplain / Wetland Basin",
+    "bbox": [
+      -91.5,
+      30.0,
+      -91.0,
+      30.5
+    ],
+    "geometry": {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [
+            -91.5,
+            30.0
+          ],
+          [
+            -91.0,
+            30.0
+          ],
+          [
+            -91.0,
+            30.5
+          ],
+          [
+            -91.5,
+            30.5
+          ],
+          [
+            -91.5,
+            30.0
+          ]
+        ]
+      ]
+    },
+    "before_granule_id": "NISAR_L2_PR_GCOV_024_033_A_017_4005_DHDH_A_20260628T112725_20260628T112800_P05023_N_F_J_001",
+    "after_granule_id": "NISAR_L2_PR_GCOV_025_033_A_017_4005_DHDH_A_20260710T112724_20260710T112759_P05023_N_F_J_001",
+    "before_date": "2026-06-28T11:27:25Z",
+    "after_date": "2026-07-10T11:27:24Z",
+    "product": "GCOV",
+    "maturity": "PROVISIONAL",
+    "track": 33,
+    "frame": 17,
+    "orbit_direction": "ASCENDING",
+    "mode": "Dual-pol (HH/HV)",
+    "selected_frequency": "A",
+    "selected_polarization": "HHHH",
+    "source_dataset_path": "/science/LSAR/GCOV/grids/frequencyA/HHHH",
+    "crid": "P05023",
+    "quality_gate_min_valid_fraction": 0.85,
+    "apply_linear_power_filter": false,
+    "filter_type": "none",
+    "filter_kernel_size": 3,
+    "difference_definition": "after_db - before_db",
+    "threshold_method": "calibrated_classical_threshold",
+    "delta_threshold": -3.0,
+    "post_water_threshold": -15.0,
+    "morphology_opening": true,
+    "min_region_pixels": 10,
+    "reference_product_pre": "OPERA_L3_DSWx-HLS_T15RXP_20260628T163859Z_20260703T000747Z_S2B_30_v1.1",
+    "reference_product_post": "OPERA_L3_DSWx-HLS_T15RXP_20260708T163859Z_20260721T172840Z_S2B_30_v1.1",
+    "reference_dates": [
+      "2026-06-28",
+      "2026-07-08"
+    ],
+    "calibration_method": "same_event_spatial_holdout",
+    "validation_basis": "OPERA_L3_DSWX-HLS_V1_valid_pixels_only",
+    "pipeline_version": "1.0.0",
+    "code_version": "step12-real-sar-v1"
+  }
+}

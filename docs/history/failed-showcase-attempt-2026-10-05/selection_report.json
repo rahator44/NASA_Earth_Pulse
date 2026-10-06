@@ -1,0 +1,407 @@
+{
+  "report_id": "SHOWCASE_SEL_20261005_211403",
+  "generated_at": "2026-10-05T21:14:03.316575+00:00",
+  "candidates_evaluated": [
+    {
+      "site_name": "Atchafalaya River Basin & Lower Mississippi Alluvial Plain, LA, USA",
+      "aoi_name": "Atchafalaya Floodplain / Wetland Basin",
+      "bbox": [
+        -91.5,
+        30.0,
+        -91.0,
+        30.5
+      ],
+      "terrain_type": "Lowland deltaic floodplain and forested wetland swamp",
+      "provisional_count": 50,
+      "total_pairs_evaluated": 10,
+      "compatible_pairs_count": 10,
+      "best_pair": {
+        "before_id": "NISAR_L2_PR_GCOV_024_033_A_017_4005_DHDH_A_20260628T112725_20260628T112800_P05023_N_F_J_001",
+        "after_id": "NISAR_L2_PR_GCOV_025_033_A_017_4005_DHDH_A_20260710T112724_20260710T112759_P05023_N_F_J_001",
+        "before_date": "2026-06-28T11:27:25Z",
+        "after_date": "2026-07-10T11:27:24Z",
+        "temporal_baseline_days": 11,
+        "checks": {
+          "track": "33 vs 33",
+          "frame": "17 vs 17",
+          "direction": "ASCENDING vs ASCENDING",
+          "mode": "DHDH (from granule ID) vs DHDH (from granule ID)",
+          "polarization": "Common: ['HH', 'HV']",
+          "frequency": "L-SAR vs L-SAR",
+          "bandwidth": "40+5 MHz vs 40+5 MHz",
+          "maturity": "PROVISIONAL vs PROVISIONAL",
+          "version": "CRID P05023 vs P05023"
+        },
+        "notes": "Candidate pair satisfies geometric and radiometric comparison criteria."
+      },
+      "independent_references": [
+        {
+          "concept_id": "G4234007702-POCLOUD",
+          "granule_ur": "OPERA_L3_DSWx-HLS_T15RXP_20260628T163859Z_20260703T000747Z_S2B_30_v1.1",
+          "temporal": {
+            "EndingDateTime": "2026-06-28T16:55:14.239Z",
+            "BeginningDateTime": "2026-06-28T16:55:14.239Z"
+          }
+        },
+        {
+          "concept_id": "G4236416855-POCLOUD",
+          "granule_ur": "OPERA_L3_DSWx-HLS_T15RXP_20260703T163841Z_20260705T043506Z_S2C_30_v1.1",
+          "temporal": {
+            "EndingDateTime": "2026-07-03T16:55:15.355Z",
+            "BeginningDateTime": "2026-07-03T16:55:15.355Z"
+          }
+        },
+        {
+          "concept_id": "G4254300259-POCLOUD",
+          "granule_ur": "OPERA_L3_DSWx-HLS_T15RXP_20260705T164711Z_20260720T220702Z_S2A_30_v1.1",
+          "temporal": {
+            "EndingDateTime": "2026-07-05T16:55:32.202Z",
+            "BeginningDateTime": "2026-07-05T16:55:32.202Z"
+          }
+        },
+        {
+          "concept_id": "G4239897958-POCLOUD",
+          "granule_ur": "OPERA_L3_DSWx-HLS_T15RXP_20260706T163741Z_20260708T115118Z_L8_30_v1.1",
+          "temporal": {
+            "EndingDateTime": "2026-07-06T16:37:41.215Z",
+            "BeginningDateTime": "2026-07-06T16:37:41.215Z"
+          }
+        },
+        {
+          "concept_id": "G4255601030-POCLOUD",
+          "granule_ur": "OPERA_L3_DSWx-HLS_T15RXP_20260707T163136Z_20260721T200840Z_L9_30_v1.1",
+          "temporal": {
+            "EndingDateTime": "2026-07-07T16:31:36.852Z",
+            "BeginningDateTime": "2026-07-07T16:31:36.852Z"
+          }
+        },
+        {
+          "concept_id": "G4255352807-POCLOUD",
+          "granule_ur": "OPERA_L3_DSWx-HLS_T15RXP_20260708T163859Z_20260721T172840Z_S2B_30_v1.1",
+          "temporal": {
+            "EndingDateTime": "2026-07-08T16:55:15.090Z",
+            "BeginningDateTime": "2026-07-08T16:55:15.090Z"
+          }
+        }
+      ]
+    },
+    {
+      "site_name": "Sacramento-San Joaquin River Delta, CA, USA",
+      "aoi_name": "Sacramento Delta Agricultural & Wetland Region",
+      "bbox": [
+        -121.8,
+        38.0,
+        -121.2,
+        38.5
+      ],
+      "terrain_type": "Lowland river delta and managed seasonal wetlands",
+      "provisional_count": 38,
+      "total_pairs_evaluated": 10,
+      "compatible_pairs_count": 10,
+      "best_pair": {
+        "before_id": "NISAR_L2_PR_GCOV_029_042_D_070_4005_DHDH_A_20260828T025638_20260828T025713_P05023_N_F_J_001",
+        "after_id": "NISAR_L2_PR_GCOV_031_042_D_070_4005_DHDH_A_20260921T025638_20260921T025713_P05023_N_F_J_001",
+        "before_date": "2026-08-28T02:56:38Z",
+        "after_date": "2026-09-21T02:56:38Z",
+        "temporal_baseline_days": 24,
+        "checks": {
+          "track": "42 vs 42",
+          "frame": "70 vs 70",
+          "direction": "DESCENDING vs DESCENDING",
+          "mode": "DHDH (from granule ID) vs DHDH (from granule ID)",
+          "polarization": "Common: ['HH', 'HV']",
+          "frequency": "L-SAR vs L-SAR",
+          "bandwidth": "40+5 MHz vs 40+5 MHz",
+          "maturity": "PROVISIONAL vs PROVISIONAL",
+          "version": "CRID P05023 vs P05023"
+        },
+        "notes": "Candidate pair satisfies geometric and radiometric comparison criteria."
+      },
+      "independent_references": [
+        {
+          "concept_id": "G4311199898-POCLOUD",
+          "granule_ur": "OPERA_L3_DSWx-HLS_T10SEH_20260829T185919Z_20260915T034424Z_S2B_30_v1.1",
+          "temporal": {
+            "EndingDateTime": "2026-08-29T19:13:49.519Z",
+            "BeginningDateTime": "2026-08-29T19:13:49.519Z"
+          }
+        },
+        {
+          "concept_id": "G4294451785-POCLOUD",
+          "granule_ur": "OPERA_L3_DSWx-HLS_T10SFH_20260830T184831Z_20260901T045621Z_S2A_30_v1.1",
+          "temporal": {
+            "EndingDateTime": "2026-08-30T18:54:10.672Z",
+            "BeginningDateTime": "2026-08-30T18:54:10.672Z"
+          }
+        },
+        {
+          "concept_id": "G4296627301-POCLOUD",
+          "granule_ur": "OPERA_L3_DSWx-HLS_T10SFH_20260831T184921Z_20260902T223842Z_S2C_30_v1.1",
+          "temporal": {
+            "EndingDateTime": "2026-08-31T19:03:49.380Z",
+            "BeginningDateTime": "2026-08-31T19:03:49.380Z"
+          }
+        },
+        {
+          "concept_id": "G4297778756-POCLOUD",
+          "granule_ur": "OPERA_L3_DSWx-HLS_T10SEH_20260831T184921Z_20260903T224852Z_S2C_30_v1.1",
+          "temporal": {
+            "EndingDateTime": "2026-08-31T19:03:52.708Z",
+            "BeginningDateTime": "2026-08-31T19:03:52.708Z"
+          }
+        },
+        {
+          "concept_id": "G4300812890-POCLOUD",
+          "granule_ur": "OPERA_L3_DSWx-HLS_T10SEH_20260902T185140Z_20260907T044004Z_L8_30_v1.1",
+          "temporal": {
+            "EndingDateTime": "2026-09-02T18:51:40.971Z",
+            "BeginningDateTime": "2026-09-02T18:51:40.971Z"
+          }
+        },
+        {
+          "concept_id": "G4298279471-POCLOUD",
+          "granule_ur": "OPERA_L3_DSWx-HLS_T10SFH_20260902T183919Z_20260904T145918Z_S2B_30_v1.1",
+          "temporal": {
+            "EndingDateTime": "2026-09-02T18:53:52.915Z",
+            "BeginningDateTime": "2026-09-02T18:53:52.915Z"
+          }
+        },
+        {
+          "concept_id": "G4299409552-POCLOUD",
+          "granule_ur": "OPERA_L3_DSWx-HLS_T10SFH_20260903T184536Z_20260905T182231Z_L9_30_v1.1",
+          "temporal": {
+            "EndingDateTime": "2026-09-03T18:45:36.834Z",
+            "BeginningDateTime": "2026-09-03T18:45:36.834Z"
+          }
+        },
+        {
+          "concept_id": "G4299410879-POCLOUD",
+          "granule_ur": "OPERA_L3_DSWx-HLS_T10SEH_20260903T184536Z_20260905T182301Z_L9_30_v1.1",
+          "temporal": {
+            "EndingDateTime": "2026-09-03T18:45:36.834Z",
+            "BeginningDateTime": "2026-09-03T18:45:36.834Z"
+          }
+        },
+        {
+          "concept_id": "G4299714191-POCLOUD",
+          "granule_ur": "OPERA_L3_DSWx-HLS_T10SFH_20260904T183919Z_20260906T021611Z_L8_30_v1.1",
+          "temporal": {
+            "EndingDateTime": "2026-09-04T18:39:19.500Z",
+            "BeginningDateTime": "2026-09-04T18:39:19.500Z"
+          }
+        },
+        {
+          "concept_id": "G4315987097-POCLOUD",
+          "granule_ur": "OPERA_L3_DSWx-HLS_T10SEH_20260910T185149Z_20260918T220904Z_L9_30_v1.1",
+          "temporal": {
+            "EndingDateTime": "2026-09-10T18:51:49.451Z",
+            "BeginningDateTime": "2026-09-10T18:51:49.451Z"
+          }
+        }
+      ]
+    },
+    {
+      "site_name": "Florida Everglades Wetlands, FL, USA",
+      "aoi_name": "Everglades National Park Sub-basin",
+      "bbox": [
+        -80.9,
+        25.4,
+        -80.3,
+        26.0
+      ],
+      "terrain_type": "Subtropical freshwater marsh and flooded sawgrass",
+      "provisional_count": 50,
+      "total_pairs_evaluated": 10,
+      "compatible_pairs_count": 7,
+      "best_pair": {
+        "before_id": "NISAR_L2_PR_GCOV_024_047_A_015_4005_DHDH_A_20260629T104441_20260629T104515_P05023_N_F_J_001",
+        "after_id": "NISAR_L2_PR_GCOV_025_047_A_015_4005_DHDH_A_20260711T104440_20260711T104515_P05023_N_F_J_001",
+        "before_date": "2026-06-29T10:44:41Z",
+        "after_date": "2026-07-11T10:44:40Z",
+        "temporal_baseline_days": 11,
+        "checks": {
+          "track": "47 vs 47",
+          "frame": "15 vs 15",
+          "direction": "ASCENDING vs ASCENDING",
+          "mode": "DHDH (from granule ID) vs DHDH (from granule ID)",
+          "polarization": "Common: ['HH', 'HV']",
+          "frequency": "L-SAR vs L-SAR",
+          "bandwidth": "40+5 MHz vs 40+5 MHz",
+          "maturity": "PROVISIONAL vs PROVISIONAL",
+          "version": "CRID P05023 vs P05023"
+        },
+        "notes": "Candidate pair satisfies geometric and radiometric comparison criteria."
+      },
+      "independent_references": [
+        {
+          "concept_id": "G4235251028-POCLOUD",
+          "granule_ur": "OPERA_L3_DSWx-HLS_T17RNJ_20260701T155821Z_20260703T233030Z_S2C_30_v1.1",
+          "temporal": {
+            "EndingDateTime": "2026-07-01T16:16:04.136Z",
+            "BeginningDateTime": "2026-07-01T16:16:04.136Z"
+          }
+        },
+        {
+          "concept_id": "G4254351892-POCLOUD",
+          "granule_ur": "OPERA_L3_DSWx-HLS_T17RNJ_20260703T160509Z_20260720T223508Z_S2B_30_v1.1",
+          "temporal": {
+            "EndingDateTime": "2026-07-03T16:06:10.638Z",
+            "BeginningDateTime": "2026-07-03T16:06:10.638Z"
+          }
+        },
+        {
+          "concept_id": "G4237937157-POCLOUD",
+          "granule_ur": "OPERA_L3_DSWx-HLS_T17RNJ_20260705T155536Z_20260707T030515Z_L8_30_v1.1",
+          "temporal": {
+            "EndingDateTime": "2026-07-05T15:55:36.911Z",
+            "BeginningDateTime": "2026-07-05T15:55:36.911Z"
+          }
+        },
+        {
+          "concept_id": "G4239941962-POCLOUD",
+          "granule_ur": "OPERA_L3_DSWx-HLS_T17RNJ_20260706T154932Z_20260708T131351Z_L9_30_v1.1",
+          "temporal": {
+            "EndingDateTime": "2026-07-06T15:49:32.776Z",
+            "BeginningDateTime": "2026-07-06T15:49:32.776Z"
+          }
+        },
+        {
+          "concept_id": "G4239866443-POCLOUD",
+          "granule_ur": "OPERA_L3_DSWx-HLS_T17RNJ_20260706T155819Z_20260708T113320Z_S2B_30_v1.1",
+          "temporal": {
+            "EndingDateTime": "2026-07-06T16:16:04.059Z",
+            "BeginningDateTime": "2026-07-06T16:16:04.059Z"
+          }
+        },
+        {
+          "concept_id": "G4241015811-POCLOUD",
+          "granule_ur": "OPERA_L3_DSWx-HLS_T17RNJ_20260707T154315Z_20260709T150000Z_L8_30_v1.1",
+          "temporal": {
+            "EndingDateTime": "2026-07-07T15:43:15.645Z",
+            "BeginningDateTime": "2026-07-07T15:43:15.645Z"
+          }
+        },
+        {
+          "concept_id": "G4255359629-POCLOUD",
+          "granule_ur": "OPERA_L3_DSWx-HLS_T17RNJ_20260708T160511Z_20260721T172947Z_S2C_30_v1.1",
+          "temporal": {
+            "EndingDateTime": "2026-07-08T16:06:13.280Z",
+            "BeginningDateTime": "2026-07-08T16:06:13.280Z"
+          }
+        },
+        {
+          "concept_id": "G4245674368-POCLOUD",
+          "granule_ur": "OPERA_L3_DSWx-HLS_T17RNJ_20260710T160531Z_20260713T134150Z_S2A_30_v1.1",
+          "temporal": {
+            "EndingDateTime": "2026-07-10T16:06:28.828Z",
+            "BeginningDateTime": "2026-07-10T16:06:28.828Z"
+          }
+        },
+        {
+          "concept_id": "G4255524356-POCLOUD",
+          "granule_ur": "OPERA_L3_DSWx-HLS_T17RNJ_20260711T155821Z_20260721T184405Z_S2C_30_v1.1",
+          "temporal": {
+            "EndingDateTime": "2026-07-11T16:16:06.209Z",
+            "BeginningDateTime": "2026-07-11T16:16:06.209Z"
+          }
+        }
+      ]
+    }
+  ],
+  "selected_showcase": {
+    "site_name": "Atchafalaya River Basin & Lower Mississippi Alluvial Plain, LA, USA",
+    "aoi_name": "Atchafalaya Floodplain / Wetland Basin",
+    "bbox": [
+      -91.5,
+      30.0,
+      -91.0,
+      30.5
+    ],
+    "terrain_type": "Lowland deltaic floodplain and forested wetland swamp",
+    "provisional_count": 50,
+    "total_pairs_evaluated": 10,
+    "compatible_pairs_count": 10,
+    "best_pair": {
+      "before_id": "NISAR_L2_PR_GCOV_024_033_A_017_4005_DHDH_A_20260628T112725_20260628T112800_P05023_N_F_J_001",
+      "after_id": "NISAR_L2_PR_GCOV_025_033_A_017_4005_DHDH_A_20260710T112724_20260710T112759_P05023_N_F_J_001",
+      "before_date": "2026-06-28T11:27:25Z",
+      "after_date": "2026-07-10T11:27:24Z",
+      "temporal_baseline_days": 11,
+      "checks": {
+        "track": "33 vs 33",
+        "frame": "17 vs 17",
+        "direction": "ASCENDING vs ASCENDING",
+        "mode": "DHDH (from granule ID) vs DHDH (from granule ID)",
+        "polarization": "Common: ['HH', 'HV']",
+        "frequency": "L-SAR vs L-SAR",
+        "bandwidth": "40+5 MHz vs 40+5 MHz",
+        "maturity": "PROVISIONAL vs PROVISIONAL",
+        "version": "CRID P05023 vs P05023"
+      },
+      "notes": "Candidate pair satisfies geometric and radiometric comparison criteria."
+    },
+    "independent_references": [
+      {
+        "concept_id": "G4234007702-POCLOUD",
+        "granule_ur": "OPERA_L3_DSWx-HLS_T15RXP_20260628T163859Z_20260703T000747Z_S2B_30_v1.1",
+        "temporal": {
+          "EndingDateTime": "2026-06-28T16:55:14.239Z",
+          "BeginningDateTime": "2026-06-28T16:55:14.239Z"
+        }
+      },
+      {
+        "concept_id": "G4236416855-POCLOUD",
+        "granule_ur": "OPERA_L3_DSWx-HLS_T15RXP_20260703T163841Z_20260705T043506Z_S2C_30_v1.1",
+        "temporal": {
+          "EndingDateTime": "2026-07-03T16:55:15.355Z",
+          "BeginningDateTime": "2026-07-03T16:55:15.355Z"
+        }
+      },
+      {
+        "concept_id": "G4254300259-POCLOUD",
+        "granule_ur": "OPERA_L3_DSWx-HLS_T15RXP_20260705T164711Z_20260720T220702Z_S2A_30_v1.1",
+        "temporal": {
+          "EndingDateTime": "2026-07-05T16:55:32.202Z",
+          "BeginningDateTime": "2026-07-05T16:55:32.202Z"
+        }
+      },
+      {
+        "concept_id": "G4239897958-POCLOUD",
+        "granule_ur": "OPERA_L3_DSWx-HLS_T15RXP_20260706T163741Z_20260708T115118Z_L8_30_v1.1",
+        "temporal": {
+          "EndingDateTime": "2026-07-06T16:37:41.215Z",
+          "BeginningDateTime": "2026-07-06T16:37:41.215Z"
+        }
+      },
+      {
+        "concept_id": "G4255601030-POCLOUD",
+        "granule_ur": "OPERA_L3_DSWx-HLS_T15RXP_20260707T163136Z_20260721T200840Z_L9_30_v1.1",
+        "temporal": {
+          "EndingDateTime": "2026-07-07T16:31:36.852Z",
+          "BeginningDateTime": "2026-07-07T16:31:36.852Z"
+        }
+      },
+      {
+        "concept_id": "G4255352807-POCLOUD",
+        "granule_ur": "OPERA_L3_DSWx-HLS_T15RXP_20260708T163859Z_20260721T172840Z_S2B_30_v1.1",
+        "temporal": {
+          "EndingDateTime": "2026-07-08T16:55:15.090Z",
+          "BeginningDateTime": "2026-07-08T16:55:15.090Z"
+        }
+      }
+    ]
+  },
+  "earthdata_authentication_status": "UNAVAILABLE",
+  "earthdata_error": "LoginAttemptFailure: LoginAttemptFailure (Authentication with Earthdata Login failed with:\n{\"error\":\"invalid_account_status\",\"error_description\":\"Credentials (username, password) are invalid\"})",
+  "selection_verdict": "NO DEFENSIBLE REAL SHOWCASE SELECTED",
+  "stop_condition_triggered": true,
+  "unverified_requirements": [
+    "Documented flood/inundation event between the two acquisitions has NOT been verified.",
+    "DSWx-HLS cloud / valid-pixel fraction NOT measured (requires authenticated download).",
+    "Candidate AOI (0.5 x 0.5 deg, ~48 x 55 km) exceeds the preferred 10-30 km demo size; must be reduced before processing.",
+    "HDF5 frequency groups, covariance terms, CRS and fill values NOT inspected (requires authenticated download).",
+    "Pair mode check uses the polarization-mode token parsed from the granule ID because ASF beamModeType is null."
+  ],
+  "failure_requirement": "Earthdata authentication unavailable",
+  "reason_selected": "Candidate site (Atchafalaya River Basin & Lower Mississippi Alluvial Plain, LA, USA) satisfies all orbital and radiometric metadata compatibility checks (same track/frame/direction/polarization-mode/bandwidth/CRID, ~12-day repeat) and has OPERA DSWx-HLS granules near both dates, but raw HDF5 access halted under STOP CONDITION because NASA Earthdata Login authentication failed (LoginAttemptFailure: LoginAttemptFailure (Authentication with Earthdata Login failed with:\n{\"error\":\"invalid_account_status\",\"error_description\":\"Credentials (username, password) are invalid\"}))."
+}

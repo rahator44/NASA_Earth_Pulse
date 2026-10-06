@@ -1,0 +1,510 @@
+{% extends "base.html" %}
+
+{% block title %}Situation Dashboard | NASA Space Apps Challenge{% endblock %}
+
+{% block content %}
+  <!-- MapLibre GL Dependencies -->
+  <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <script src="/static/js/dashboard_map.js"></script>
+
+  {% set page_label = "REGIONAL SITUATION MATRIX // DECISION SUPPORT" %}
+  {% set page_title = "Situation Dashboard" %}
+  {% set page_description = "Review analyzed surface-change records and their evidence." %}
+  {% set badge_text = "REGIONAL REVIEW" %}
+  {% include "components/page_header.html" %}
+
+  <div class="space-y-8" 
+       x-data="initReviewQueue({
+         items: {{ dashboard.review_queue_json|tojson }}
+       })">
+
+    <!-- 1. Synthetic Warning & Triage Context Strip -->
+    <div class="p-3.5 bg-[#090D14] border-l-2 border-[#1E6BFF] border-y border-r border-[#1E2838] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm font-mono text-xs">
+      <div class="flex items-center gap-3">
+        <span class="badge badge-product text-[10px] shrink-0 font-bold tracking-wider">{{ dashboard.synthetic_badge_text }}</span>
+        <p class="text-[#94A3B8] leading-relaxed">
+          {{ dashboard.synthetic_warning }}
+        </p>
+      </div>
+      <div class="text-[11px] text-[#5C6B80] italic shrink-0">
+        Review Priority is a triage aid, not an emergency severity level.
+      </div>
+    </div>
+
+    <!-- 2. Observation Summary (Top Summary Cards) -->
+    <div class="space-y-3">
+      <div class="flex items-center justify-between">
+        <h3 class="type-section-title text-sm flex items-center gap-2">
+          <i data-lucide="layout-grid" class="w-4 h-4 text-[#1E6BFF]"></i>
+          <span>ANALYZED AREAS SUMMARY</span>
+        </h3>
+        <span class="type-metadata text-[10px] text-[#5C6B80]">TOTAL ANALYSES: {{ dashboard.summary.total_analyzed_count }}</span>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        <!-- Change Detected -->
+        <div class="panel-standard p-3.5 bg-[#090D14] border-l-2 border-[#1E6BFF]">
+          <div class="type-metadata text-[10px] text-[#1E6BFF] font-semibold">CHANGE DETECTED</div>
+          <div class="text-2xl font-bold font-mono text-white mt-1">{{ dashboard.summary.change_detected_count }}</div>
+          <div class="text-[10px] text-[#5C6B80] font-mono mt-0.5">Physical change observed</div>
+        </div>
+
+        <!-- Strong Change -->
+        <div class="panel-standard p-3.5 bg-[#090D14] border-l-2 border-[#00D2FF]">
+          <div class="type-metadata text-[10px] text-[#00D2FF] font-semibold">STRONG CHANGE</div>
+          <div class="text-2xl font-bold font-mono text-white mt-1">{{ dashboard.summary.strong_change_count }}</div>
+          <div class="text-[10px] text-[#5C6B80] font-mono mt-0.5">High magnitude divergence</div>
+        </div>
+
+        <!-- Unknown Change -->
+        <div class="panel-standard p-3.5 bg-[#090D14] border-l-2 border-[#8B5CF6]">
+          <div class="type-metadata text-[10px] text-[#8B5CF6] font-semibold">UNKNOWN CHANGE</div>
+          <div class="text-2xl font-bold font-mono text-white mt-1">{{ dashboard.summary.unknown_change_count }}</div>
+          <div class="text-[10px] text-[#5C6B80] font-mono mt-0.5">Unidentified cause anomaly</div>
+        </div>
+
+        <!-- No Change -->
+        <div class="panel-standard p-3.5 bg-[#090D14] border-l-2 border-[#4E7880]">
+          <div class="type-metadata text-[10px] text-[#8CC4CE] font-semibold">NO CHANGE</div>
+          <div class="text-2xl font-bold font-mono text-white mt-1">{{ dashboard.summary.no_change_count }}</div>
+          <div class="text-[10px] text-[#5C6B80] font-mono mt-0.5">No significant change under current criteria</div>
+        </div>
+
+        <!-- Insufficient Data -->
+        <div class="panel-standard p-3.5 bg-[#090D14] border-l-2 border-[#64748B]">
+          <div class="type-metadata text-[10px] text-[#94A3B8] font-semibold">INSUFFICIENT DATA</div>
+          <div class="text-2xl font-bold font-mono text-white mt-1">{{ dashboard.summary.insufficient_data_count }}</div>
+          <div class="text-[10px] text-[#5C6B80] font-mono mt-0.5">Quality gate withheld</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Human-readable Surface Change Overview -->
+    <section class="space-y-3" aria-labelledby="surface-change-overview-title">
+      <div class="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h3 id="surface-change-overview-title" class="type-section-title text-sm flex items-center gap-2"><i data-lucide="activity" class="w-4 h-4 text-[#1E6BFF]"></i><span>SURFACE CHANGE OVERVIEW</span></h3>
+          <p class="text-xs text-[#94A3B8] mt-1">Plain-language explanations of what the stored NISAR analyses observed. These are observations and interpretations, not danger ratings.</p>
+        </div>
+        <span class="type-metadata">{{ dashboard.surface_changes|length }} CHANGE RECORDS</span>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        {% for item in dashboard.surface_changes %}
+          <article class="panel-standard p-4 bg-[#090D14] border border-[#1E2838] space-y-3">
+            <div class="flex flex-wrap items-start justify-between gap-2">
+              <div><div class="type-metadata text-[#60A5FA]">{{ item.human_label }}</div><h4 class="text-base text-white font-semibold mt-1">{{ item.aoi_name }}</h4><div class="text-[11px] text-[#64748B]">{{ item.aoi_country }}</div></div>
+              <span class="badge {{ item.observation_state_badge_class }}">{{ item.observation_state_label }}</span>
+            </div>
+            <div class="p-3 bg-[#0B1220] border border-[#1E6BFF]/30">
+              <div class="type-metadata mb-1">WHAT NISAR OBSERVED</div>
+              <div class="text-sm text-white font-semibold">{{ item.headline }}</div>
+              <p class="text-xs text-[#CBD5E1] mt-1">{{ item.explanation }}</p>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-2 text-xs">
+              <div><div class="type-metadata">MOST SUPPORTED INTERPRETATION</div><div class="text-[#CBD5E1] mt-1">{{ item.interpretation }}</div></div>
+              <div><div class="type-metadata">DATA QUALITY</div><div class="text-[#CBD5E1] mt-1">{{ item.quality }}</div>{% if item.primary_measurement %}<div class="text-[#94A3B8] mt-1">{{ item.primary_measurement }}</div>{% endif %}</div>
+            </div>
+            <div class="flex flex-wrap gap-2 pt-2 border-t border-[#1E2838]">
+              {% if item.event_url %}<a href="{{ item.event_url }}" class="btn btn-secondary text-xs">View Explanation</a>{% endif %}
+              <a href="{{ item.map_url }}" class="btn btn-secondary text-xs">Open Map</a>
+              <a href="{{ item.lab_url }}" class="btn btn-secondary text-xs scientist-only">Scientist Lab</a>
+            </div>
+          </article>
+        {% else %}
+          <div class="panel-standard p-4 text-xs text-[#94A3B8]">No stored change analyses are available.</div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- 4. Compact MapLibre Overview -->
+    <div class="panel-standard p-0 overflow-hidden bg-[#04060A]">
+      <div class="p-3 bg-[#090D14] border-b border-[#1E2838] flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+        <div class="flex items-center gap-2">
+          <i data-lucide="map" class="w-4 h-4 text-[#1E6BFF]"></i>
+          <span class="type-section-title text-xs text-white">MAP OVERVIEW &bull; ANALYZED REGIONS</span>
+        </div>
+        <div class="flex items-center gap-3 text-[10px] text-[#5C6B80]">
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#1E6BFF]"></span>Change</span>
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#8B5CF6]"></span>Unknown</span>
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#4E7880]"></span>No Change</span>
+          <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#64748B]"></span>Insufficient</span>
+        </div>
+      </div>
+
+      <div id="dashboard-map" class="w-full h-80 sm:h-96"></div>
+      
+      <div class="p-2 bg-[#090D14] border-t border-[#1E2838] text-[10px] font-mono text-[#5C6B80] flex justify-between">
+        <span>Map polygons are colored strictly by physical Observation State, not Review Priority.</span>
+        <span>Click any footprint to inspect localized triage details.</span>
+      </div>
+    </div>
+
+    <!-- 5. Review Queue (Actual Detected Changes) -->
+    <div class="space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#1E2838] pb-3">
+        <div>
+          <h3 class="type-section-title text-base flex items-center gap-2">
+            <i data-lucide="list-ordered" class="w-4 h-4 text-[#1E6BFF]"></i>
+            <span>REVIEW QUEUE &bull; PRIORITIZED CHANGES</span>
+          </h3>
+          <p class="text-xs text-[#5C6B80] font-mono mt-0.5">
+            Review Priority organizes this synthetic demonstration queue for inspection.
+          </p>
+        </div>
+
+        <!-- Filter & Sort Controls -->
+        <div class="flex flex-wrap items-center gap-2 font-mono text-xs">
+          <!-- State Filter -->
+          <select x-model="filterState" class="bg-[#090D14] border border-[#1E2838] text-[#94A3B8] text-xs py-1 px-2.5 focus:border-[#1E6BFF] focus:outline-none">
+            <option value="all">All States</option>
+            <option value="change_detected">Change Detected</option>
+            <option value="strong_change">Strong Change</option>
+            <option value="unknown_change">Unknown Change</option>
+          </select>
+
+          <!-- Priority Band Filter -->
+          <select x-model="filterPriority" class="bg-[#090D14] border border-[#1E2838] text-[#94A3B8] text-xs py-1 px-2.5 focus:border-[#1E6BFF] focus:outline-none">
+            <option value="all">All Priorities</option>
+            <option value="HIGH">HIGH Priority</option>
+            <option value="MEDIUM">MEDIUM Priority</option>
+            <option value="LOW">LOW Priority</option>
+          </select>
+
+          <!-- Sort Select -->
+          <select x-model="sortBy" class="bg-[#090D14] border border-[#1E2838] text-[#94A3B8] text-xs py-1 px-2.5 focus:border-[#1E6BFF] focus:outline-none">
+            <option value="priority">Sort: Review Priority</option>
+            <option value="state">Sort: Observation State</option>
+            <option value="freshness">Sort: Freshness Age</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Queue Card List -->
+      <div class="space-y-4">
+        <template x-for="item in filteredItems" :key="item.analysis_id">
+          <div class="panel-standard p-0 overflow-hidden bg-[#090D14] border border-[#1E2838] hover:border-[#2E3C52] transition-colors"
+               x-data="{ expanded: false }">
+            
+            <!-- Main Row -->
+            <div class="p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              
+              <!-- Left: Location, State, Interpretation -->
+              <div class="space-y-2 lg:max-w-md">
+                <div class="flex items-center gap-2">
+                  <span class="badge" :class="item.observation_state_badge_class" x-text="item.observation_state_label"></span>
+                  <span class="type-metadata text-[10px] text-[#5C6B80] font-mono" x-text="item.domain_label"></span>
+                </div>
+
+                <div>
+                  <h4 class="type-section-title text-base text-white" x-text="item.aoi_name"></h4>
+                  <div class="text-xs text-[#94A3B8] font-mono">
+                    <span x-text="item.aoi_country"></span> &bull; 
+                    <span x-text="item.comparison_range_display"></span>
+                  </div>
+                </div>
+
+                <p class="text-xs text-[#94A3B8] font-mono leading-relaxed" x-text="item.interpretation_summary"></p>
+
+                <!-- Candidate interpretations for unknown change -->
+                <template x-if="item.candidate_interpretations && item.candidate_interpretations.length > 0">
+                  <div class="p-2 bg-[#04060A] border border-[#1E2838] text-[11px] font-mono text-[#8B5CF6] space-y-1">
+                    <span class="text-[10px] text-[#5C6B80] uppercase tracking-wider block font-bold">POSSIBLE HYPOTHESES:</span>
+                    <ul class="list-disc list-inside space-y-0.5 text-xs text-[#A78BFA]">
+                      <template x-for="cand in item.candidate_interpretations" :key="cand">
+                        <li x-text="cand"></li>
+                      </template>
+                    </ul>
+                  </div>
+                </template>
+              </div>
+
+              <!-- Queue review aid; no exposure estimates are displayed. -->
+              <div class="p-3 bg-[#04060A] border border-[#1E2838] rounded-none font-mono text-xs space-y-2 lg:min-w-[280px]">
+                <div class="type-metadata text-[10px]">REVIEW PRIORITY</div>
+                <p class="text-[11px] text-[#94A3B8]">Demonstration queue grouping only. It is not a measure of danger or emergency urgency.</p>
+                <span class="badge font-mono text-xs px-2.5 py-1" :class="item.priority_badge_class" x-text="item.priority.priority_band"></span>
+              </div>
+
+              <!-- Right: Priority Badge, Exposure, Actions -->
+              <div class="flex flex-col items-start lg:items-end justify-between gap-3 shrink-0">
+                <div class="flex items-center gap-2">
+                  <div class="text-right">
+                    <div class="text-[9px] text-[#5C6B80] uppercase tracking-wider font-mono">REVIEW PRIORITY</div>
+                  </div>
+                  <!-- Neutral Priority Badge -->
+                  <span class="badge font-mono text-xs px-2.5 py-1" :class="item.priority_badge_class" x-text="item.priority.priority_band"></span>
+                </div>
+
+                <div class="text-[11px] font-mono text-[#94A3B8] text-left lg:text-right space-y-0.5">
+                  <div>Exposure data unavailable</div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2 pt-1">
+                  <button type="button" 
+                          @click="expanded = !expanded" 
+                          class="btn btn-secondary text-xs py-1.5 px-2.5 border border-[#1E2838] flex items-center gap-1">
+                    <span x-text="expanded ? 'Hide Details' : 'Triage Details'"></span>
+                    <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform" :class="expanded ? 'rotate-180' : ''"></i>
+                  </button>
+
+                  <template x-if="item.event_url">
+                    <a :href="item.event_url" class="btn btn-primary text-xs py-1.5 px-3 flex items-center gap-1.5">
+                      <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                      <span>View Event</span>
+                    </a>
+                  </template>
+
+                  <a :href="item.lab_url" class="btn btn-secondary text-xs py-1.5 px-2.5 border border-[#1E2838] flex items-center gap-1.5">
+                    <i data-lucide="flask-conical" class="w-3.5 h-3.5"></i>
+                    <span>Scientist Lab</span>
+                  </a>
+
+                  <a :href="item.map_url" class="btn btn-secondary text-xs py-1.5 px-2.5 border border-[#1E2838] flex items-center gap-1.5">
+                    <i data-lucide="map" class="w-3.5 h-3.5"></i>
+                    <span>Map</span>
+                  </a>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Demo queue explanation -->
+            <div x-show="expanded" x-transition class="border-t border-[#1E2838] p-4 bg-[#04060A] text-xs font-mono space-y-3">
+              <p class="text-[#94A3B8]">Exposure data unavailable. This demonstration dashboard does not display population or infrastructure estimates. Review Priority is not an emergency measure.</p>
+            </div>
+
+          </div>
+        </template>
+
+        <!-- Empty Review Queue State -->
+        <template x-if="filteredItems.length === 0">
+          <div class="panel-standard p-8 text-center bg-[#090D14] border border-[#1E2838]">
+            <div class="w-12 h-12 bg-[#0F141F] border border-[#1E2838] flex items-center justify-center text-[#5C6B80] mx-auto mb-3">
+              <i data-lucide="check-circle" class="w-6 h-6 text-[#10B981]"></i>
+            </div>
+            <h4 class="type-section-title text-sm text-white mb-1">NO REVIEWABLE CHANGES</h4>
+            <p class="type-small text-[#94A3B8] max-w-md mx-auto">
+              No analyzed records currently have Change Detected, Strong Change, or Unknown Change states matching the selected filters.
+            </p>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <!-- 5. No Change Areas (Separate Section) -->
+    <div class="space-y-4 pt-4 border-t border-[#1E2838]">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="type-section-title text-base flex items-center gap-2">
+            <i data-lucide="shield-check" class="w-4 h-4 text-[#8CC4CE]"></i>
+            <span>NO CHANGE AREAS</span>
+          </h3>
+          <p class="text-xs text-[#5C6B80] font-mono mt-0.5">
+            Areas with no significant change under the current analysis criteria.
+          </p>
+        </div>
+        <span class="badge badge-state-no-change text-[10px] font-mono">{{ dashboard.no_change_areas|length }} NO CHANGE</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono text-xs">
+        {% for area in dashboard.no_change_areas %}
+          <div class="panel-standard p-4 bg-[#090D14] border border-[#1E2838] space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="type-section-title text-sm text-white">{{ area.aoi_name }}</h4>
+                <div class="text-[11px] text-[#5C6B80]">{{ area.aoi_country }} &bull; {{ area.domain_label }}</div>
+              </div>
+              <span class="badge badge-state-no-change">NO CHANGE</span>
+            </div>
+
+            <div class="space-y-1.5 text-[11px] bg-[#04060A] p-2.5 border border-[#1E2838]">
+              <div class="flex justify-between">
+                <span class="text-[#5C6B80]">Comparison Baseline:</span>
+                <span class="text-white">{{ area.comparison_range_display }}</span>
+              </div>
+              {% if area.primary_measurement_label %}
+                <div class="flex justify-between">
+                  <span class="text-[#5C6B80]">{{ area.primary_measurement_label }}:</span>
+                  <span class="text-white">{{ area.primary_measurement_value }}</span>
+                </div>
+              {% endif %}
+              <div class="flex justify-between">
+                <span class="text-[#5C6B80]">Quality Assessment:</span>
+                <span class="text-[#8CC4CE]">Gate Passed</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-[#5C6B80]">Validation:</span>
+                <span class="text-white">{{ area.validation_statement }}</span>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-1">
+              <span class="text-[10px] text-[#5C6B80] italic">Outside the demonstration review queue</span>
+              <div class="flex items-center gap-2">
+                {% if area.event_url %}
+                  <a href="{{ area.event_url }}" class="btn btn-secondary text-xs py-1 px-2.5 border border-[#1E2838]">View Baseline</a>
+                {% endif %}
+                <a href="{{ area.lab_url }}" class="btn btn-secondary text-xs py-1 px-2.5 border border-[#1E2838]">Scientist Lab</a>
+              </div>
+            </div>
+          </div>
+        {% else %}
+          <div class="col-span-2 panel-standard p-4 text-center text-[#5C6B80]">
+            No stable baseline areas recorded.
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- 7. Insufficient / Unavailable Areas (Separate Section) -->
+    <div class="space-y-4 pt-4 border-t border-[#1E2838]">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="type-section-title text-base flex items-center gap-2">
+            <i data-lucide="alert-triangle" class="w-4 h-4 text-[#94A3B8]"></i>
+            <span>INSUFFICIENT / UNAVAILABLE AREAS</span>
+          </h3>
+          <p class="text-xs text-[#5C6B80] font-mono mt-0.5">
+            Observations flagged due to incomplete scans, failed quality gates, or missing repeat coverage.
+          </p>
+        </div>
+        <span class="badge badge-state-insufficient text-[10px] font-mono">{{ dashboard.insufficient_areas|length }} WITHHELD</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono text-xs">
+        {% for area in dashboard.insufficient_areas %}
+          <div class="panel-standard p-4 bg-[#090D14] border border-[#1E2838] space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="type-section-title text-sm text-white">{{ area.aoi_name }}</h4>
+                <div class="text-[11px] text-[#5C6B80]">{{ area.aoi_country }} &bull; {{ area.domain_label }}</div>
+              </div>
+              <span class="badge badge-state-insufficient">INSUFFICIENT DATA</span>
+            </div>
+
+            <div class="space-y-1.5 text-[11px] bg-[#04060A] p-2.5 border border-[#1E2838]">
+              <div class="flex justify-between">
+                <span class="text-[#5C6B80]">Valid Pixel Fraction:</span>
+                <span class="text-[#94A3B8] font-bold">{{ area.valid_pixel_fraction_display }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-[#5C6B80]">Quality Gate Status:</span>
+                <span class="text-[#94A3B8]">FAILED</span>
+              </div>
+              <div class="text-[#94A3B8]">
+                Reason: {{ area.quality_failure_reason }}
+              </div>
+              <div class="text-[#5C6B80] pt-1">
+                Context: {{ area.available_context }}
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-1">
+              <span class="text-[10px] text-[#5C6B80] italic">Not interpreted as No Change &bull; Excluded from triage</span>
+              <div class="flex items-center gap-2">
+                {% if area.event_url %}
+                  <a href="{{ area.event_url }}" class="btn btn-secondary text-xs py-1 px-2.5 border border-[#1E2838]">View Record</a>
+                {% endif %}
+                <a href="{{ area.lab_url }}" class="btn btn-secondary text-xs py-1 px-2.5 border border-[#1E2838]">Scientist Lab</a>
+              </div>
+            </div>
+          </div>
+        {% else %}
+          <div class="col-span-2 panel-standard p-4 text-center text-[#5C6B80]">
+            No insufficient observation records present.
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- 8. Method & Mathematical Formulation (Expandable Panel) -->
+    <div class="panel-standard p-0 overflow-hidden bg-[#090D14] border border-[#1E2838]" 
+         x-data="{ showMethod: true }">
+      <div class="p-4 bg-[#090D14] flex items-center justify-between cursor-pointer border-b border-[#1E2838]"
+           @click="showMethod = !showMethod">
+        <div class="flex items-center gap-2">
+          <i data-lucide="scale" class="w-4 h-4 text-[#1E6BFF]"></i>
+          <h3 class="type-section-title text-sm text-white">HOW REVIEW PRIORITY WORKS &bull; METHODOLOGICAL PRINCIPLES</h3>
+        </div>
+        <i data-lucide="chevron-down" class="w-4 h-4 text-[#5C6B80] transition-transform" :class="showMethod ? 'rotate-180' : ''"></i>
+      </div>
+
+      <div x-show="showMethod" x-transition class="p-5 sm:p-6 bg-[#04060A] space-y-4 font-mono text-xs">
+        <!-- Review queue explanation -->
+        <div class="p-3.5 bg-[#090D14] border border-[#1E2838] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-center sm:text-left">
+          <div>
+            <span class="type-metadata text-[10px] text-[#5C6B80] uppercase tracking-wider block">DEMONSTRATION REVIEW ORDER</span>
+            <span class="text-sm font-bold text-white font-mono">Review Priority groups synthetic records for inspection.</span>
+          </div>
+          <div class="text-[10px] text-[#5C6B80]">Not a danger level or emergency priority.</div>
+        </div>
+
+        <div class="p-3 bg-[#090D14] border border-[#1E2838] text-xs text-[#94A3B8] leading-relaxed">
+          Observation state describes the stored record. Exposure data unavailable; this dashboard does not present population or infrastructure estimates. Review Priority is a demonstration interface aid only.
+        </div>
+
+        <!-- Explanations and Caveats -->
+        <div class="space-y-2 pt-2 border-t border-[#1E2838] text-[11px] text-[#94A3B8] leading-normal">
+          <div class="flex items-start gap-2">
+            <span class="text-[#1E6BFF]">&bull;</span>
+            <p><strong class="text-white">Triage Aid Distinction:</strong> {{ dashboard.triage_disclaimer }}</p>
+          </div>
+          <div class="flex items-start gap-2">
+            <span class="text-[#1E6BFF]">&bull;</span>
+            <p><strong class="text-white">Exposure:</strong> Exposure data unavailable.</p>
+          </div>
+          <div class="flex items-start gap-2">
+            <span class="text-[#1E6BFF]">&bull;</span>
+            <p><strong class="text-white">Dataset-Relative Normalization:</strong> {{ dashboard.dataset_relative_note }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function initReviewQueue(config) {
+      return {
+        rawItems: config.items || [],
+        filterState: 'all',
+        filterPriority: 'all',
+        sortBy: 'priority',
+
+        get filteredItems() {
+          let list = [...this.rawItems];
+
+          // Filter by Observation State
+          if (this.filterState !== 'all') {
+            list = list.filter(item => item.observation_state_raw === this.filterState);
+          }
+
+          // Filter by Priority Band
+          if (this.filterPriority !== 'all') {
+            list = list.filter(item => item.priority.priority_band === this.filterPriority);
+          }
+
+          // Sort
+          if (this.sortBy === 'priority') {
+            list.sort((a, b) => b.priority.review_score - a.priority.review_score);
+          } else if (this.sortBy === 'state') {
+            list.sort((a, b) => b.priority.observation_component - a.priority.observation_component);
+          } else if (this.sortBy === 'freshness') {
+            list.sort((a, b) => a.priority.freshness_age_days - b.priority.freshness_age_days);
+          }
+
+          return list;
+        }
+      };
+    }
+
+    // Initialize MapLibre on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      const geojson = {{ dashboard.map_geojson|tojson }};
+      if (window.initDashboardMap) {
+        window.initDashboardMap(geojson);
+      }
+    });
+  </script>
+{% endblock %}

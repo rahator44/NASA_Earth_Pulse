@@ -1,0 +1,361 @@
+{# Reusable Before / After / Difference Satellite Evidence Viewer Component #}
+{% if evidence %}
+  <div class="panel-standard p-0 overflow-hidden bg-[#04060A]" 
+       x-data="initEvidenceViewer({
+         analysisId: '{{ evidence.analysis_id }}',
+         initialMode: '{{ 'before' if not (evidence.before and evidence.after) or not evidence.quality_gate_passed else 'swipe' }}',
+         hasBefore: {{ 'true' if evidence.before else 'false' }},
+         hasAfter: {{ 'true' if evidence.after else 'false' }},
+         hasDifference: {{ 'true' if evidence.difference else 'false' }},
+         hasMask: {{ 'true' if evidence.change_mask else 'false' }},
+         qualityGatePassed: {{ 'true' if evidence.quality_gate_passed else 'false' }},
+         qualityNotes: '{{ evidence.quality_notes or '' }}'
+       })"
+       @pointermove="onDrag($event)"
+       @pointerup="stopDrag($event)"
+       @pointercancel="stopDrag($event)">
+
+    <!-- 1. Top Control Bar (Mode Buttons + Overlay Opacity Controls) -->
+    <div class="bg-[#090D14] border-b border-[#1E2838] p-3 sm:px-4 sm:py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+      
+      <!-- Mode Toggle Buttons -->
+      <div class="flex flex-wrap items-center gap-1.5 overflow-x-auto py-0.5">
+        <button type="button" 
+                @click="setMode('swipe')" 
+                :class="mode === 'swipe' ? 'bg-[#1E6BFF] text-white border-[#1E6BFF]' : 'bg-[#0F141F] text-[#94A3B8] border-[#1E2838] hover:text-white'"
+                class="px-2.5 py-1.5 border text-xs flex items-center gap-1.5 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                :disabled="!hasBefore || !hasAfter"
+                :aria-pressed="mode === 'swipe'">
+          <i data-lucide="split" class="w-3.5 h-3.5"></i>
+          <span>Swipe</span>
+        </button>
+
+        <button type="button" 
+                @click="setMode('before')" 
+                :class="mode === 'before' ? 'bg-[#1E6BFF] text-white border-[#1E6BFF]' : 'bg-[#0F141F] text-[#94A3B8] border-[#1E2838] hover:text-white'"
+                class="px-2.5 py-1.5 border text-xs flex items-center gap-1.5 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                :disabled="!hasBefore"
+                :aria-pressed="mode === 'before'">
+          <i data-lucide="image" class="w-3.5 h-3.5"></i>
+          <span>Before</span>
+        </button>
+
+        <button type="button" 
+                @click="setMode('after')" 
+                :class="mode === 'after' ? 'bg-[#1E6BFF] text-white border-[#1E6BFF]' : 'bg-[#0F141F] text-[#94A3B8] border-[#1E2838] hover:text-white'"
+                class="px-2.5 py-1.5 border text-xs flex items-center gap-1.5 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                :disabled="!hasAfter"
+                :aria-pressed="mode === 'after'">
+          <i data-lucide="image" class="w-3.5 h-3.5"></i>
+          <span>After</span>
+        </button>
+
+        <button type="button" 
+                @click="setMode('difference')" 
+                :class="mode === 'difference' ? 'bg-[#1E6BFF] text-white border-[#1E6BFF]' : 'bg-[#0F141F] text-[#94A3B8] border-[#1E2838] hover:text-white'"
+                class="px-2.5 py-1.5 border text-xs flex items-center gap-1.5 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                :disabled="!hasDifference || !qualityGatePassed"
+                :aria-pressed="mode === 'difference'">
+          <i data-lucide="git-compare" class="w-3.5 h-3.5"></i>
+          <span>Difference</span>
+        </button>
+
+        <button type="button" 
+                @click="setMode('mask')" 
+                :class="mode === 'mask' ? 'bg-[#1E6BFF] text-white border-[#1E6BFF]' : 'bg-[#0F141F] text-[#94A3B8] border-[#1E2838] hover:text-white'"
+                class="px-2.5 py-1.5 border text-xs flex items-center gap-1.5 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                :disabled="!hasMask || !qualityGatePassed"
+                :aria-pressed="mode === 'mask'">
+          <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+          <span>Change Mask</span>
+        </button>
+      </div>
+
+      <!-- Right Controls: Opacity & Info Toggles -->
+      <div class="flex items-center gap-3">
+        
+        <!-- Opacity Slider (Displayed in overlay modes: difference and mask) -->
+        <div x-show="mode === 'mask' || mode === 'difference'" 
+             x-transition 
+             class="flex items-center gap-2 bg-[#0F141F] border border-[#1E2838] px-2.5 py-1">
+          <span class="text-[10px] text-[#5C6B80] uppercase">Opacity:</span>
+          <input type="range" 
+                 min="0" 
+                 max="100" 
+                 x-model="opacity" 
+                 class="w-20 h-1 bg-[#1E2838] accent-[#1E6BFF] cursor-pointer"
+                 aria-label="Layer opacity slider">
+          <span class="text-[10px] text-white font-mono w-7 text-right" x-text="opacity + '%'">70%</span>
+        </div>
+
+        <button type="button" 
+                @click="showLegend = !showLegend" 
+                :class="showLegend ? 'text-[#60A5FA] border-[#1E6BFF]/50 bg-[#1E6BFF]/10' : 'text-[#94A3B8] border-[#1E2838] bg-[#0F141F]'"
+                class="px-2 py-1 border text-xs flex items-center gap-1"
+                title="Toggle visual legend">
+          <i data-lucide="list" class="w-3.5 h-3.5"></i>
+          <span class="hidden sm:inline">Legend</span>
+        </button>
+
+        <button type="button" 
+                @click="showMetadata = !showMetadata" 
+                :class="showMetadata ? 'text-[#60A5FA] border-[#1E6BFF]/50 bg-[#1E6BFF]/10' : 'text-[#94A3B8] border-[#1E2838] bg-[#0F141F]'"
+                class="px-2 py-1 border text-xs flex items-center gap-1"
+                title="Toggle acquisition metadata">
+          <i data-lucide="info" class="w-3.5 h-3.5"></i>
+          <span class="hidden sm:inline">Metadata</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 2. Source Warning & Scientific Honest Notice -->
+    <div class="bg-[#090D14]/90 border-b border-[#1E2838] px-4 py-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
+      <div class="flex items-center gap-2.5">
+        <span class="badge border-[#EF4444] bg-[#EF4444]/20 text-[#FCA5A5] text-[9px] font-bold tracking-wider px-1.5 py-0.5">
+          DEMO VISUAL
+        </span>
+        <span class="text-[#FCA5A5] font-medium text-[11px]">
+          {{ evidence.disclaimer }}
+        </span>
+      </div>
+
+      <div class="text-[10px] font-mono text-[#5C6B80] flex items-center gap-1">
+        <i data-lucide="check" class="w-3 h-3 text-[#10B981]"></i>
+        <span>Displayed evidence assets are pre-aligned for comparison.</span>
+      </div>
+    </div>
+
+    <!-- 3. Insufficient Data Warning Banner (If quality gate failed) -->
+    {% if not evidence.quality_gate_passed %}
+      <div class="p-3.5 bg-[#EF4444]/10 border-b border-[#EF4444]/30 text-xs font-mono">
+        <div class="flex items-center gap-2 text-[#F87171] font-bold">
+          <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+          <span>QUALITY GATE NOT PASSED &bull; DIFFERENCE &amp; MASK PRODUCTS UNAVAILABLE</span>
+        </div>
+        <p class="text-[#FCA5A5]/80 text-[11px] mt-1 leading-relaxed">
+          {{ evidence.quality_notes or "Difference and change-mask products are unavailable because the analysis quality gate was not passed." }}
+        </p>
+      </div>
+    {% endif %}
+
+    <!-- 4. Main Interactive Visual Viewport -->
+    <div class="relative w-full aspect-[16/10] min-h-[380px] sm:min-h-[460px] bg-[#070B12] overflow-hidden select-none"
+         x-ref="viewerFrame">
+
+      <!-- View A: SWIPE COMPARISON MODE -->
+      <template x-if="mode === 'swipe' && hasBefore && hasAfter">
+        <div class="absolute inset-0 w-full h-full">
+          <!-- After Image (Underneath) -->
+          <img src="{{ evidence.after.url if evidence.after else '' }}" 
+               alt="After radar observation" 
+               class="absolute inset-0 w-full h-full object-cover pointer-events-none">
+
+          <!-- Before Image (Clipped with Polygon) -->
+          <img src="{{ evidence.before.url if evidence.before else '' }}" 
+               alt="Before radar observation" 
+               class="absolute inset-0 w-full h-full object-cover pointer-events-none"
+               :style="`clip-path: polygon(0 0, ${dividerPos}% 0, ${dividerPos}% 100%, 0 100%);`">
+
+          <!-- Draggable Divider Line & Handle -->
+          <div class="absolute top-0 bottom-0 z-20 cursor-ew-resize flex items-center justify-center -translate-x-1/2"
+               :style="`left: ${dividerPos}%;`"
+               @pointerdown="startDrag($event)"
+               tabindex="0"
+               role="slider"
+               aria-label="Before/After swipe divider"
+               :aria-valuenow="Math.round(dividerPos)"
+               @keydown.left.prevent="stepDivider(-5)"
+               @keydown.right.prevent="stepDivider(5)">
+            
+            <!-- Center Vertical Line -->
+            <div class="w-0.5 h-full bg-[#1E6BFF] shadow-[0_0_8px_rgba(30,107,255,0.8)]"></div>
+            
+            <!-- Center Drag Thumb Handle -->
+            <div class="absolute w-8 h-8 rounded-full bg-[#090D14] border-2 border-[#1E6BFF] flex items-center justify-center text-white shadow-xl pointer-events-none hover:scale-105 transition-transform">
+              <i data-lucide="chevrons-left-right" class="w-4 h-4 text-[#1E6BFF]"></i>
+            </div>
+          </div>
+
+          <!-- Observation Date Overlay Badges -->
+          <div class="absolute top-3 left-3 z-10 bg-[#090D14]/85 backdrop-blur-sm border border-[#1E2838] px-2.5 py-1 text-xs font-mono">
+            <span class="text-[#5C6B80] block text-[9px] uppercase">BEFORE OBSERVATION</span>
+            <span class="text-white font-semibold">{{ evidence.before.acquisition_date if evidence.before else 'Baseline' }}</span>
+          </div>
+
+          <div class="absolute top-3 right-3 z-10 bg-[#090D14]/85 backdrop-blur-sm border border-[#1E2838] px-2.5 py-1 text-xs font-mono text-right">
+            <span class="text-[#5C6B80] block text-[9px] uppercase">AFTER OBSERVATION</span>
+            <span class="text-[#10B981] font-semibold">{{ evidence.after.acquisition_date if evidence.after else 'Repeat pass' }}</span>
+          </div>
+        </div>
+      </template>
+
+      <!-- View B: BEFORE IMAGE ONLY -->
+      <template x-if="mode === 'before' && hasBefore">
+        <div class="absolute inset-0 w-full h-full">
+          <img src="{{ evidence.before.url if evidence.before else '' }}" 
+               alt="Before radar observation" 
+               class="w-full h-full object-cover">
+          <div class="absolute top-3 left-3 bg-[#090D14]/85 backdrop-blur-sm border border-[#1E2838] px-2.5 py-1 text-xs font-mono">
+            <span class="text-[#5C6B80] block text-[9px] uppercase">BEFORE OBSERVATION</span>
+            <span class="text-white font-semibold">{{ evidence.before.label }} &bull; {{ evidence.before.acquisition_date }}</span>
+          </div>
+        </div>
+      </template>
+
+      <!-- View C: AFTER IMAGE ONLY -->
+      <template x-if="mode === 'after' && hasAfter">
+        <div class="absolute inset-0 w-full h-full">
+          <img src="{{ evidence.after.url if evidence.after else '' }}" 
+               alt="After radar observation" 
+               class="w-full h-full object-cover">
+          <div class="absolute top-3 right-3 bg-[#090D14]/85 backdrop-blur-sm border border-[#1E2838] px-2.5 py-1 text-xs font-mono text-right">
+            <span class="text-[#5C6B80] block text-[9px] uppercase">AFTER OBSERVATION</span>
+            <span class="text-[#10B981] font-semibold">{{ evidence.after.label }} &bull; {{ evidence.after.acquisition_date }}</span>
+          </div>
+        </div>
+      </template>
+
+      <!-- View D: DIFFERENCE RASTER MODE -->
+      <template x-if="mode === 'difference' && hasDifference && qualityGatePassed">
+        <div class="absolute inset-0 w-full h-full">
+          <!-- Background Base Image -->
+          <img src="{{ evidence.after.url if evidence.after else evidence.before.url }}" 
+               alt="Base observation" 
+               class="absolute inset-0 w-full h-full object-cover filter brightness-75">
+          <!-- Difference Raster Overlay -->
+          <img src="{{ evidence.difference.url if evidence.difference else '' }}" 
+               alt="Radar backscatter difference raster" 
+               class="absolute inset-0 w-full h-full object-cover"
+               :style="`opacity: ${opacity / 100};`">
+
+          <div class="absolute top-3 left-3 bg-[#090D14]/85 backdrop-blur-sm border border-[#1E2838] px-2.5 py-1 text-xs font-mono">
+            <span class="text-[#38BDF8] block text-[9px] uppercase font-bold">DIFFERENCE RASTER</span>
+            <span class="text-white font-semibold">{{ evidence.difference.label }}</span>
+          </div>
+        </div>
+      </template>
+
+      <!-- View E: CHANGE MASK OVERLAY MODE -->
+      <template x-if="mode === 'mask' && hasMask && qualityGatePassed">
+        <div class="absolute inset-0 w-full h-full">
+          <!-- Base After (or Before) Image -->
+          <img src="{{ evidence.after.url if evidence.after else evidence.before.url }}" 
+               alt="Base observation" 
+               class="absolute inset-0 w-full h-full object-cover">
+          <!-- Change Mask Overlay -->
+          <img src="{{ evidence.change_mask.url if evidence.change_mask else '' }}" 
+               alt="Detected change mask overlay" 
+               class="absolute inset-0 w-full h-full object-cover"
+               :style="`opacity: ${opacity / 100};`">
+
+          <div class="absolute top-3 left-3 bg-[#090D14]/85 backdrop-blur-sm border border-[#1E2838] px-2.5 py-1 text-xs font-mono">
+            <span class="text-[#F59E0B] block text-[9px] uppercase font-bold">CHANGE MASK OVERLAY</span>
+            <span class="text-white font-semibold">{{ evidence.change_mask.label }}</span>
+          </div>
+        </div>
+      </template>
+
+      <!-- Option A: Note on geographic change polygons -->
+      <div class="absolute bottom-3 right-3 z-10 bg-[#090D14]/80 backdrop-blur-sm border border-[#1E2838] px-2.5 py-1 text-[10px] font-mono text-[#5C6B80]">
+        Geographic change polygons are available on the map.
+      </div>
+    </div>
+
+    <!-- 5. Expandable Visual Legend -->
+    <div x-show="showLegend" x-transition class="border-t border-[#1E2838] p-3.5 bg-[#090D14] text-xs font-mono">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        
+        <!-- Difference Legend -->
+        {% if evidence.difference and evidence.quality_gate_passed %}
+          <div x-show="mode === 'difference' || mode === 'swipe'" class="flex items-center gap-3">
+            <span class="type-metadata text-[10px] text-[#5C6B80]">DIFFERENCE:</span>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] text-[#38BDF8]">{{ evidence.difference.legend_min }}</span>
+              <div class="w-24 h-2 rounded-full bg-gradient-to-r from-[#06B6D4] via-[#1E3A8A] to-[#F59E0B] border border-[#1E2838]"></div>
+              <span class="text-[10px] text-[#F59E0B]">{{ evidence.difference.legend_max }}</span>
+            </div>
+            {% if evidence and (evidence.data_origin.value == "precomputed_real_analysis" or not evidence.is_synthetic) %}
+            <span class="text-[10px] text-[#34D399] font-mono">Calibrated radar backscatter difference raster (Δσ° dB).</span>
+            {% else %}
+            <span class="text-[10px] text-[#5C6B80] italic">Illustrative synthetic difference raster.</span>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        <!-- Change Mask Legend -->
+        {% if evidence.change_mask and evidence.quality_gate_passed %}
+          <div x-show="mode === 'mask'" class="flex items-center gap-3">
+            <span class="type-metadata text-[10px] text-[#5C6B80]">CHANGE MASK:</span>
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 bg-[#F59E0B]/50 border border-[#F59E0B] inline-block"></span>
+              <span class="text-white text-[10px]">Detected Change</span>
+              <span class="w-3 h-3 bg-transparent border border-[#5C6B80] inline-block ml-2"></span>
+              <span class="text-[#5C6B80] text-[10px]">Background</span>
+            </div>
+            {% if evidence and (evidence.data_origin.value == "precomputed_real_analysis" or not evidence.is_synthetic) %}
+            <span class="text-[10px] text-[#34D399] font-mono">Precomputed NISAR GCOV change mask.</span>
+            {% else %}
+            <span class="text-[10px] text-[#5C6B80] italic">Synthetic threshold mask.</span>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        <!-- General View Mode Label -->
+        <div class="text-[10px] text-[#5C6B80]">
+          ACTIVE VIEW: <span class="text-white uppercase font-bold" x-text="mode">SWIPE</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. Expandable Metadata Drawer -->
+    <div x-show="showMetadata" x-transition class="border-t border-[#1E2838] p-3.5 bg-[#070B12] text-xs font-mono space-y-2">
+      <div class="type-metadata text-[10px] text-[#5C6B80] uppercase tracking-wider mb-1">EVIDENCE ACQUISITION METADATA</div>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-[11px]">
+        <div class="p-2 bg-[#090D14] border border-[#1E2838]">
+          <span class="text-[#5C6B80] block text-[9px]">SOURCE</span>
+          <span class="text-white">{{ evidence.before.source if evidence.before else 'NASA-ISRO SAR' }}</span>
+        </div>
+        <div class="p-2 bg-[#090D14] border border-[#1E2838]">
+          <span class="text-[#5C6B80] block text-[9px]">PRODUCT &bull; POLARIZATION</span>
+          <span class="text-white">{{ evidence.before.product if evidence.before else 'GCOV' }} ({{ evidence.before.polarization if evidence.before else 'HH+HV' }})</span>
+        </div>
+        <div class="p-2 bg-[#090D14] border border-[#1E2838]">
+          <span class="text-[#5C6B80] block text-[9px]">BEFORE PASS ID</span>
+          <span class="text-white">{{ evidence.before.acquisition_id if evidence.before else 'N/A' }}</span>
+        </div>
+        <div class="p-2 bg-[#090D14] border border-[#1E2838]">
+          <span class="text-[#5C6B80] block text-[9px]">AFTER PASS ID</span>
+          <span class="text-white">{{ evidence.after.acquisition_id if evidence.after else 'Not applicable' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. Source & Verification Bottom Strip -->
+    <div class="bg-[#090D14] border-t border-[#1E2838] px-4 py-2 flex flex-wrap items-center justify-between text-[11px] font-mono text-[#94A3B8]">
+      <div class="flex items-center gap-3">
+        <span class="text-[#5C6B80]">SOURCE: <span class="text-white">{{ evidence.before.source if (evidence and evidence.before and evidence.before.source) else ("NASA NISAR / ASF DAAC" if (evidence and not evidence.is_synthetic) else "Synthetic visual fixture") }}</span></span>
+        <span class="text-[#5C6B80]">&bull;</span>
+        <span class="text-[#5C6B80]">PRODUCT: <span class="text-white">{{ evidence.before.product if evidence.before else 'GCOV' }}</span></span>
+        <span class="text-[#5C6B80]">&bull;</span>
+        <span class="text-[#5C6B80]">MATURITY: <span class="text-white">{{ evidence.before.maturity if evidence.before else 'PROVISIONAL' }}</span></span>
+      </div>
+
+      <div class="text-[#5C6B80]">
+        ANALYSIS ID: <span class="text-white">{{ evidence.analysis_id }}</span>
+      </div>
+    </div>
+
+  </div>
+
+{% else %}
+  <!-- No Evidence Fallback State -->
+  <div class="panel-standard p-8 text-center bg-[#090D14]">
+    <div class="w-12 h-12 bg-[#0F141F] border border-[#1E2838] flex items-center justify-center text-[#5C6B80] mx-auto mb-3">
+      <i data-lucide="image-off" class="w-6 h-6"></i>
+    </div>
+    <h3 class="type-section-title text-sm text-white mb-1">NO STORED VISUAL EVIDENCE</h3>
+    <p class="type-small text-[#94A3B8] max-w-sm mx-auto">
+      No precomputed evidence assets are available for this analysis.
+    </p>
+  </div>
+{% endif %}

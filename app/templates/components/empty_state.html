@@ -1,0 +1,18 @@
+<div class="empty-state">
+  <div class="empty-state-icon">
+    <i data-lucide="{{ empty_icon | default('inbox') }}" class="w-6 h-6"></i>
+  </div>
+  <div class="empty-state-title">
+    {{ empty_title | default('No Records Available') }}
+  </div>
+  <p class="empty-state-description">
+    {{ empty_description | default('No observations or analyses match the current criteria.') }}
+  </p>
+  {% if empty_action_label and empty_action_url %}
+  <div class="mt-5 flex items-center gap-3">
+    <a href="{{ empty_action_url }}" class="btn btn-primary text-xs">
+      <span>{{ empty_action_label }}</span>
+    </a>
+  </div>
+  {% endif %}
+</div>

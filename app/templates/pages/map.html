@@ -1,0 +1,326 @@
+{% extends "base.html" %}
+
+{% block title %}Explore Map{% endblock %}
+
+{% block head_extra %}
+  <!-- MapLibre GL JS Stylesheet & Script -->
+  <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+{% endblock %}
+
+{% block content %}
+  {% set page_label = "GEOSPATIAL RADAR EXPLORER // MODULE 01" %}
+  {% set page_title = "Map & Coverage Explorer" %}
+  {% set page_description = "Inspect precomputed surface-change analyses by clicking the map or drawing an Area of Interest." %}
+  {% set badge_text = "INTERACTIVE SELECTION ACTIVE" %}
+  {% include "components/page_header.html" %}
+
+  <div class="space-y-4">
+
+    <section class="panel-standard p-3 sm:p-4" aria-labelledby="location-search-title">
+      <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+        <div>
+          <h2 id="location-search-title" class="type-section-title text-xs">SEARCH LOCATION</h2>
+          <p class="type-small text-[#94A3B8] text-xs mt-1">Find a place or enter latitude, longitude. Search does not imply an existing analysis.</p>
+        </div>
+        <span class="text-[10px] text-[#64748B] font-mono">BASEMAP PROVIDER</span>
+      </div>
+      <form id="location-search-form" class="flex flex-col sm:flex-row gap-2 mt-3" role="search">
+        <label class="sr-only" for="location-search-input">Search a place or coordinates</label>
+        <input id="location-search-input" name="q" type="search" maxlength="200"
+               placeholder="Dhaka, Singapore, New Orleans, or 23.8103, 90.4125"
+               class="min-w-0 flex-1 bg-[#0F141F] border border-[#1E2838] text-sm text-white px-3 py-2 rounded-[2px] focus:outline-none focus:border-[#1E6BFF]">
+        <button type="submit" class="btn bg-[#1E6BFF] text-white border-[#1E6BFF] text-xs py-2 px-4">Search</button>
+      </form>
+      <p id="location-search-status" class="text-xs text-[#94A3B8] mt-2" role="status" aria-live="polite"></p>
+      <div id="location-search-results" class="flex flex-wrap gap-2 mt-2" aria-label="Location search results"></div>
+    </section>
+    
+    <!-- Map Toolbar Shell -->
+    <div class="panel-standard p-2.5 sm:p-3 flex flex-wrap items-center justify-between gap-3 bg-[#090D14] border-[#1E2838]">
+      
+      <!-- Left: Interactive Drawing & Selection Tools -->
+      <div class="flex flex-wrap items-center gap-2">
+        
+        <!-- Tool: Click Location (Default) -->
+        <button type="button" 
+                id="tool-click"
+                class="btn bg-[#1E6BFF] text-white border-[#1E6BFF] text-xs py-1.5 px-3 flex items-center gap-1.5 transition-colors"
+                aria-pressed="true"
+                aria-label="Click Location mode: click a point on the map to inspect">
+          <i data-lucide="mouse-pointer" class="w-3.5 h-3.5"></i>
+          <span>Click</span>
+        </button>
+
+        <!-- Tool: Draw Rectangle -->
+        <button type="button" 
+                id="tool-rectangle"
+                class="btn btn-secondary text-xs py-1.5 px-3 flex items-center gap-1.5 transition-colors"
+                aria-pressed="false"
+                aria-label="Draw Rectangle mode: click two corners to draw a bounding box">
+          <i data-lucide="square" class="w-3.5 h-3.5 text-[#60A5FA]"></i>
+          <span>Rectangle</span>
+        </button>
+
+        <!-- Tool: Draw Polygon -->
+        <button type="button" 
+                id="tool-polygon"
+                class="btn btn-secondary text-xs py-1.5 px-3 flex items-center gap-1.5 transition-colors"
+                aria-pressed="false"
+                aria-label="Draw Polygon mode: click vertices to draw custom area, double-click to finish">
+          <i data-lucide="pentagon" class="w-3.5 h-3.5 text-[#38BDF8]"></i>
+          <span>Polygon</span>
+        </button>
+
+        <!-- Tool: Clear Selection -->
+        <button type="button" 
+                id="tool-clear"
+                class="btn btn-secondary text-xs py-1.5 px-3 flex items-center gap-1.5 transition-colors hover:text-white"
+                aria-label="Clear current selection and reset inspector">
+          <i data-lucide="x" class="w-3.5 h-3.5 text-[#94A3B8]"></i>
+          <span>Clear</span>
+        </button>
+
+        <span class="text-[#1E2838] hidden sm:inline">|</span>
+
+        <!-- Tool: Find Demo Area Selector -->
+        <div class="flex items-center gap-1.5">
+          <label for="select-demo-area" class="sr-only">Find Demo Area</label>
+          <div class="relative">
+            <select id="select-demo-area" 
+                    aria-label="Find Demo Area"
+                    class="bg-[#0F141F] border border-[#1E2838] text-xs font-mono text-[#CBD5E1] px-2.5 py-1.5 rounded-[2px] focus:outline-none focus:border-[#1E6BFF] cursor-pointer">
+              <option value="">Select analyzed area...</option>
+              <option value="aoi_real_001" class="font-bold text-[#34D399]">★ Real Showcase: Lake Henderson (Atchafalaya)</option>
+              <option value="aoi_synth_alpha">Synthetic AOI Alpha (Flood / Wetland)</option>
+              <option value="aoi_synth_beta">Synthetic AOI Beta (Unclassified Anomaly)</option>
+              <option value="aoi_synth_gamma">Synthetic AOI Gamma (Insufficient Data)</option>
+              <option value="aoi_synth_delta">Synthetic AOI Delta (Deformation Reference)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Tool: Layer Control Popover -->
+        <div class="relative" x-data="{ open: false }">
+          <button type="button" 
+                  @click="open = !open" 
+                  class="btn btn-secondary text-xs py-1.5 px-3 flex items-center gap-1.5"
+                  aria-haspopup="true"
+                  :aria-expanded="open"
+                  aria-label="Toggle map data layers">
+            <i data-lucide="layers" class="w-3.5 h-3.5 text-[#1E6BFF]"></i>
+            <span>Layers</span>
+            <i data-lucide="chevron-down" class="w-3 h-3 text-[#5C6B80] transition-transform" :class="{ 'rotate-180': open }"></i>
+          </button>
+
+          <!-- Dropdown menu -->
+          <div x-show="open" 
+               @click.away="open = false" 
+               x-cloak
+               class="absolute left-0 mt-1.5 w-52 bg-[#090D14] border border-[#1E2838] rounded-[2px] shadow-2xl p-3 z-30 space-y-2.5">
+            <div class="type-metadata text-[10px] text-[#5C6B80] border-b border-[#1E2838] pb-1.5">MAP LAYERS</div>
+            <div class="type-metadata text-[9px] pt-1">BASEMAP</div>
+            <div class="grid grid-cols-2 gap-1.5">
+              <button type="button" id="basemap-satellite" class="btn btn-secondary text-[10px] py-1.5 px-2" {% if not mapbox_public_token %}disabled title="Satellite basemap requires Mapbox configuration."{% endif %}>Satellite</button>
+              <button type="button" id="basemap-streets" class="btn btn-secondary text-[10px] py-1.5 px-2" aria-pressed="false">Streets</button>
+            </div>
+            <p id="map-basemap-status" class="text-[10px] leading-snug text-[#94A3B8]" role="status" aria-live="polite">{% if not mapbox_public_token %}Satellite basemap requires Mapbox configuration.{% endif %}</p>
+            <div class="type-metadata text-[9px] pt-1">ANALYSIS</div>
+            <label class="flex items-center gap-2.5 text-xs text-[#CBD5E1] cursor-pointer"><input type="checkbox" id="layer-toggle-real-changes" checked class="accent-[#1E6BFF]"><span>Real analysis regions</span></label>
+            <label class="flex items-center gap-2.5 text-xs text-[#CBD5E1] cursor-pointer"><input type="checkbox" id="layer-toggle-real-aois" checked class="accent-[#1E6BFF]"><span>Analysis AOIs</span></label>
+            <div class="type-metadata text-[9px] pt-1 border-t border-[#1E2838]">NISAR</div>
+            <label class="flex items-center gap-2.5 text-xs text-[#CBD5E1] cursor-pointer"><input type="checkbox" id="layer-toggle-footprints" disabled class="accent-[#38BDF8]"><span>Search footprints</span></label>
+            <div class="type-metadata text-[9px] pt-1 border-t border-[#1E2838]">DEMONSTRATION</div>
+            <label class="flex items-center gap-2.5 text-xs text-[#CBD5E1] cursor-pointer"><input type="checkbox" id="layer-toggle-synthetic-aois" class="accent-[#8B5CF6]"><span>Synthetic AOIs</span></label>
+            <label class="flex items-center gap-2.5 text-xs text-[#CBD5E1] cursor-pointer"><input type="checkbox" id="layer-toggle-synthetic-changes" class="accent-[#8B5CF6]"><span>Synthetic change regions</span></label>
+            <div class="type-metadata text-[9px] pt-1 border-t border-[#1E2838]">USER</div>
+            <label class="flex items-center gap-2.5 text-xs text-[#CBD5E1] cursor-pointer"><input type="checkbox" id="layer-toggle-selection" checked class="accent-[#1E6BFF]"><span>Current selection</span></label>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right: Coordinate HUD & Basemap Metadata -->
+      <div class="flex items-center gap-4 text-xs font-mono">
+        <div class="hidden md:flex items-center gap-2 text-[#94A3B8]">
+          <span class="w-1.5 h-1.5 bg-[#1E6BFF] inline-block"></span>
+          <span class="type-metadata text-[10px] text-[#5C6B80]">BASEMAP:</span>
+          <span id="map-basemap-label" class="text-white text-[11px]">OpenStreetMap</span>
+        </div>
+        <div class="flex items-center gap-3 bg-[#0F141F] px-2.5 py-1 border border-[#1E2838] text-[#94A3B8]">
+          <div>
+            <span class="text-[#5C6B80]">VIEW:</span>
+            <span id="map-coordinates" class="text-white ml-1 font-mono text-[11px]">15.0000° N, 10.0000° W</span>
+          </div>
+          <span class="text-[#1E2838]">|</span>
+          <div>
+            <span class="text-[#5C6B80]">ZOOM:</span>
+            <span id="map-zoom" class="text-white ml-1 font-mono text-[11px]">Z2.2</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Main Workspace: Split Desktop Layout (Map + Area Inspector) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+      
+      <!-- Map Column (Desktop 68%, Mobile 100%) -->
+      <div class="lg:col-span-8 lg:sticky lg:top-4 lg:self-start">
+        <div class="panel-standard p-0 overflow-hidden border-[#1E2838] bg-[#04060A] relative flex flex-col h-[560px] sm:h-[640px] lg:h-[760px]">
+          
+          <!-- Data-origin reminder -->
+          <div class="absolute top-3 left-3 z-10 bg-[#090D14]/90 backdrop-blur-sm border border-[#1E2838] px-2.5 py-1.5 flex items-center gap-2 text-xs font-mono shadow-lg"
+               title="Synthetic development fixtures — not Earth observation results.">
+            <span class="w-2 h-2 rounded-full bg-[#1E6BFF] animate-pulse"></span>
+            <span class="font-bold text-white tracking-wider">REAL + DEMO DATA</span>
+            <span class="text-[#5C6B80] hidden sm:inline">&bull; Stored showcase and labeled fixtures</span>
+          </div>
+
+          <!-- Interaction Hint Banner (Dynamic during Drawing) -->
+          <div id="map-interaction-hint" 
+               class="hidden absolute top-3 left-1/2 -translate-x-1/2 z-10 bg-[#090D14]/95 border border-[#1E6BFF] px-3 py-1.5 text-xs font-mono text-[#60A5FA] shadow-xl pointer-events-none">
+            Mode: Draw Rectangle — Click first corner on map.
+          </div>
+
+          <!-- Small Expandable Map Legend (Bottom-Left) -->
+          <div class="absolute bottom-12 left-3 z-10" x-data="{ expanded: false }">
+            <button type="button" 
+                    @click="expanded = !expanded" 
+                    class="bg-[#090D14]/90 backdrop-blur-sm border border-[#1E2838] px-2.5 py-1 text-[11px] font-mono text-[#CBD5E1] flex items-center gap-1.5 hover:text-white transition-colors"
+                    aria-label="Toggle map legend">
+              <i data-lucide="info" class="w-3.5 h-3.5 text-[#1E6BFF]"></i>
+              <span>LEGEND</span>
+              <i data-lucide="chevron-up" class="w-3 h-3 text-[#5C6B80] transition-transform" :class="{ 'rotate-180': expanded }"></i>
+            </button>
+
+            <!-- Legend Details Box -->
+            <div x-show="expanded" 
+                 x-cloak 
+                 class="mt-1.5 p-3 bg-[#090D14]/95 backdrop-blur-sm border border-[#1E2838] text-xs font-mono space-y-2 w-64 shadow-2xl">
+              <div class="type-metadata text-[10px] text-[#5C6B80]">MAP OVERLAYS</div>
+              
+              <div class="flex items-center gap-2.5 text-[11px] text-[#94A3B8]">
+                <span class="w-3 h-3 border border-[#1E6BFF] bg-[#1E6BFF]/10 inline-block"></span>
+                <span>Real analysis AOI</span>
+              </div>
+
+              <div class="flex items-center gap-2.5 text-[11px] text-[#94A3B8]">
+                <span class="w-3 h-3 border border-[#8B5CF6] bg-[#8B5CF6]/10 inline-block"></span>
+                <span>Synthetic demonstration AOI / region</span>
+              </div>
+
+              <div class="flex items-center gap-2.5 text-[11px] text-[#94A3B8]">
+                <span class="w-3 h-3 border border-[#38BDF8] bg-[#38BDF8]/30 inline-block"></span>
+                <span>Detected Change</span>
+              </div>
+
+              <div class="flex items-center gap-2.5 text-[11px] text-[#94A3B8]">
+                <span class="w-3 h-3 border border-[#8B5CF6] bg-[#8B5CF6]/30 inline-block"></span>
+                <span>Ambiguous / Anomaly Region</span>
+              </div>
+
+              <div class="flex items-center gap-2.5 text-[11px] text-[#94A3B8]">
+                <span class="w-3 h-3 border border-dashed border-[#60A5FA] bg-[#1E6BFF]/20 inline-block"></span>
+                <span>User Selection Area</span>
+              </div>
+
+              <div class="flex items-center gap-2.5 text-[11px] text-[#94A3B8]">
+                <span class="w-3 h-3 border border-[#38BDF8] bg-[#38BDF8]/10 inline-block"></span>
+                <span>NISAR Granule Footprints</span>
+              </div>
+
+              <div class="pt-1.5 border-t border-[#1E2838] text-[10px] text-[#64748B] leading-tight">
+                Real showcase geometry and synthetic demonstration fixtures are identified by their record labels.
+              </div>
+            </div>
+          </div>
+
+          <!-- Map Canvas Container (Fills exact panel height) -->
+          <div id="map" class="flex-1 w-full min-h-0"></div>
+
+          <!-- Bottom Status Bar -->
+          <div class="bg-[#090D14] border-t border-[#1E2838] px-4 py-2 flex items-center justify-between text-[11px] font-mono text-[#94A3B8] shrink-0">
+            <div class="flex items-center gap-2">
+              <i data-lucide="compass" class="w-3.5 h-3.5 text-[#1E6BFF]"></i>
+              <span>MapLibre GL &bull; Interactive selection &amp; spatial intersection active.</span>
+            </div>
+            <div class="text-[#5C6B80] hidden sm:block">
+              EPSG:3857 (Web Mercator)
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Area Inspector Column (Desktop 32%, Mobile 100%) -->
+      <div class="lg:col-span-4">
+        
+        <!-- Area Inspector Panel Shell (Exact height-matched to Map) -->
+        <div class="panel-standard flex flex-col h-[560px] sm:h-[640px] lg:h-[760px] overflow-hidden">
+          
+          <!-- Inspector Header -->
+          <div class="flex items-center justify-between border-b border-[#1E2838] pb-3 mb-3 shrink-0">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 bg-[#090D14] border border-[#1E2838] flex items-center justify-center text-[#1E6BFF]">
+                <i data-lucide="scan" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <h3 class="type-section-title text-sm">AREA INSPECTOR</h3>
+                <span class="type-metadata text-[9px] text-[#5C6B80]">SURFACE-CHANGE OBSERVATION</span>
+              </div>
+            </div>
+            <span class="badge badge-maturity text-[9px]">HUMAN EXPLANATION</span>
+          </div>
+
+          <!-- Dynamic Inspector Content Area (Scrollable viewport for products & observations) -->
+          <div id="area-inspector-content" class="flex-1 overflow-y-auto pr-1 space-y-3 custom-scrollbar" aria-live="polite">
+            
+            <!-- STATE 1: NOTHING SELECTED (Default initial HTML) -->
+            <div class="empty-state py-8 px-4 bg-[#090D14] border border-[#1E2838] rounded-[2px]">
+              <div class="empty-state-icon w-10 h-10 mb-3 mx-auto flex items-center justify-center bg-[#0F141F] border border-[#1E2838] text-[#1E6BFF]">
+                <i data-lucide="crosshair" class="w-5 h-5"></i>
+              </div>
+              <div class="empty-state-title text-xs font-semibold text-white uppercase tracking-wider text-center">No Area Selected</div>
+              <p class="empty-state-description text-[12px] text-[#94A3B8] leading-relaxed text-center mt-2">
+                Click the map or draw an area to inspect available processed surface-change analyses.
+              </p>
+              <div class="mt-4 pt-3 border-t border-[#1E2838] text-center">
+                <span class="type-metadata text-[10px] text-[#5C6B80]">
+                Use Check NISAR Coverage to search the ASF metadata catalog.
+                </span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Scientific Context Footer (12-Day Orbital Repeat) -->
+          <div class="pt-2.5 mt-2.5 border-t border-[#1E2838] shrink-0 text-[10px] font-mono text-[#94A3B8] flex items-center justify-between bg-[#04060A]/40 -mx-4 -mb-4 px-4 py-2.5">
+            <span class="flex items-center gap-1.5 text-[#CBD5E1]">
+              <span class="w-1.5 h-1.5 bg-[#1E6BFF] inline-block"></span>
+              <span>12-DAY ORBIT REPEAT</span>
+            </span>
+            <span class="text-[#5C6B80]">L-BAND SAR &bull; GCOV/GUNW</span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Informational Architecture Panel -->
+    {% set panel_title = "Interactive Surface Change Pipeline" %}
+    {% set panel_tag = "AREA INSPECTION // EXPLANATION READY" %}
+    {% set icon = "scan" %}
+    {% set summary = "Map selection and server-side spatial query are connected to precomputed analysis records." %}
+    {% set details = "Area Inspector distinguishes observed change, ambiguous anomalies with candidate hypotheses, no significant change under current criteria, and insufficient data — while clearly communicating when no processed analysis exists." %}
+    {% include "components/placeholder_panel.html" %}
+
+  </div>
+{% endblock %}
+
+{% block scripts_extra %}
+  <script src="/static/js/area_inspector.js"></script>
+  <script src="/static/js/map_selection.js"></script>
+  <script src="/static/js/map.js"></script>
+{% endblock %}

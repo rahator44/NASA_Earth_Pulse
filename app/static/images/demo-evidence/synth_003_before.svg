@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" height="100%">
+  <defs>
+    <pattern id="missing-data-stripes" width="20" height="20" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0" x2="0" y2="20" stroke="#EF4444" stroke-width="1.5" opacity="0.3"/>
+    </pattern>
+  </defs>
+
+  <rect width="800" height="500" fill="#0A0E18"/>
+
+  <!-- Partial Swath Coverage (Only Left 32% Valid Pixels) -->
+  <rect x="50" y="40" width="240" height="420" fill="#1A2536" stroke="#33445C" stroke-width="1.5"/>
+  <path d="M 60 100 Q 150 80 280 120" stroke="#475A77" stroke-width="2" fill="none"/>
+  <path d="M 60 200 Q 180 170 280 230" stroke="#475A77" stroke-width="2" fill="none"/>
+  <path d="M 60 320 Q 160 300 280 340" stroke="#475A77" stroke-width="2" fill="none"/>
+
+  <!-- Missing Data Void / Quality Degradation Zone -->
+  <rect x="290" y="40" width="460" height="420" fill="#05080E" stroke="#1E2838" stroke-width="1"/>
+  <rect x="290" y="40" width="460" height="420" fill="url(#missing-data-stripes)"/>
+
+  <text x="520" y="240" fill="#F87171" font-family="monospace" font-size="13" font-weight="bold" text-anchor="middle" letter-spacing="1">
+    DATA DROPOUT // INVALID PIXEL FRACTION: 68%
+  </text>
+  <text x="520" y="265" fill="#94A3B8" font-family="monospace" font-size="10" text-anchor="middle">
+    SECONDARY ORBIT PASS MISSING IN CATALOG
+  </text>
+
+  <!-- Watermark & Legend -->
+  <rect x="430" y="16" width="350" height="24" fill="#090D14" opacity="0.85" rx="2" stroke="#1E2838" stroke-width="0.8"/>
+  <text x="440" y="32" fill="#FCA5A5" font-family="monospace" font-size="11" font-weight="bold" letter-spacing="1">
+    SYNTHETIC VISUAL FIXTURE // NOT NISAR IMAGERY
+  </text>
+
+  <rect x="20" y="458" width="310" height="24" fill="#090D14" opacity="0.85" rx="2" stroke="#1E2838" stroke-width="0.8"/>
+  <text x="28" y="474" fill="#FCA5A5" font-family="monospace" font-size="10" font-weight="bold">
+    PRIMARY PASS DEGRADED &bull; 08 AUG 2026 &bull; BETA
+  </text>
+</svg>

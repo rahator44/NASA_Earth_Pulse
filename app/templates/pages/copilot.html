@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}Earth Copilot{% endblock %}
+
+{% block content %}
+  {% set page_label = "GROUNDED EXPLANATION // DEMO MODE" %}
+  {% set page_title = "Earth Copilot" %}
+  {% set page_description = "Explore stored analysis records through deterministic, evidence-grounded demo answers." %}
+  {% set badge_text = "DEMO ASSISTANT" %}
+  {% include "components/page_header.html" %}
+
+  <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_22rem] gap-5" data-copilot>
+    <section class="panel-standard p-0 overflow-hidden flex flex-col min-h-[620px]" aria-label="Conversation workspace">
+      <header class="px-4 py-3 border-b border-[#1E2838] bg-[#090D14] flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <span class="w-9 h-9 border border-[#1E2838] bg-[#0F141F] text-[#60A5FA] flex items-center justify-center"><i data-lucide="message-square-text" class="w-4 h-4"></i></span>
+          <div><h2 class="type-section-title text-sm">CONVERSATION</h2><p class="type-metadata text-[10px]">ANSWERS USE STORED FIELDS ONLY</p></div>
+        </div>
+        <span class="badge badge-maturity">DEMO ASSISTANT</span>
+      </header>
+
+      <div class="p-4 sm:p-6 space-y-5 flex-1" id="copilot-thread" aria-live="polite">
+        <div class="border border-[#1E2838] bg-[#0F141F] p-4 text-xs leading-relaxed text-[#CBD5E1]">
+          <div class="type-metadata text-[#60A5FA] mb-2">DEMO ASSISTANT</div>
+          This interface demonstrates a grounded analysis assistant. Responses are generated from stored analysis records only.
+        </div>
+
+        {% if requested_event_not_found %}
+          {% set status_kind = "no-processed-analysis" %}
+          {% set status_title = "NO PROCESSED ANALYSIS" %}
+          {% set status_description = "No computed analysis exists for this request." %}
+          {% include "components/status_state.html" %}
+        {% elif not event_context %}
+          <div class="space-y-4">
+            <div class="p-3 border border-[#1E2838] bg-[#090D14] flex items-center justify-between gap-3">
+              <div>
+                <div class="type-metadata text-[10px] text-[#60A5FA]">NO ACTIVE CONTEXT</div>
+                <div class="text-xs text-[#CBD5E1]">Open Copilot from an event record to load its stored analysis context, or select an observation below:</div>
+              </div>
+              <span class="text-[11px] text-[#94A3B8] font-mono">{{ available_events|length if available_events else 0 }} records</span>
+            </div>
+
+            <div class="space-y-2.5">
+              {% for ev in available_events %}
+                <a href="/copilot?event={{ ev.id }}" class="group block p-3.5 border border-[#1E2838] bg-[#090D14] hover:border-[#1E6BFF] hover:bg-[#0F141F] transition-all">
+                  <div class="flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2">
+                      <span class="font-semibold text-xs text-white group-hover:text-[#60A5FA] transition-colors">{{ ev.title }}</span>
+                      {% if not ev.is_demo %}
+                        <span class="badge badge-maturity text-[9px] bg-[#0D2818] text-[#34D399] border-[#059669]">REAL NISAR</span>
+                      {% else %}
+                        <span class="badge badge-provisional text-[9px]">DEMO</span>
+                      {% endif %}
+                    </div>
+                    <span class="text-xs text-[#60A5FA] group-hover:translate-x-1 transition-transform">Analyze &rarr;</span>
+                  </div>
+                  <p class="text-[11px] text-[#94A3B8] mt-1 line-clamp-2">{{ ev.short_description }}</p>
+                  {% if ev.primary_measurement_label %}
+                    <div class="text-[10px] font-mono text-[#38BDF8] mt-2 flex items-center gap-2">
+                      <span class="text-[#64748B]">{{ ev.primary_measurement_label }}:</span>
+                      <span class="font-semibold">{{ ev.primary_measurement_value }}</span>
+                    </div>
+                  {% endif %}
+                </a>
+              {% endfor %}
+            </div>
+          </div>
+        {% else %}
+          <div class="p-3 border border-[#1E2838] bg-[#090D14] flex flex-wrap items-center justify-between gap-3">
+            <div><div class="type-metadata text-[10px]">ACTIVE RECORD · {{ event_context.situation.human_label }}</div><div class="text-sm font-semibold text-white">{{ event_context.title }}</div><div class="text-[11px] text-[#94A3B8]">{{ event_context.aoi }}</div>{% if event_context.situation.human_label == "DEMO INTERPRETATION" %}<div class="text-[10px] text-amber-200">Synthetic development fixture — not an Earth observation result.</div>{% endif %}</div>
+            <a href="/event/{{ event_context.event_id }}" class="btn btn-secondary text-xs">Open Event Detail</a>
+          </div>
+
+          <div class="space-y-2">
+            <div class="type-metadata text-[10px]">STARTER QUESTIONS</div>
+            {% set questions = [
+              ("What happened here?", "what_changed"),
+              ("Why do you think that?", "evidence"),
+              ("What did NISAR measure?", "measurement"),
+              ("What else could explain this?", "alternatives"),
+              ("How reliable is the data?", "quality"),
+              ("What can't you conclude?", "limitations"),
+              ("Should I evacuate?", "evacuation")
+            ] %}
+            {% for label, key in questions %}
+              <button type="button" class="copilot-question w-full text-left px-3 py-2.5 border border-[#1E2838] bg-[#090D14] hover:border-[#1E6BFF] text-xs text-[#CBD5E1] transition-colors" data-question="{{ label }}" data-answer-key="{{ key }}">{{ label }}<span class="float-right text-[#60A5FA]" aria-hidden="true">↗</span></button>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <footer class="p-3 border-t border-[#1E2838] bg-[#090D14] text-[11px] text-[#94A3B8]">
+        <span class="font-semibold text-white">DEMO ASSISTANT</span> · Fixed prompts show how stored fields can be explained; no external language model is connected.
+      </footer>
+    </section>
+
+    <aside class="panel-standard h-fit" aria-label="Active context">
+      <div class="flex items-center gap-2 border-b border-[#1E2838] pb-3 mb-3"><i data-lucide="panel-right" class="w-4 h-4 text-[#60A5FA]"></i><h2 class="type-section-title text-sm">ACTIVE CONTEXT</h2></div>
+      {% if event_context %}
+        <dl class="space-y-3 text-xs">
+          <div><dt class="type-metadata">RECORD TYPE</dt><dd class="mt-0.5"><span class="badge badge-maturity">{{ event_context.situation.human_label }}</span></dd></div>
+          <div><dt class="type-metadata">EVENT</dt><dd class="text-white mt-0.5">{{ event_context.title }}</dd></div>
+          <div><dt class="type-metadata">AOI</dt><dd class="text-[#CBD5E1] mt-0.5">{{ event_context.aoi }}</dd></div>
+          <div><dt class="type-metadata">OBSERVATION STATE</dt><dd class="mt-0.5"><span class="badge {{ event_context.observation_state_badge_class }}">{{ event_context.observation_state }}</span></dd></div>
+          <div><dt class="type-metadata">INTERPRETATION</dt><dd class="text-[#CBD5E1] mt-0.5">{{ event_context.interpretation }}</dd></div>
+          <div class="scientist-only"><dt class="type-metadata">ANALYSIS ID</dt><dd class="technical-id mt-0.5">{{ event_context.analysis_id }}</dd></div>
+          <div class="scientist-only"><dt class="type-metadata">MANIFEST ID</dt><dd class="technical-id mt-0.5">{{ event_context.manifest_id }}</dd></div>
+          <div><dt class="type-metadata">ACQUISITION DATES</dt><dd class="text-[#CBD5E1] mt-0.5">{{ event_context.before_date }}<br>{{ event_context.after_date }}</dd></div>
+          <div><dt class="type-metadata">PRODUCT</dt><dd class="text-[#CBD5E1] mt-0.5">{{ event_context.product }}</dd></div>
+          <div class="scientist-only"><dt class="type-metadata">PRODUCT / PAIR DETAILS</dt><dd class="text-[#CBD5E1] mt-0.5">{{ event_context.situation.technical_metadata.product_code }} · {{ event_context.situation.technical_metadata.maturity_code }} · Track {{ event_context.situation.technical_metadata.track }} / Frame {{ event_context.situation.technical_metadata.frame }} · {{ event_context.situation.technical_metadata.orbit_direction }} · {{ event_context.situation.technical_metadata.polarizations|join('/') }} · CRID {{ event_context.situation.technical_metadata.crid }}</dd></div>
+          <div class="scientist-only"><dt class="type-metadata">PROVENANCE</dt><dd class="technical-id mt-0.5">{{ event_context.situation.technical_metadata.before_granule_id }}<br>{{ event_context.situation.technical_metadata.after_granule_id }}<br>Manifest {{ event_context.manifest_id }}<br>Dataset path {{ event_context.situation.technical_metadata.dataset_path or "not stored" }}</dd></div>
+          <div class="scientist-only"><dt class="type-metadata">COMPARISON / QUALITY CONFIGURATION</dt><dd class="text-[#CBD5E1] mt-0.5">{{ event_context.situation.technical_metadata.comparison_policy }} · {{ event_context.situation.data_quality }}</dd></div>
+          <div><dt class="type-metadata">VALIDATION</dt><dd class="text-[#CBD5E1] mt-0.5">{{ event_context.validation }}</dd></div>
+          <div class="pt-2 border-t border-[#1E2838] flex flex-wrap gap-2"><a href="{{ event_context.evidence_url }}" class="btn btn-secondary text-xs">Open Evidence / Lab</a><a href="/map" class="btn btn-secondary text-xs">Open Map</a></div>
+        </dl>
+      {% else %}
+        <div class="empty-state p-4"><div class="empty-state-title">NO ACTIVE CONTEXT</div><p class="empty-state-description">Choose an existing event to load its saved context.</p></div>
+      {% endif %}
+    </aside>
+  </div>
+{% endblock %}
+
+{% block scripts_extra %}
+  {% if event_context %}
+  <script>
+    (() => {
+      const context = {{ event_context|tojson }};
+      const situation = context.situation;
+      const answers = {
+        what_changed: `${situation.headline}\n${situation.what_changed}`,
+        evidence: [...situation.direct_evidence, ...situation.supporting_evidence].map(item => item.description_public).join('\n') || situation.summary,
+        measurement: situation.what_nisar_measured,
+        alternatives: situation.interpretations.slice(1).map(item => `${item.public_label}: ${item.description}`).join('\n') || 'The stored analysis does not record another supported physical explanation. The cause may remain unresolved.',
+        quality: `${situation.data_quality.status || 'Not assessed'}: ${situation.data_quality.explanation || 'No quality assessment is stored.'}${situation.data_quality.valid_pixel_percent !== undefined ? ` ${situation.data_quality.valid_pixel_percent}% usable pixels.` : ''}`,
+        limitations: situation.what_we_cannot_say.map(item => `• ${item}`).join('\n'),
+        evacuation: 'This application does not issue evacuation instructions. Follow local authorities and official emergency alert services.'
+      };
+      const thread = document.getElementById('copilot-thread');
+      document.querySelectorAll('.copilot-question').forEach(button => button.addEventListener('click', () => {
+        const question = document.createElement('div');
+        question.className = 'ml-8 border border-[#1E6BFF]/40 bg-[#0F141F] p-3 text-xs text-white';
+        question.textContent = button.dataset.question;
+        const answer = document.createElement('div');
+        answer.className = 'mr-6 border border-[#1E2838] bg-[#090D14] p-3 text-xs leading-relaxed text-[#CBD5E1] whitespace-pre-line';
+        const label = document.createElement('div');
+        label.className = 'type-metadata text-[#60A5FA] mb-2';
+        label.textContent = 'DEMO ASSISTANT · STORED RECORD';
+        answer.append(label, document.createTextNode(answers[button.dataset.answerKey]));
+        thread.append(question, answer);
+        answer.scrollIntoView({block: 'nearest', behavior: 'smooth'});
+      }));
+    })();
+  </script>
+  {% endif %}
+{% endblock %}

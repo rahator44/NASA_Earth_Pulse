@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Settings{% endblock %}
+
+{% block content %}
+  {% set page_label = "DISPLAY PREFERENCES // THIS BROWSER" %}
+  {% set page_title = "Settings" %}
+  {% set page_description = "Lightweight display preferences saved in this browser." %}
+  {% set badge_text = "LOCAL PREFERENCES" %}
+  {% include "components/page_header.html" %}
+
+  <div class="max-w-4xl space-y-5">
+    <section class="panel-standard space-y-4" aria-labelledby="display-settings">
+      <h2 id="display-settings" class="type-section-title text-sm border-b border-[#1E2838] pb-3">DISPLAY</h2>
+      <div class="setting-row"><div><div class="type-section-title text-xs">Dark theme</div><p class="type-small">Current default appearance.</p></div><span class="badge badge-state-change">DARK · DEFAULT</span></div>
+      <label class="setting-row" for="pref-reduced-motion"><span><span class="type-section-title text-xs">Reduced motion</span><span class="type-small block">Reduce optional interface transitions.</span></span><input id="pref-reduced-motion" type="checkbox" data-pref="reducedMotion" class="setting-toggle"></label>
+      <label class="setting-row" for="pref-compact-metadata"><span><span class="type-section-title text-xs">Compact metadata</span><span class="type-small block">Use tighter spacing for metadata rows.</span></span><input id="pref-compact-metadata" type="checkbox" data-pref="compactMetadata" class="setting-toggle"></label>
+    </section>
+
+    <section class="panel-standard space-y-4" aria-labelledby="map-settings">
+      <h2 id="map-settings" class="type-section-title text-sm border-b border-[#1E2838] pb-3">MAP</h2>
+      <label class="setting-row" for="pref-map-view"><span><span class="type-section-title text-xs">Default map view</span><span class="type-small block">Initial map extent for this browser.</span></span><select id="pref-map-view" data-pref="mapDefaultView" class="setting-select"><option value="global">Global view</option><option value="north-america">North America</option><option value="last-view">Last map view (when available)</option></select></label>
+      <label class="setting-row" for="pref-change-regions"><span><span class="type-section-title text-xs">Show change regions</span></span><input id="pref-change-regions" type="checkbox" data-pref="showChangeRegions" class="setting-toggle" checked></label>
+      <label class="setting-row" for="pref-aois"><span><span class="type-section-title text-xs">Show AOIs</span></span><input id="pref-aois" type="checkbox" data-pref="showAois" class="setting-toggle" checked></label>
+      <label class="setting-row" for="pref-footprints"><span><span class="type-section-title text-xs">Show NISAR footprints</span><span class="type-small block">Visible when live search footprints are loaded.</span></span><input id="pref-footprints" type="checkbox" data-pref="showFootprints" class="setting-toggle"></label>
+    </section>
+
+    <section class="panel-standard space-y-4" aria-labelledby="science-mode-settings">
+      <div class="flex flex-wrap items-start justify-between gap-3 border-b border-[#1E2838] pb-3"><div><h2 id="science-mode-settings" class="type-section-title text-sm">SCIENCE DISPLAY</h2><p class="type-small mt-1">Choose how much technical detail appears across the application. Scientist Image Lab always keeps its analysis controls available.</p></div><span class="badge badge-product">DEFAULT: PUBLIC MODE</span></div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" role="radiogroup" aria-label="Science display mode">
+        <button type="button" class="mode-option" data-mode-option="public" role="radio" aria-checked="true"><span class="type-section-title text-xs">PUBLIC MODE</span><span class="type-small block mt-1">Plain-language observations, location, dates, measurements, and evidence.</span></button>
+        <button type="button" class="mode-option" data-mode-option="scientist" role="radio" aria-checked="false"><span class="type-section-title text-xs">SCIENTIST MODE</span><span class="type-small block mt-1">Manifest, acquisition IDs, thresholds, quality, validation, and provenance.</span></button>
+      </div>
+    </section>
+
+    <section class="panel-standard space-y-4" aria-labelledby="language-settings">
+      <h2 id="language-settings" class="type-section-title text-sm border-b border-[#1E2838] pb-3">LANGUAGE</h2>
+      <label class="setting-row" for="pref-language"><span><span class="type-section-title text-xs">Interface language</span></span><select id="pref-language" data-pref="language" class="setting-select"><option value="en">English</option><option value="es" disabled>Español · Future option</option><option value="fr" disabled>Français · Future option</option><option value="bn" disabled>বাংলা · Future option</option></select></label>
+    </section>
+
+    <section class="panel-standard space-y-3" aria-labelledby="about-settings">
+      <h2 id="about-settings" class="type-section-title text-sm border-b border-[#1E2838] pb-3">ABOUT</h2>
+      <div class="setting-row"><span class="type-small">NASA Space Apps Challenge Demo</span><span class="technical-id">Application version 1.0.0</span></div>
+      <p class="type-small">Data acknowledgements: NASA-ISRO NISAR data via ASF DAAC; other records are labeled as demonstration fixtures.</p>
+      <a href="/methods" class="text-xs text-[#60A5FA] hover:underline">Methodology and data sources</a>
+      <p class="text-[11px] text-[#94A3B8] leading-relaxed">NISAR Surface Change Explorer is a NASA Space Apps Challenge demo. It visualizes observed Earth-surface change and does not predict disasters or issue emergency instructions. This demo is not an official NASA product or endorsement.</p>
+    </section>
+    <p class="text-[10px] text-[#5C6B80] font-mono">Preferences are stored locally in this browser; no account or server storage is used.</p>
+  </div>
+{% endblock %}

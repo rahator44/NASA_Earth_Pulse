@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "region_synth_001",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-25.2, 14.95],
+            [-24.95, 14.95],
+            [-24.95, 15.2],
+            [-25.2, 15.2],
+            [-25.2, 14.95]
+          ]
+        ]
+      },
+      "properties": {
+        "region_id": "region_synth_001",
+        "analysis_id": "analysis_synth_001",
+        "area_km2": 4.8,
+        "classification_status": "resolved",
+        "final_classification": "flood_wetland",
+        "context_tags": ["coastal_margin", "subcanopy_inundation"],
+        "is_demo": true,
+        "data_origin": "synthetic_ui_fixture",
+        "disclaimer": "Synthetic development fixture — not an Earth observation result."
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "region_synth_002",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [9.7, -15.3],
+            [10.1, -15.3],
+            [10.1, -14.9],
+            [9.7, -14.9],
+            [9.7, -15.3]
+          ]
+        ]
+      },
+      "properties": {
+        "region_id": "region_synth_002",
+        "analysis_id": "analysis_synth_002",
+        "area_km2": 2.1,
+        "classification_status": "ambiguous",
+        "final_classification": null,
+        "context_tags": ["multi_candidate_anomaly", "unresolved_evidence"],
+        "is_demo": true,
+        "data_origin": "synthetic_ui_fixture",
+        "disclaimer": "Synthetic development fixture — not an Earth observation result."
+      }
+    }
+  ]
+}

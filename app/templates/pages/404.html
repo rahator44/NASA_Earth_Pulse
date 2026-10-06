@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}{% if is_lab_404 or analysis_id %}Analysis Not Found{% else %}Observation Not Found{% endif %}{% endblock %}
+
+{% block content %}
+  {% set page_label = "REGISTRY LOOKUP // EXCEPTION" %}
+  {% set page_title = "Analysis Not Found" if (is_lab_404 or analysis_id) else "Observation Not Found" %}
+  {% set page_description = "The requested analysis is not available in the current dataset." if (is_lab_404 or analysis_id) else "The requested analysis record does not exist in the current dataset." %}
+  {% set badge_text = "HTTP 404 // NOT FOUND" %}
+  {% include "components/page_header.html" %}
+
+  <div class="space-y-6">
+    <div class="panel-standard p-8 sm:p-12 text-center max-w-2xl mx-auto flex flex-col items-center">
+      <div class="w-16 h-16 rounded-full bg-[#121824] border border-[#1E2838] flex items-center justify-center text-[#EF4444] mb-5 shadow-lg">
+        <i data-lucide="alert-triangle" class="w-8 h-8"></i>
+      </div>
+
+      <div class="type-metadata text-[11px] text-[#5C6B80] tracking-widest uppercase mb-1">DATA REGISTRY EXCEPTION</div>
+      <h2 class="type-section-title text-xl sm:text-2xl text-white mb-3">
+        {% if is_lab_404 or analysis_id %}ANALYSIS NOT FOUND{% else %}OBSERVATION NOT FOUND{% endif %}
+      </h2>
+      
+      <p class="type-body text-[#94A3B8] max-w-md mb-6 text-sm">
+        {% if is_lab_404 or analysis_id %}
+          The requested analysis <code class="font-mono text-white bg-[#090D14] px-2.5 py-1 border border-[#1E2838] text-xs font-semibold">{{ analysis_id }}</code> is not available in the current dataset.
+        {% else %}
+          The requested analysis record <code class="font-mono text-white bg-[#090D14] px-2.5 py-1 border border-[#1E2838] text-xs font-semibold">{{ event_id }}</code> does not exist in the current dataset or may have been unindexed.
+        {% endif %}
+      </p>
+
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        <a href="/" class="btn btn-primary text-xs py-2 px-4 flex items-center gap-2">
+          <i data-lucide="list" class="w-4 h-4"></i>
+          <span>{% if is_lab_404 or analysis_id %}Change Feed{% else %}Return to Change Feed{% endif %}</span>
+        </a>
+        <a href="/map" class="btn btn-secondary text-xs py-2 px-4 flex items-center gap-2">
+          <i data-lucide="map" class="w-4 h-4"></i>
+          <span>Explore Map</span>
+        </a>
+      </div>
+    </div>
+  </div>
+{% endblock %}

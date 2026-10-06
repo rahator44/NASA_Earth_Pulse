@@ -1,0 +1,8 @@
+<section class="empty-state status-state-{{ status_kind|default('no-data') }}" role="status" aria-live="polite">
+  <div class="empty-state-icon"><i data-lucide="{{ status_icon|default('info') }}" class="w-6 h-6"></i></div>
+  <div class="empty-state-title">{{ status_title }}</div>
+  <p class="empty-state-description">{{ status_description }}</p>
+  {% if status_action_label and status_action_url %}
+    <div class="mt-5"><a href="{{ status_action_url }}" class="btn btn-secondary text-xs">{{ status_action_label }}</a></div>
+  {% endif %}
+</section>

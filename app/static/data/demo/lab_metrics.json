@@ -1,0 +1,162 @@
+[
+  {
+    "analysis_id": "analysis_synth_001",
+    "data_origin": "synthetic_ui_fixture",
+    "is_synthetic": true,
+    "disclaimer": "Synthetic evidence and analysis controls are used to demonstrate the scientist workflow. These are not NISAR measurements.",
+    "active_channel": "HH",
+    "available_channels": ["HH", "HV"],
+    "channel_label": "HH — co-polarized backscatter (synthetic demonstration)",
+    "has_alternative_channel_assets": false,
+    "histogram": {
+      "label": "Radar Backscatter Difference Distribution (HH)",
+      "unit": "dB",
+      "bins": [-6.0, -5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0],
+      "counts": [420, 1280, 4850, 8920, 15400, 18900, 11200, 3400],
+      "minimum": -6.2,
+      "maximum": 2.4,
+      "mean": -1.35,
+      "median": -1.10,
+      "disclaimer": "Synthetic distribution — demonstration only."
+    },
+    "threshold_preview": {
+      "parameter_name": "Backscatter Reduction Cutoff",
+      "unit": "dB",
+      "minimum": -5.0,
+      "maximum": -2.0,
+      "default": -3.8,
+      "step": 0.1,
+      "direction": "below_threshold",
+      "preview_states": [
+        {
+          "threshold_value": -4.5,
+          "mask_url": "/static/images/demo-evidence/synth_001_mask_conservative.svg",
+          "label": "Conservative Cutoff (-4.5 dB)"
+        },
+        {
+          "threshold_value": -3.8,
+          "mask_url": "/static/images/demo-evidence/synth_001_mask.svg",
+          "label": "Nominal Stored Cutoff (-3.8 dB)"
+        },
+        {
+          "threshold_value": -2.5,
+          "mask_url": "/static/images/demo-evidence/synth_001_mask_aggressive.svg",
+          "label": "Aggressive Cutoff (-2.5 dB)"
+        }
+      ],
+      "disclaimer": "Preview uses precomputed synthetic mask states."
+    },
+    "quality_summary": {
+      "valid_pixel_fraction": 0.94,
+      "required_inputs_available": true,
+      "quality_gate_passed": true,
+      "notes": "Complete 12-day exact repeat dual-pol coverage available."
+    },
+    "has_quality_mask": true,
+    "quality_mask_url": "/static/images/demo-evidence/synth_001_quality_mask.svg",
+    "pixel_value_summary": "Calibrated gamma-0 backscatter range: -24.2 dB to -3.8 dB across water surfaces.",
+    "notes": "Dual-polarization L-band hydrology extraction."
+  },
+  {
+    "analysis_id": "analysis_synth_002",
+    "data_origin": "synthetic_ui_fixture",
+    "is_synthetic": true,
+    "disclaimer": "Synthetic evidence and analysis controls are used to demonstrate the scientist workflow. These are not NISAR measurements.",
+    "active_channel": "HV",
+    "available_channels": ["HH", "HV"],
+    "channel_label": "HV — cross-polarized canopy volume response (synthetic demonstration)",
+    "has_alternative_channel_assets": false,
+    "histogram": {
+      "label": "Cross-Pol Coherence Loss Distribution (HV)",
+      "unit": "unitless",
+      "bins": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
+      "counts": [150, 480, 1120, 2900, 6800, 14200, 9500, 3100, 650],
+      "minimum": 0.05,
+      "maximum": 0.92,
+      "mean": 0.48,
+      "median": 0.51,
+      "disclaimer": "Synthetic distribution — demonstration only."
+    },
+    "threshold_preview": {
+      "parameter_name": "Decorrelation Magnitude Cutoff",
+      "unit": "unitless",
+      "minimum": 0.3,
+      "maximum": 0.7,
+      "default": 0.52,
+      "step": 0.02,
+      "direction": "above_threshold",
+      "preview_states": [
+        {
+          "threshold_value": 0.52,
+          "mask_url": "/static/images/demo-evidence/synth_002_mask.svg",
+          "label": "Nominal Stored Cutoff (0.52)"
+        }
+      ],
+      "disclaimer": "Preview uses precomputed synthetic mask states."
+    },
+    "quality_summary": {
+      "valid_pixel_fraction": 0.91,
+      "required_inputs_available": true,
+      "quality_gate_passed": true,
+      "notes": "Valid SAR pixels present, but independent sensor signals diverge."
+    },
+    "has_quality_mask": false,
+    "quality_mask_url": null,
+    "pixel_value_summary": "Interferometric coherence loss magnitude in canopy volume scattering.",
+    "notes": "Multi-candidate anomaly analysis."
+  },
+  {
+    "analysis_id": "analysis_synth_003",
+    "data_origin": "synthetic_ui_fixture",
+    "is_synthetic": true,
+    "disclaimer": "Synthetic evidence and analysis controls are used to demonstrate the scientist workflow. These are not NISAR measurements.",
+    "active_channel": "HH",
+    "available_channels": ["HH"],
+    "channel_label": "HH — degraded single pass (synthetic demonstration)",
+    "has_alternative_channel_assets": false,
+    "histogram": null,
+    "threshold_preview": null,
+    "quality_summary": {
+      "valid_pixel_fraction": 0.32,
+      "required_inputs_available": false,
+      "quality_gate_passed": false,
+      "notes": "Valid-pixel fraction below configured minimum."
+    },
+    "has_quality_mask": false,
+    "quality_mask_url": null,
+    "pixel_value_summary": null,
+    "notes": "Threshold analysis unavailable because the quality gate was not passed."
+  },
+  {
+    "analysis_id": "analysis_synth_004",
+    "data_origin": "synthetic_ui_fixture",
+    "is_synthetic": true,
+    "disclaimer": "Synthetic evidence and analysis controls are used to demonstrate the scientist workflow. These are not NISAR measurements.",
+    "active_channel": "HH",
+    "available_channels": ["HH"],
+    "channel_label": "HH — single polarization interferogram (synthetic demonstration)",
+    "has_alternative_channel_assets": false,
+    "histogram": {
+      "label": "Interferometric Phase Residual Distribution",
+      "unit": "rad",
+      "bins": [-3.14, -2.35, -1.57, -0.78, 0.0, 0.78, 1.57, 2.35, 3.14],
+      "counts": [80, 240, 950, 4200, 18500, 4100, 980, 220],
+      "minimum": -3.12,
+      "maximum": 3.10,
+      "mean": 0.02,
+      "median": 0.01,
+      "disclaimer": "Synthetic distribution — demonstration only."
+    },
+    "threshold_preview": null,
+    "quality_summary": {
+      "valid_pixel_fraction": 0.98,
+      "required_inputs_available": true,
+      "quality_gate_passed": true,
+      "notes": "Excellent interferometric coherence across 12-day repeat."
+    },
+    "has_quality_mask": false,
+    "quality_mask_url": null,
+    "pixel_value_summary": "Phase residual standard deviation: 0.14 rad across stable bedrock network.",
+    "notes": "Relative line-of-sight interferometric phase residuals evaluated against stable bedrock reference."
+  }
+]

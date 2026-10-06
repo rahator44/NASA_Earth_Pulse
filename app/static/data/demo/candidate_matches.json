@@ -1,0 +1,68 @@
+[
+  {
+    "id": "candidate_synth_001",
+    "analysis_id": "analysis_synth_001",
+    "region_id": "region_synth_001",
+    "candidate_domain": "flood_wetland",
+    "physical_evidence": {
+      "gamma0_backscatter_drop_db": -3.8,
+      "copol_phase_shift_deg": 14.2
+    },
+    "independent_evidence": {
+      "gauge_level_above_threshold": true,
+      "optical_water_index_concordance": 0.88
+    },
+    "contradicting_evidence": {},
+    "candidate_score": 0.92,
+    "supported": true,
+    "notes": "Consistent double-bounce reduction and inundation indicators across multi-polarization radar channels.",
+    "is_demo": true,
+    "data_origin": "synthetic_ui_fixture",
+    "disclaimer": "Synthetic development fixture — not an Earth observation result."
+  },
+  {
+    "id": "candidate_synth_002_a",
+    "analysis_id": "analysis_synth_002",
+    "region_id": "region_synth_002",
+    "candidate_domain": "flood_wetland",
+    "physical_evidence": {
+      "backscatter_drop_db": -4.2
+    },
+    "independent_evidence": {
+      "gauge_station_proximity": false,
+      "optical_cloud_cover_obscuration": 0.78
+    },
+    "contradicting_evidence": {
+      "topographic_slope_deg": 18.5
+    },
+    "candidate_score": 0.41,
+    "supported": false,
+    "notes": "Hydrological inundation is physically implausible on steep terrain slope despite signal drop.",
+    "is_demo": true,
+    "data_origin": "synthetic_ui_fixture",
+    "disclaimer": "Synthetic development fixture — not an Earth observation result."
+  },
+  {
+    "id": "candidate_synth_002_b",
+    "analysis_id": "analysis_synth_002",
+    "region_id": "region_synth_002",
+    "candidate_domain": "wildfire",
+    "physical_evidence": {
+      "cross_pol_coherence_loss": 0.52,
+      "canopy_roughness_decrease": true
+    },
+    "independent_evidence": {
+      "firms_active_detections": 0,
+      "viirs_thermal_anamolies": 0
+    },
+    "contradicting_evidence": {
+      "zero_thermal_detections_in_24h_window": true
+    },
+    "candidate_score": 0.48,
+    "supported": false,
+    "notes": "Coherence loss resembles canopy burn scar but independent thermal infrared evidence is entirely absent.",
+    "is_demo": true,
+    "data_origin": "synthetic_ui_fixture",
+    "disclaimer": "Synthetic development fixture — not an Earth observation result."
+  }
+]

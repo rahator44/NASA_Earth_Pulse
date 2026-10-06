@@ -1,0 +1,112 @@
+<div class="media-card group h-full flex flex-col justify-between border border-[#1E2838] bg-[#0F141F] hover:border-[#1E6BFF]/60 transition-colors">
+  
+  <!-- Image / Visual Placement -->
+  <div class="media-card-image-wrap relative">
+    {% if event.thumbnail_url %}
+      <img src="{{ event.thumbnail_url }}" alt="{{ event.title }}" class="media-card-image" loading="lazy">
+    {% else %}
+      <div class="w-full h-full bg-[#090D14] flex items-center justify-center relative overflow-hidden">
+        <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#1E6BFF_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        <div class="z-10 flex flex-col items-center text-[#5C6B80] px-4 text-center">
+          <i data-lucide="{{ event.fallback_icon }}" class="w-9 h-9 text-[#1E6BFF]/70 mb-2"></i>
+          <span class="text-[9px] font-mono uppercase tracking-widest text-[#94A3B8]">
+            {{ event.fallback_graphic_tag }}
+          </span>
+          <span class="text-[8px] font-mono text-[#5C6B80] tracking-wider mt-0.5">
+            VISUAL PLACEHOLDER
+          </span>
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Gradient overlay for text contrast -->
+    <div class="media-card-overlay"></div>
+
+    <!-- Floating Top Badges (Observation State + Demo Fixture Badge) -->
+    <div class="absolute top-3 left-3 right-3 flex items-center justify-between gap-2 z-10">
+      <span class="badge {{ event.observation_state_badge_class }}">
+        {{ event.observation_state_label }}
+      </span>
+
+      {% if event.is_synthetic %}
+      <span class="badge badge-demo text-[9px]"
+            title="{{ event.disclaimer }}">
+        DEMO FIXTURE
+      </span>
+      {% else %}
+      <span class="badge badge-real text-[9px]"
+            title="Real NISAR analysis from NASA NISAR / ASF DAAC">
+        REAL NISAR ANALYSIS
+      </span>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Card Body -->
+  <div class="media-card-body flex-1 flex flex-col p-4 sm:p-5">
+    
+    <!-- Domain Metadata Eyebrow -->
+    <div class="type-metadata mb-1.5 flex items-center justify-between text-[10px]">
+      <div class="flex items-center gap-1.5 text-[#60A5FA]">
+        <span class="w-1.5 h-1.5 bg-[#1E6BFF] inline-block"></span>
+        <span>{{ event.domain_label }}</span>
+      </div>
+      <span class="technical-id scientist-only text-[9px]">{{ event.analysis_id }}</span>
+    </div>
+
+    <!-- Large Title -->
+    <h3 class="font-sans font-bold text-base sm:text-lg text-white uppercase tracking-tight group-hover:text-[#60A5FA] transition-colors leading-snug mb-2">
+      <a href="{{ event.detail_url }}" class="text-white hover:text-[#60A5FA] text-decoration-none">
+        {{ event.title }}
+      </a>
+    </h3>
+
+    <!-- Short Description -->
+    <p class="type-small text-[#94A3B8] line-clamp-2 mb-3 leading-relaxed flex-1">
+      {{ event.short_description }}
+    </p>
+
+    <!-- Synthetic Disclaimer Notice / Real Source -->
+    {% if event.is_synthetic %}
+    <div class="text-[10px] font-mono text-[#5C6B80] bg-[#090D14] border border-[#1E2838] p-2 mb-3 leading-snug">
+      <span class="text-[#8E9BAE]">Disclaimer:</span> {{ event.disclaimer }}
+    </div>
+    {% else %}
+    <div class="text-[10px] font-mono text-[#34D399] bg-[#090D14] border border-[#10B981]/30 p-2 mb-3 leading-snug flex items-center justify-between">
+      <span class="text-[#5C6B80]">SOURCE:</span>
+      <span class="font-bold text-white">{{ event.source or "NASA NISAR / ASF DAAC" }}</span>
+    </div>
+    {% endif %}
+
+    <!-- Comparison Dates & Primary Measurement -->
+    <div class="border-t border-[#1E2838] pt-3 pb-2 text-xs space-y-1.5">
+      <div class="flex items-center justify-between">
+        <span class="type-metadata text-[10px] text-[#5C6B80]">COMPARISON</span>
+        <span class="type-mono-metadata text-[11px] text-[#F0F4F8]">{{ event.date_range_display }}</span>
+      </div>
+      {% if event.primary_measurement_label and event.primary_measurement_value %}
+      <div class="flex items-center justify-between">
+        <span class="type-metadata text-[10px] text-[#5C6B80]">{{ event.primary_measurement_label }}</span>
+        <span class="type-mono-metadata text-[11px] text-[#60A5FA] font-bold">{{ event.primary_measurement_value }}</span>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Card Footer: Product Maturity, Validation Badge, Action Link -->
+    <div class="mt-auto pt-3 border-t border-[#1E2838] flex items-center justify-between text-xs gap-2">
+      <div class="flex items-center gap-1.5">
+        <span class="badge {{ event.product_maturity_badge_class }}">
+          {{ event.product_maturity_label }}
+        </span>
+        <span class="badge {{ event.validation_status_badge_class }}">
+          {{ event.validation_status_label }}
+        </span>
+      </div>
+      <a href="{{ event.detail_url }}" class="inline-flex items-center gap-1 text-[#1E6BFF] hover:text-[#3B82F6] font-mono text-[11px] uppercase tracking-wider font-semibold shrink-0 group/link">
+        <span>Explore Analysis</span>
+        <i data-lucide="arrow-right" class="w-3.5 h-3.5 group-hover/link:translate-x-0.5 transition-transform"></i>
+      </a>
+    </div>
+
+  </div>
+</div>
