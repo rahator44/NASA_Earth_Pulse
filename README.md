@@ -169,7 +169,7 @@ App URL: **`http://localhost:8000`**
 OpenAPI Documentation: **`http://localhost:8000/api/docs`**
 
 > **Note on NASA Credentials:**  
-> Teammates **do not** need a `~/.netrc` file or a NASA Earthdata account to run the web application, inspect the real NISAR Lake Henderson showcase, search the live NASA metadata archive, or run the test suite. All required processed products and mock fixtures are committed in the repository.  
+  
 > NASA Earthdata credentials are only required if you choose to re-run the offline raw granule streaming script (`scripts/real_flood/run_showcase.py`), which can be provided via `.env` (see `.env.example`).
 
 
