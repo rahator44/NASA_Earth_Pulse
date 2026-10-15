@@ -41,7 +41,7 @@ DEFAULT_PRODUCTS = ["GCOV", "GUNW", "GOFF"]
 MAX_SEARCH_RESULTS_PER_PRODUCT = 50
 MAX_AOI_SPAN_DEGREES = 5.0
 CACHE_TTL_SECONDS = 900  # 15 minutes
-SEARCH_TIMEOUT_SECONDS = 60  # Bounded execution for parallel product searches (1 minute)
+SEARCH_TIMEOUT_SECONDS = 15  # Bounded execution for parallel product searches (15 seconds)
 
 
 class NisarCoverageService:
@@ -510,7 +510,7 @@ class NisarCoverageService:
                     prod, mat = future_to_task[future]
                     timed_out_tasks.append((prod, mat))
                     search_warnings.append(f"Archive query for {prod} ({mat}) timed out.")
-                    logger.warning("ASF metadata search sub-query timed out for %s %s", prod, mat)
+                    logger.info("ASF metadata search sub-query reached timeout for %s %s (non-fatal, proceeding with available products)", prod, mat)
                     future.cancel()
 
                 for future in done:

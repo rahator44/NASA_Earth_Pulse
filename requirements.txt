@@ -11,5 +11,7 @@ scipy>=1.13
 # Offline real-data pipeline only (scripts/real_flood):
 earthaccess>=0.12
 h5py>=3.11
-
 rasterio>=1.4
+pillow>=10.0.0
+pyproj>=3.6.0
+

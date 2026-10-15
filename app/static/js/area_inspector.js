@@ -243,7 +243,11 @@ class AreaInspector {
       });
     }
 
-    this.bindCoverageCheckButton();
+    if (this.lastCoverageResponse) {
+      this.renderCoverageResponse(this.lastCoverageResponse);
+    } else {
+      this.bindCoverageCheckButton();
+    }
     this.refreshIcons();
   }
 
@@ -298,7 +302,11 @@ class AreaInspector {
       </div>
     `;
 
-    this.bindCoverageCheckButton();
+    if (this.lastCoverageResponse) {
+      this.renderCoverageResponse(this.lastCoverageResponse);
+    } else {
+      this.bindCoverageCheckButton();
+    }
     this.refreshIcons();
   }
 
@@ -626,6 +634,10 @@ class AreaInspector {
       // Trigger map footprint rendering if footprints exist
       if (coverageData.footprints_geojson && typeof window.updateNisarFootprints === 'function') {
         window.updateNisarFootprints(coverageData.footprints_geojson);
+      }
+
+      if (typeof window.onCoverageUpdated === 'function') {
+        window.onCoverageUpdated(coverageData);
       }
 
     } catch (err) {

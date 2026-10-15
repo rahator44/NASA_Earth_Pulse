@@ -390,17 +390,37 @@ class MapSelectionManager {
     }
   }
 
-  // Programmatic Polygon Display (e.g. for highlighting a selected AOI)
+  // Programmatic Point Display (e.g. for restoring active point selection)
+  displayPoint(lng, lat) {
+    this.clearPolygon();
+    this.cancelActiveDrawing();
+    const pointSource = this.map.getSource('user-selection');
+    if (pointSource && Number.isFinite(lng) && Number.isFinite(lat)) {
+      pointSource.setData({
+        type: 'FeatureCollection',
+        features: [{
+          type: 'Feature',
+          geometry: { type: 'Point', coordinates: [lng, lat] },
+          properties: {}
+        }]
+      });
+    }
+  }
+
+  // Programmatic Polygon Display (e.g. for highlighting a selected AOI or restoring active selection)
   displayPolygon(coordinates, coordsDisplay = '') {
     this.clearPoint();
     this.cancelActiveDrawing();
     const polySource = this.map.getSource('user-selection-poly');
-    if (polySource) {
+    if (polySource && coordinates) {
+      const ringCoords = (Array.isArray(coordinates) && coordinates.length > 0 && Array.isArray(coordinates[0]) && typeof coordinates[0][0] === 'number')
+        ? [coordinates]
+        : coordinates;
       polySource.setData({
         type: 'FeatureCollection',
         features: [{
           type: 'Feature',
-          geometry: { type: 'Polygon', coordinates: coordinates },
+          geometry: { type: 'Polygon', coordinates: ringCoords },
           properties: {}
         }]
       });
