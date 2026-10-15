@@ -27,11 +27,36 @@ function initNisarMap() {
   }
 
   const preferences = window.NisarPreferences;
-  const savedView = (() => { try { return JSON.parse(localStorage.getItem('nisar-map-last-view') || 'null'); } catch (_) { return null; } })();
+  const savedSelection = (() => {
+    try {
+      return JSON.parse(
+        sessionStorage.getItem('nisar-map-active-selection') ||
+        localStorage.getItem('nisar-map-active-selection') ||
+        'null'
+      );
+    } catch (_) { return null; }
+  })();
+  const savedView = (() => {
+    try {
+      return JSON.parse(
+        sessionStorage.getItem('nisar-map-last-view') ||
+        localStorage.getItem('nisar-map-last-view') ||
+        'null'
+      );
+    } catch (_) { return null; }
+  })();
   const defaultView = preferences ? preferences.get('mapDefaultView') : 'global';
-  const initialView = defaultView === 'last-view' && savedView
-    ? savedView
-    : defaultView === 'north-america' ? { center: [-101, 39], zoom: 3.1 } : { center: [0, 20], zoom: 1.8 };
+
+  let initialView;
+  if (savedSelection?.view?.center && Number.isFinite(savedSelection.view.zoom)) {
+    initialView = savedSelection.view;
+  } else if (savedView?.center && Number.isFinite(savedView.zoom)) {
+    initialView = savedView;
+  } else if (defaultView === 'north-america') {
+    initialView = { center: [-101, 39], zoom: 3.1 };
+  } else {
+    initialView = { center: [0, 20], zoom: 1.8 };
+  }
   try {
     const map = new maplibregl.Map({
       container: 'map',
@@ -90,7 +115,18 @@ function initNisarMap() {
 
     map.on('move', updateReadout);
     map.on('moveend', () => {
-      try { localStorage.setItem('nisar-map-last-view', JSON.stringify({ center: map.getCenter().toArray(), zoom: map.getZoom() })); } catch (_) {}
+      try {
+        const view = { center: map.getCenter().toArray(), zoom: map.getZoom() };
+        localStorage.setItem('nisar-map-last-view', JSON.stringify(view));
+        sessionStorage.setItem('nisar-map-last-view', JSON.stringify(view));
+        const selStr = sessionStorage.getItem('nisar-map-active-selection') || localStorage.getItem('nisar-map-active-selection');
+        if (selStr) {
+          const sel = JSON.parse(selStr);
+          sel.view = view;
+          sessionStorage.setItem('nisar-map-active-selection', JSON.stringify(sel));
+          localStorage.setItem('nisar-map-active-selection', JSON.stringify(sel));
+        }
+      } catch (_) {}
     });
 
     // Map Load Pipeline
@@ -112,6 +148,7 @@ function initNisarMap() {
           inspector.renderEmpty();
           clearHighlightedAOIs();
           clearNisarFootprints(map);
+          clearActiveSelection();
         }
       });
       window.nisarSelection = selectionManager;
@@ -128,7 +165,12 @@ function initNisarMap() {
       setupBasemapSwitcher(map);
 
       // 6. Check URL query parameters (e.g. /map?aoi=aoi_synth_alpha)
-      checkUrlParameters(map, inspector);
+      const hasUrlAoi = checkUrlParameters(map, inspector);
+
+      // 7. Restore active selection if no URL parameter overrode it
+      if (!hasUrlAoi) {
+        restoreSavedSelection(map, selectionManager, inspector);
+      }
 
       console.log('[NISAR Map] Interactive map initialized.');
     });
@@ -186,6 +228,8 @@ function addAOILayers(map, sourceId, prefix, isDemo) {
     if (!feature) return;
     const aoiId = feature.properties.id;
     highlightAOI(aoiId);
+    const selectElem = document.getElementById('select-demo-area');
+    if (selectElem && aoiId) selectElem.value = aoiId;
     map.fitBounds(geometryBounds(feature.geometry), { padding: 70, maxZoom: 9, duration: 900 });
     triggerInspectionByAoiId(aoiId, feature.geometry);
   });
@@ -212,6 +256,9 @@ function addChangeLayers(map, sourceId, prefix, isDemo) {
     const feature = e.features && e.features[0];
     if (!feature) return;
     window.nisarInspector.setLastGeometry(feature.geometry);
+    if (window.nisarSelection && feature.geometry?.coordinates) {
+      window.nisarSelection.displayPolygon(feature.geometry.coordinates);
+    }
     performAreaInspection({
       geometry: feature.geometry,
       selection_type: 'polygon',
@@ -351,12 +398,12 @@ function clearNisarFootprints(map) {
 /**
  * Sends Selection Payload to POST /api/demo/inspect-area
  */
-async function performAreaInspection(payload) {
+async function performAreaInspection(payload, options = {}) {
   const inspector = window.nisarInspector;
   if (!inspector) return;
 
   inspector.renderLoading();
-  inspector.setLastRequest(() => performAreaInspection(payload));
+  inspector.setLastRequest(() => performAreaInspection(payload, options));
 
   try {
     const res = await fetch('/api/demo/inspect-area', {
@@ -383,11 +430,35 @@ async function performAreaInspection(payload) {
     // Highlight matched AOIs on the map
     if (data.matched_aoi_ids && data.matched_aoi_ids.length > 0) {
       highlightAOIs(data.matched_aoi_ids);
+    } else if (payload.aoi_id) {
+      highlightAOI(payload.aoi_id);
     } else {
       clearHighlightedAOIs();
     }
 
+    // Keep dropdown selection synchronized
+    const selectElem = document.getElementById('select-demo-area');
+    if (selectElem) {
+      if (payload.aoi_id) {
+        selectElem.value = payload.aoi_id;
+      } else if (data.matched_aoi_ids && data.matched_aoi_ids.length === 1) {
+        selectElem.value = data.matched_aoi_ids[0];
+      }
+    }
+
+    // If restoring cached coverage data, attach it prior to rendering
+    if (options.coverage_data && !inspector.lastCoverageResponse) {
+      inspector.lastCoverageResponse = options.coverage_data;
+    }
+
     inspector.renderResponse(data);
+
+    // Persist this active selection so navigating to another page and returning maintains the selection
+    saveActiveSelection(payload, {
+      aoi_id: payload.aoi_id || (data.matched_aoi_ids?.length === 1 ? data.matched_aoi_ids[0] : null),
+      matched_aoi_ids: data.matched_aoi_ids || [],
+      coverage_data: inspector.lastCoverageResponse || options.coverage_data || null
+    });
 
   } catch (err) {
     console.error('[Area Inspection Error]:', err);
@@ -401,6 +472,10 @@ async function performAreaInspection(payload) {
 function triggerInspectionByAoiId(aoiId, geometry = null) {
   if (geometry && window.nisarInspector) {
     window.nisarInspector.setLastGeometry(geometry);
+  }
+  const selectElem = document.getElementById('select-demo-area');
+  if (selectElem && aoiId) {
+    selectElem.value = aoiId;
   }
   performAreaInspection({
     aoi_id: aoiId,
@@ -549,10 +624,10 @@ function setupFindDemoArea(map, selectionManager, inspector) {
     'aoi_synth_delta': { type: 'Polygon', coordinates: [[[-60.5, -20.5], [-59.7, -20.5], [-59.7, -19.7], [-60.5, -19.7], [-60.5, -20.5]]] }
   };
 
-  window.selectDemoAOI = (aoiId) => {
+  window.selectDemoAOI = (aoiId, options = {}) => {
     if (selectElem) selectElem.value = aoiId;
     const bbox = aoiBboxes[aoiId];
-    if (bbox) {
+    if (bbox && !options.skipFly) {
       map.fitBounds(bbox, {
         padding: 80,
         maxZoom: 9,
@@ -567,6 +642,8 @@ function setupFindDemoArea(map, selectionManager, inspector) {
     const aoiId = e.target.value;
     if (aoiId && aoiBboxes[aoiId]) {
       window.selectDemoAOI(aoiId);
+    } else if (!aoiId) {
+      window.nisarSelection?.clear();
     }
   });
 }
@@ -607,13 +684,135 @@ function setupLayerToggles(map) {
 function checkUrlParameters(map, inspector) {
   try {
     const params = new URLSearchParams(window.location.search);
+    if (params.get('reset') === 'true') {
+      clearActiveSelection();
+      return false;
+    }
     const targetAoi = params.get('aoi');
     if (targetAoi && window.selectDemoAOI) {
       setTimeout(() => {
         window.selectDemoAOI(targetAoi);
-      }, 500);
+      }, 350);
+      return true;
     }
   } catch (e) {
     console.warn('[Map URL State] Error reading URL parameters:', e);
   }
+  return false;
 }
+
+/**
+ * Saves active selection state and camera position across page navigations.
+ */
+function saveActiveSelection(payload, extra = {}) {
+  try {
+    const map = window.nisarMap;
+    const selectElem = document.getElementById('select-demo-area');
+    const existingStr = sessionStorage.getItem('nisar-map-active-selection') || localStorage.getItem('nisar-map-active-selection');
+    const existing = existingStr ? JSON.parse(existingStr) : {};
+
+    const state = {
+      payload: {
+        geometry: payload.geometry || existing.payload?.geometry || null,
+        selection_type: payload.selection_type || existing.payload?.selection_type || 'point',
+        coordinates_display: payload.coordinates_display || existing.payload?.coordinates_display || null,
+        aoi_id: payload.aoi_id || existing.payload?.aoi_id || null
+      },
+      aoi_id: payload.aoi_id || extra.aoi_id || existing.aoi_id || null,
+      dropdown_value: selectElem?.value || extra.dropdown_value || existing.dropdown_value || null,
+      matched_aoi_ids: extra.matched_aoi_ids ?? (existing.matched_aoi_ids || []),
+      coverage_data: extra.coverage_data ?? (existing.coverage_data || null),
+      view: map ? { center: map.getCenter().toArray(), zoom: map.getZoom() } : (existing.view || null),
+      timestamp: Date.now()
+    };
+
+    sessionStorage.setItem('nisar-map-active-selection', JSON.stringify(state));
+    localStorage.setItem('nisar-map-active-selection', JSON.stringify(state));
+    if (map) {
+      const view = { center: map.getCenter().toArray(), zoom: map.getZoom() };
+      localStorage.setItem('nisar-map-last-view', JSON.stringify(view));
+      sessionStorage.setItem('nisar-map-last-view', JSON.stringify(view));
+    }
+  } catch (e) {
+    console.warn('[Map State] Failed to save active selection:', e);
+  }
+}
+
+/**
+ * Clears saved selection when user explicitly clicks Clear.
+ */
+function clearActiveSelection() {
+  try {
+    sessionStorage.removeItem('nisar-map-active-selection');
+    localStorage.removeItem('nisar-map-active-selection');
+    const selectElem = document.getElementById('select-demo-area');
+    if (selectElem) selectElem.value = '';
+  } catch (e) {}
+}
+
+/**
+ * Restores the previous selection and inspection state when returning to the map.
+ */
+function restoreSavedSelection(map, selectionManager, inspector) {
+  try {
+    const savedStr = sessionStorage.getItem('nisar-map-active-selection') || localStorage.getItem('nisar-map-active-selection');
+    if (!savedStr) return;
+    const saved = JSON.parse(savedStr);
+    if (!saved || !saved.payload) return;
+
+    const { payload, aoi_id, dropdown_value, matched_aoi_ids, view, coverage_data } = saved;
+
+    // 1. Restore Dropdown
+    const selectElem = document.getElementById('select-demo-area');
+    if (selectElem && (dropdown_value || aoi_id)) {
+      selectElem.value = dropdown_value || aoi_id || '';
+    }
+
+    // 2. Restore AOI Highlights
+    if (aoi_id) {
+      highlightAOI(aoi_id);
+    } else if (matched_aoi_ids && matched_aoi_ids.length > 0) {
+      highlightAOIs(matched_aoi_ids);
+    }
+
+    // 3. Restore Drawing Layer (point or polygon/rectangle)
+    if (payload.geometry) {
+      inspector.setLastGeometry(payload.geometry);
+      if (payload.geometry.type === 'Point' && Array.isArray(payload.geometry.coordinates)) {
+        const [lng, lat] = payload.geometry.coordinates;
+        selectionManager.displayPoint(lng, lat);
+      } else if (payload.geometry.type === 'Polygon' && Array.isArray(payload.geometry.coordinates)) {
+        selectionManager.displayPolygon(payload.geometry.coordinates, payload.coordinates_display || '');
+      }
+    }
+
+    // 4. Restore Footprints if cached
+    if (coverage_data?.footprints_geojson && typeof window.updateNisarFootprints === 'function') {
+      window.updateNisarFootprints(coverage_data.footprints_geojson);
+    }
+
+    // 5. Restore Area Inspection & Inspector content
+    performAreaInspection(payload, {
+      isRestore: true,
+      matched_aoi_ids: matched_aoi_ids || [],
+      coverage_data: coverage_data || null
+    });
+  } catch (err) {
+    console.warn('[Map State] Failed to restore saved selection:', err);
+  }
+}
+
+/**
+ * Synchronize live coverage data into the persisted selection state.
+ */
+window.onCoverageUpdated = function(coverageData) {
+  try {
+    const selStr = sessionStorage.getItem('nisar-map-active-selection') || localStorage.getItem('nisar-map-active-selection');
+    if (selStr) {
+      const sel = JSON.parse(selStr);
+      sel.coverage_data = coverageData;
+      sessionStorage.setItem('nisar-map-active-selection', JSON.stringify(sel));
+      localStorage.setItem('nisar-map-active-selection', JSON.stringify(sel));
+    }
+  } catch (_) {}
+};
